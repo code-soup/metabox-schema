@@ -168,12 +168,114 @@ You integrate this into your existing form handling workflow.
 
 Works with WordPress functions when available, falls back to PHP alternatives otherwise. Suitable for WordPress metaboxes, settings pages, or standalone forms.
 
+## WordPress Integration Example
+
+Here is how to use this package with WordPress metaboxes using a class-based approach:
+
+**1. Define your schema** (`wp/schema.php`):
+
+```php
+return [
+    'product_price' => [
+        'type' => 'number',
+        'label' => 'Product Price',
+        'validation' => ['required' => true, 'min' => 0]
+    ],
+    'product_sku' => [
+        'type' => 'text',
+        'label' => 'SKU',
+        'validation' => ['required' => true]
+    ]
+];
+```
+
+**2. Create metabox class**:
+
+```php
+use CodeSoup\MetaboxSchema\Renderer;
+use CodeSoup\MetaboxSchema\Validator;
+
+class ProductDetailsMetabox {
+
+    private array $schema;
+
+    public function __construct() {
+        $this->schema = require __DIR__ . '/wp/schema.php';
+        $this->registerHooks();
+    }
+
+    private function registerHooks(): void {
+        add_action( 'add_meta_boxes', [ $this, 'registerMetabox' ] );
+        add_action( 'save_post_product', [ $this, 'saveMetabox' ] );
+        add_action( 'admin_notices', [ $this, 'displayErrors' ] );
+    }
+
+    public function registerMetabox(): void {
+        add_meta_box(
+            'product_details',
+            'Product Details',
+            [ $this, 'renderMetabox' ],
+            'product',
+            'normal',
+            'high'
+        );
+    }
+
+    public function renderMetabox( $post ): void {
+        wp_nonce_field( 'product_details_nonce', 'product_details_nonce' );
+
+        Renderer::render([
+            'schema' => $this->schema,
+            'entity' => $post,
+            'form_prefix' => 'product_meta'
+        ]);
+    }
+
+    public function saveMetabox( int $post_id ): void {
+        // Verify nonce and permissions
+        if ( ! $this->shouldSave( $post_id ) ) {
+            return;
+        }
+
+        // Validate data
+        $validator = new Validator();
+        $validated_data = $validator->validate( $_POST['product_meta'], $this->schema );
+
+        if ( $validator->hasErrors() ) {
+            set_transient( 'product_meta_errors_' . $post_id, $validator->getErrors(), 45 );
+            return;
+        }
+
+        // Save validated data
+        foreach ( $validated_data as $key => $value ) {
+            update_post_meta( $post_id, $key, $value );
+        }
+    }
+
+    public function displayErrors(): void {
+        global $post;
+
+        $errors = get_transient( 'product_meta_errors_' . $post->ID );
+
+        if ( $errors ) {
+            // Display error notice
+        }
+    }
+}
+
+new ProductDetailsMetabox();
+```
+
+See `examples/wordpress-metabox.php` and `examples/wp/schema.php` for the complete implementation.
+
 ## Examples
 
 See the `examples/` folder for complete working examples:
 
 - `examples/simple-form.php` - Basic form rendering
 - `examples/basic-usage.php` - Comprehensive schema with all field types and validation
+- `examples/wordpress-metabox.php` - Complete WordPress metabox class implementation
+- `examples/wp/schema.php` - Example schema for WordPress metabox
 
 ## Requirements
 
