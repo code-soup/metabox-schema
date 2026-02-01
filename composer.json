@@ -1,0 +1,36 @@
+{
+    "name": "codesoup/metabox-schema",
+    "description": "Drop-in schema-based form field renderer and validator. Define your fields once, render forms and validate data.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "form",
+        "schema",
+        "validation",
+        "renderer",
+        "wordpress",
+        "metabox"
+    ],
+    "authors": [
+        {
+            "name": "Code Soup",
+            "email": "info@codesoup.co"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "CodeSoup\\MetaboxSchema\\": "src/"
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/examples"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+
