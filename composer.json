@@ -11,10 +11,15 @@
         "wordpress",
         "metabox"
     ],
+    "homepage": "https://github.com/code-soup/metabox-schema",
+    "support": {
+        "issues": "https://github.com/code-soup/metabox-schema/issues",
+        "source": "https://github.com/code-soup/metabox-schema"
+    },
     "authors": [
         {
             "name": "Code Soup",
-            "email": "info@codesoup.co"
+            "email": "hi@codesoup.co"
         }
     ],
     "require": {
@@ -33,4 +38,3 @@
     "minimum-stability": "dev",
     "prefer-stable": true
 }
-

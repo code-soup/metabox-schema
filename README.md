@@ -179,6 +179,12 @@ See the `examples/` folder for complete working examples:
 
 - PHP 8.1 or higher
 
+## Contributing
+
+Issues and pull requests are welcome on [GitHub](https://github.com/code-soup/metabox-schema).
+
+To report a bug or request a feature, please [open an issue](https://github.com/code-soup/metabox-schema/issues).
+
 ## License
 
 MIT
