@@ -150,6 +150,141 @@ Default sanitization by type:
 - `textarea` - Textarea sanitization
 - Others - Text field sanitization
 
+## Extending Classes
+
+All core classes (`Validator`, `Field`, `Renderer`) are designed to be extensible. All internal methods are `protected`, allowing you to extend and customize behavior.
+
+### Extend Validator
+
+Add custom validation rules and sanitization:
+
+```php
+use CodeSoup\MetaboxSchema\Validator;
+
+class CustomValidator extends Validator {
+    protected function sanitizeByType($value, string $type): mixed {
+        return match($type) {
+            'phone' => $this->sanitizePhone($value),
+            'slug' => $this->sanitizeSlug($value),
+            default => parent::sanitizeByType($value, $type),
+        };
+    }
+
+    protected function validateValue($value, array $context): string|bool {
+        // Add custom validation logic
+        if ($context['type'] === 'phone') {
+            return $this->validatePhone($value, $context);
+        }
+        return parent::validateValue($value, $context);
+    }
+
+    private function sanitizePhone($value): string {
+        return preg_replace('/[^0-9+\-() ]/', '', (string) $value);
+    }
+}
+
+$validator = new CustomValidator();
+```
+
+### Extend Renderer
+
+Customize rendering behavior:
+
+```php
+use CodeSoup\MetaboxSchema\Renderer;
+
+class BootstrapRenderer extends Renderer {
+    protected function openGrid(): void {
+        printf('<div class="row">');
+    }
+
+    protected function renderField(...$args): void {
+        printf('<div class="col-md-6">');
+        parent::renderField(...$args);
+        printf('</div>');
+    }
+}
+
+BootstrapRenderer::render(['schema' => $schema, ...]);
+```
+
+### Extend Field
+
+Customize field rendering:
+
+```php
+use CodeSoup\MetaboxSchema\Field;
+
+class CustomField extends Field {
+    protected function generateFieldId(): string {
+        return 'custom-' . parent::generateFieldId();
+    }
+
+    public function getAttributesString(): string {
+        // Add custom data attributes
+        $attrs = $this->getAttributes();
+        $attrs['data-field-name'] = $this->config['name'];
+        // ... custom logic
+    }
+}
+```
+
+## Custom Templates
+
+You can override field templates to customize HTML output.
+
+### Override All Templates
+
+Use `template_base` to specify a custom template directory:
+
+```php
+Renderer::render([
+    'schema' => $schema,
+    'entity' => null,
+    'form_prefix' => 'my_form',
+    'template_base' => __DIR__ . '/templates'
+]);
+```
+
+Create these files in your templates directory:
+- `input.php` - For all input types
+- `textarea.php` - For textarea fields
+- `select.php` - For select dropdowns
+- `label.php` - For field labels
+- `help.php` - For help text
+- `heading.php` - For heading elements
+
+### Override Single Field Template
+
+Use `template_path` in a specific field to override just that field:
+
+```php
+'featured_content' => [
+    'type' => 'textarea',
+    'label' => 'Featured Content',
+    'template_path' => __DIR__ . '/templates/featured-textarea.php'
+]
+```
+
+### Available Methods in Templates
+
+Inside template files, `$this` refers to the Field object:
+
+```php
+$this->getFieldId()          // Field ID attribute
+$this->getFieldName()        // Field name attribute
+$this->getLabel()            // Field label
+$this->getValue()            // Field value
+$this->getType()             // Field type
+$this->isRequired()          // Is field required?
+$this->getRequiredAttr()     // Required attribute string
+$this->getAttributesString() // Custom attributes string
+$this->getHelp()             // Help text
+$this->getRows()             // Textarea rows
+$this->getOptions()          // Select options
+$this->getHeadingTag()       // Heading tag (h1-h6)
+```
+
 ## What You Need to Provide
 
 This package does **not** include:
@@ -276,6 +411,11 @@ See the `examples/` folder for complete working examples:
 - `examples/basic-usage.php` - Comprehensive schema with all field types and validation
 - `examples/wordpress-metabox.php` - Complete WordPress metabox class implementation
 - `examples/wp/schema.php` - Example schema for WordPress metabox
+- `examples/custom-templates.php` - Using custom template directory for all fields
+- `examples/override-single-field.php` - Override template for a specific field
+- `examples/templates/` - Custom template files (Bootstrap-style examples)
+- `examples/extend-validator.php` - Extending Validator class with custom validation rules
+- `examples/extend-renderer.php` - Extending Renderer and Field classes with Bootstrap integration
 
 ## Requirements
 

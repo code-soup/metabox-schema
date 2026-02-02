@@ -1,6 +1,7 @@
 {
     "name": "codesoup/metabox-schema",
     "description": "Drop-in schema-based form field renderer and validator. Define your fields once, render forms and validate data.",
+    "version": "0.0.2",
     "type": "library",
     "license": "MIT",
     "keywords": [

@@ -89,7 +89,7 @@ class Field {
 	 *
 	 * @param string $wrapper Wrapper tag name.
 	 */
-	private function openWrapper( string $wrapper ): void {
+	protected function openWrapper( string $wrapper ): void {
 		if ( ! in_array( $wrapper, self::VALID_WRAPPER_TAGS, true ) ) {
 			return;
 		}
@@ -105,7 +105,7 @@ class Field {
 	 *
 	 * @param string $wrapper Wrapper tag name.
 	 */
-	private function closeWrapper( string $wrapper ): void {
+	protected function closeWrapper( string $wrapper ): void {
 		if ( ! in_array( $wrapper, self::VALID_WRAPPER_TAGS, true ) ) {
 			return;
 		}
@@ -121,7 +121,7 @@ class Field {
 	 *
 	 * @return string Field ID.
 	 */
-	private function generateFieldId(): string {
+	protected function generateFieldId(): string {
 		return sprintf(
 			'%s-%s',
 			rtrim( $this->config['form_prefix'], self::FORM_PREFIX_DELIMITER ),
@@ -134,7 +134,7 @@ class Field {
 	 *
 	 * @return string Field name attribute.
 	 */
-	private function generateFieldName(): string {
+	protected function generateFieldName(): string {
 		return sprintf(
 			'%s[%s]',
 			$this->config['form_prefix'],
@@ -149,7 +149,7 @@ class Field {
 	 *
 	 * @return mixed Resolved value.
 	 */
-	private function resolveValue(): mixed {
+	protected function resolveValue(): mixed {
 		$value_config = $this->config['value'] ?? $this->config['default'] ?? '';
 
 		if ( is_callable( $value_config ) ) {
@@ -164,7 +164,7 @@ class Field {
 	 *
 	 * @param string $template_name Template name.
 	 */
-	private function renderTemplate( string $template_name ): void {
+	protected function renderTemplate( string $template_name ): void {
 		$template_path = $this->getTemplatePath( $template_name );
 		if ( file_exists( $template_path ) ) {
 			require $template_path;
@@ -176,7 +176,7 @@ class Field {
 	 *
 	 * Uses specific templates for textarea and select, generic input template for others.
 	 */
-	private function renderFieldTemplate(): void {
+	protected function renderFieldTemplate(): void {
 		$type = $this->getType();
 
 		$template_name = in_array( $type, self::SPECIAL_TYPES, true )
@@ -192,7 +192,7 @@ class Field {
 	 * @param string $type Template type.
 	 * @return string Template file path.
 	 */
-	private function getTemplatePath( string $type ): string {
+	protected function getTemplatePath( string $type ): string {
 		if ( isset( $this->config['template_path'] ) ) {
 			return $this->config['template_path'];
 		}

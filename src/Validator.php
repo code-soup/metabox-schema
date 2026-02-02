@@ -98,7 +98,7 @@ class Validator {
 	 * @param array  $field_config Field configuration.
 	 * @return array Field context with label, validation, errors, type.
 	 */
-	private function buildFieldContext( string $field_name, array $field_config ): array {
+	protected function buildFieldContext( string $field_name, array $field_config ): array {
 		$validation = $field_config['validation'] ?? array();
 
 		return array(
@@ -120,7 +120,7 @@ class Validator {
 	 * @param mixed $value Value to check.
 	 * @return bool True if empty, false otherwise.
 	 */
-	private function isEmptyValue( $value ): bool {
+	protected function isEmptyValue( $value ): bool {
 		return null === $value || '' === $value;
 	}
 
@@ -131,7 +131,7 @@ class Validator {
 	 * @param array  $context    Field context.
 	 * @return mixed Default value or empty string.
 	 */
-	private function handleEmptyValue( string $field_name, array $context ) {
+	protected function handleEmptyValue( string $field_name, array $context ) {
 		if ( $context['is_required'] ) {
 			$this->errors[ $field_name ] = $this->getRequiredError( $context );
 		}
@@ -145,7 +145,7 @@ class Validator {
 	 * @param array $context Field context.
 	 * @return string Error message.
 	 */
-	private function getRequiredError( array $context ): string {
+	protected function getRequiredError( array $context ): string {
 		return $context['errors']['required'] ?? sprintf(
 			'%s is required',
 			$context['label']
@@ -162,7 +162,7 @@ class Validator {
 	 * @param array $config Field configuration.
 	 * @return mixed Sanitized value.
 	 */
-	private function sanitizeValue( $value, array $config ): mixed {
+	protected function sanitizeValue( $value, array $config ): mixed {
 		$sanitize = $config['sanitize'] ?? null;
 
 		if ( is_callable( $sanitize ) ) {
@@ -185,7 +185,7 @@ class Validator {
 	 * @param array $callbacks Array of sanitization callbacks.
 	 * @return mixed Sanitized value.
 	 */
-	private function applySanitizeCallbacks( $value, array $callbacks ): mixed {
+	protected function applySanitizeCallbacks( $value, array $callbacks ): mixed {
 		foreach ( $callbacks as $callback ) {
 			if ( ! is_callable( $callback ) ) {
 				continue;
@@ -203,7 +203,7 @@ class Validator {
 	 * @param string $type  Field type.
 	 * @return mixed Sanitized value.
 	 */
-	private function sanitizeByType( $value, string $type ): mixed {
+	protected function sanitizeByType( $value, string $type ): mixed {
 		switch ( $type ) {
 			case 'number':
 				return is_numeric( $value )
@@ -241,7 +241,7 @@ class Validator {
 	 * @param array $context Field context.
 	 * @return string|bool True if valid, error message string if invalid.
 	 */
-	private function validateValue( $value, array $context ): string|bool {
+	protected function validateValue( $value, array $context ): string|bool {
 		$validation = $context['validation'];
 		$errors = $context['errors'];
 		$label = $context['label'];
@@ -302,7 +302,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateMin( $value, int $min, string $type, string $label, array $errors ): string|bool {
+	protected function validateMin( $value, int $min, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( $value < $min ) {
 				return $errors['min'] ?? sprintf(
@@ -332,7 +332,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateMax( $value, int $max, string $type, string $label, array $errors ): string|bool {
+	protected function validateMax( $value, int $max, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( $value > $max ) {
 				return $errors['max'] ?? sprintf(
@@ -361,7 +361,7 @@ class Validator {
 	 * @param array  $errors  Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validatePattern( $value, string $pattern, string $label, array $errors ): string|bool {
+	protected function validatePattern( $value, string $pattern, string $label, array $errors ): string|bool {
 		$result = @preg_match( $pattern, (string) $value );
 
 		if ( false === $result ) {
@@ -390,7 +390,7 @@ class Validator {
 	 * @param array  $errors  Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateOptions( $value, array $options, string $label, array $errors ): string|bool {
+	protected function validateOptions( $value, array $options, string $label, array $errors ): string|bool {
 		if ( ! array_key_exists( $value, $options ) ) {
 			return $errors['options'] ?? sprintf(
 				'%s must be one of the available options',
@@ -409,7 +409,7 @@ class Validator {
 	 * @param string   $label    Field label.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateCustom( $value, callable $callback, string $label ): string|bool {
+	protected function validateCustom( $value, callable $callback, string $label ): string|bool {
 		$result = $callback( $value );
 
 		if ( $result !== true ) {
@@ -435,7 +435,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateFormat( $value, string $format, string $label, array $errors ): string|bool {
+	protected function validateFormat( $value, string $format, string $label, array $errors ): string|bool {
 		if ( '' === $value ) {
 			return true;
 		}
@@ -456,7 +456,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateEmailFormat( $value, string $label, array $errors ): string|bool {
+	protected function validateEmailFormat( $value, string $label, array $errors ): string|bool {
 		$is_valid = function_exists( 'is_email' )
 			? is_email( $value )
 			: filter_var( $value, FILTER_VALIDATE_EMAIL );
@@ -479,7 +479,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateUrlFormat( $value, string $label, array $errors ): string|bool {
+	protected function validateUrlFormat( $value, string $label, array $errors ): string|bool {
 		if ( false === filter_var( $value, FILTER_VALIDATE_URL ) ) {
 			return $errors['format'] ?? sprintf(
 				'%s must be a valid URL',
@@ -498,7 +498,7 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	private function validateDateFormat( $value, string $label, array $errors ): string|bool {
+	protected function validateDateFormat( $value, string $label, array $errors ): string|bool {
 		$timestamp = strtotime( $value );
 
 		if ( false === $timestamp ) {
@@ -519,7 +519,7 @@ class Validator {
 	 * @param string $field_name Field name.
 	 * @return string Formatted field name.
 	 */
-	private function formatFieldName( string $field_name ): string {
+	protected function formatFieldName( string $field_name ): string {
 		$formatted = str_replace(
 			array( '_', '-' ),
 			' ',
@@ -536,7 +536,7 @@ class Validator {
 	 * @param array $config Field configuration.
 	 * @return mixed Default value.
 	 */
-	private function resolveDefault( array $config ): mixed {
+	protected function resolveDefault( array $config ): mixed {
 		$default = $config['default'] ?? '';
 
 		if ( is_callable( $default ) ) {
