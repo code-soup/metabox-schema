@@ -163,6 +163,7 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value' => 'john_doe',
 		'help' => 'Choose a unique username',
 	),
 	'email' => array(
@@ -176,6 +177,7 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value' => 'john@example.com',
 	),
 	'bio' => array(
 		'type' => 'textarea',
@@ -185,6 +187,7 @@ $schema = array(
 			'class' => 'form-control',
 		),
 		'rows' => 4,
+		'value' => 'Software developer passionate about clean code.',
 	),
 );
 

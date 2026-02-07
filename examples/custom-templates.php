@@ -41,6 +41,7 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value'      => 'john_doe',
 		'help'       => 'Choose a unique username',
 	),
 	'email'    => array(
@@ -52,15 +53,18 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value'      => 'john@example.com',
 	),
 	'bio'      => array(
 		'type'  => 'textarea',
 		'label' => 'Biography',
 		'rows'  => 5,
+		'value' => 'Software developer and open source enthusiast.',
 	),
 	'country'  => array(
 		'type'    => 'select',
 		'label'   => 'Country',
+		'value'   => 'us',
 		'options' => array(
 			''   => '— Select —',
 			'us' => 'United States',

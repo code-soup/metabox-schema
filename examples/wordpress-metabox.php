@@ -192,15 +192,20 @@ class ProductDetailsMetabox {
 	 *
 	 * WHAT IT DOES:
 	 * 1. Adds a security nonce field
-	 * 2. Uses Renderer to generate form fields from schema
+	 * 2. Creates entity wrapper to retrieve post meta values
+	 * 3. Uses Renderer to generate form fields from schema
 	 *
 	 * WHY NONCE:
 	 * Security token that proves the form came from WordPress admin.
 	 * Prevents malicious form submissions from other websites.
 	 *
+	 * WHY ENTITY:
+	 * The entity object provides methods to retrieve current field values.
+	 * Schema fields use 'value' => 'getProductPrice' which calls $entity->getProductPrice().
+	 *
 	 * RENDERER PARAMETERS:
 	 * - schema: Field definitions (what to show)
-	 * - entity: WordPress post object (not used in this example)
+	 * - entity: Object with methods to retrieve current values
 	 * - form_prefix: Prefix for field names in $_POST
 	 *
 	 * NOTE:
@@ -215,10 +220,46 @@ class ProductDetailsMetabox {
 			self::NONCE_NAME
 		);
 
+		$entity = new class( $post ) {
+			public function __construct( private $post ) {}
+
+			public function getProductPrice() {
+				return get_post_meta(
+					$this->post->ID,
+					'product_price',
+					true
+				);
+			}
+
+			public function getProductSku() {
+				return get_post_meta(
+					$this->post->ID,
+					'product_sku',
+					true
+				);
+			}
+
+			public function getProductDescription() {
+				return get_post_meta(
+					$this->post->ID,
+					'product_description',
+					true
+				);
+			}
+
+			public function getProductStatus() {
+				return get_post_meta(
+					$this->post->ID,
+					'product_status',
+					true
+				);
+			}
+		};
+
 		Renderer::render(
 			array(
 				'schema'      => $this->schema,
-				'entity'      => $post,
+				'entity'      => $entity,
 				'form_prefix' => self::FORM_PREFIX,
 			)
 		);

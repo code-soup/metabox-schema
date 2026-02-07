@@ -150,13 +150,28 @@ class Field {
 	 * @return mixed Resolved value.
 	 */
 	protected function resolveValue(): mixed {
-		$value_config = $this->config['value'] ?? $this->config['default'] ?? '';
+		$value = $this->config['value'] ?? $this->config['default'] ?? '';
 
-		if ( is_callable( $value_config ) ) {
-			return $value_config();
+		// Handle callable values (closures, array callables, invokable objects)
+		if ( is_callable( $value ) ) {
+			return $value();
 		}
 
-		return $value_config;
+		// Null-safe entity access
+		$entity = $this->config['entity'] ?? null;
+
+		// Handle string method names on entity object
+		if (
+			is_string( $value )
+			&& ! empty( trim( $value ) )
+			&& is_object( $entity )
+			&& method_exists( $entity, $value )
+		) {
+			return $entity->{$value}();
+		}
+
+		// Return static value
+		return $value;
 	}
 
 	/**

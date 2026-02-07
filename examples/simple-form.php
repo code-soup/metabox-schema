@@ -46,9 +46,7 @@ $schema = array(
 			'max'      => 50,
 		),
 		'sanitize'   => array( 'trim', 'strip_tags' ),
-		'default'    => array(
-			'method' => 'getUsername',
-		),
+		'value'      => 'getUsername',
 		'help'       => 'Enter your username (3-50 characters)',
 	),
 	'email'    => array(
@@ -60,9 +58,7 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
-		'default'    => array(
-			'method' => 'getEmail',
-		),
+		'value'      => 'getEmail',
 	),
 );
 

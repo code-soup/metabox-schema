@@ -31,6 +31,7 @@ $schema = array(
 			'pattern'  => '/^[a-zA-Z0-9_]+$/',
 		),
 		'sanitize'   => array( 'trim', 'strip_tags' ),
+		'value'      => 'getUsername',
 		'default'    => 'guest',
 		'help'       => 'Enter your username (3-50 characters)',
 		'errors'     => array(
@@ -49,6 +50,7 @@ $schema = array(
 			'format'   => 'email',
 		),
 		'sanitize'   => 'sanitize_email',
+		'value'      => 'getEmail',
 		'default'    => '',
 		'help'       => 'Enter a valid email address',
 	),

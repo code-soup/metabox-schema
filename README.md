@@ -35,6 +35,7 @@ $schema = [
             'min' => 3,
             'max' => 50
         ],
+        'value' => 'john_doe',
         'default' => 'guest'
     ],
     'email' => [
@@ -43,7 +44,8 @@ $schema = [
         'validation' => [
             'required' => true,
             'format' => 'email'
-        ]
+        ],
+        'value' => 'john@example.com'
     ]
 ];
 ```
@@ -88,7 +90,8 @@ Each field in your schema supports these properties:
 |----------|------|-------------|
 | `type` | string | Field type: text, email, url, number, date, password, tel, color, range, textarea, select, heading |
 | `label` | string | Field label text |
-| `default` | mixed/callable | Default value or callback function |
+| `value` | mixed/callable/string | Current field value, callable, or entity method name |
+| `default` | mixed/callable | Default value or callback function (used when value is empty) |
 | `attributes` | array | HTML attributes (placeholder, maxlength, class, etc.) |
 | `validation` | array | Validation rules (see below) |
 | `sanitize` | callable/array | Sanitization callback(s) |
@@ -98,6 +101,149 @@ Each field in your schema supports these properties:
 | `rows` | int | Number of rows for textarea (default: 5) |
 | `grid` | string | Grid layout: 'start' or 'end' |
 | `heading_tag` | string | Heading tag for heading type: h1-h6 (default: h6) |
+
+### Field Values
+
+The `value` property determines what value is displayed in the field. It supports four approaches:
+
+**1. Static Value**
+
+```php
+'username' => [
+    'type' => 'text',
+    'label' => 'Username',
+    'value' => 'john_doe'
+]
+```
+
+**2. Entity Method Name (with entity)**
+
+When an entity object is provided, `value` can be a method name that will be called on the entity:
+
+```php
+'username' => [
+    'type' => 'text',
+    'label' => 'Username',
+    'value' => 'getUsername'
+]
+
+// Renderer::render([
+//     'schema' => $schema,
+//     'entity' => $userObject,
+//     'form_prefix' => 'my_form'
+// ]);
+```
+
+**3. Callable (deferred execution)**
+
+Pass a function name or callable - it will be executed when the field is rendered:
+
+```php
+'username' => [
+    'type' => 'text',
+    'label' => 'Username',
+    'value' => 'get_current_user_name'
+]
+```
+
+**4. Immediate Execution**
+
+Execute the function when defining the schema:
+
+```php
+'username' => [
+    'type' => 'text',
+    'label' => 'Username',
+    'value' => get_current_user_name()
+]
+```
+
+**Priority**: `value` takes precedence over `default`. If `value` is not set, `default` is used.
+
+### How Value Resolution Works
+
+The Field class resolves values in this order:
+
+1. **Check if value is callable** - If `is_callable($value)` returns true, the callable is executed
+2. **Check if value is entity method** - If value is a string, entity exists, and entity has that method, call it
+3. **Return static value** - Otherwise, return the value as-is
+
+**Important Distinctions:**
+
+```php
+// Callable reference (deferred) - Field class calls it during render
+'value' => 'get_current_user_name'
+
+// Immediate execution - Executes NOW when schema is defined
+'value' => get_current_user_name()
+
+// Entity method (deferred) - Field class calls it during render
+'value' => 'getUsername'  // requires entity object
+
+// Static value - Used as-is
+'value' => 'john_doe'
+```
+
+**When to use each approach:**
+
+- **Callable reference**: When you want the value fetched at render time (e.g., current timestamp, session data)
+- **Immediate execution**: When you want the value captured at schema definition time
+- **Entity method**: When working with objects (WordPress posts, database models, etc.)
+- **Static value**: When you have a fixed value or pre-fetched data
+
+**Complete Example**
+
+```php
+// Without entity - use static values
+$schema = [
+    'username' => [
+        'type' => 'text',
+        'label' => 'Username',
+        'value' => 'john_doe'
+    ]
+];
+
+Renderer::render([
+    'schema' => $schema,
+    'entity' => null,
+    'form_prefix' => 'my_form'
+]);
+
+// With entity - use method names
+class User {
+    public function getUsername(): string {
+        return 'john_doe';
+    }
+}
+
+$schema = [
+    'username' => [
+        'type' => 'text',
+        'label' => 'Username',
+        'value' => 'getUsername'
+    ]
+];
+
+Renderer::render([
+    'schema' => $schema,
+    'entity' => new User(),
+    'form_prefix' => 'my_form'
+]);
+
+// Callable examples
+$schema = [
+    'timestamp' => [
+        'type' => 'text',
+        'label' => 'Current Time',
+        'value' => 'time'  // Deferred: calls time() when field renders
+    ],
+    'captured_time' => [
+        'type' => 'text',
+        'label' => 'Captured Time',
+        'value' => time()  // Immediate: captures time() NOW
+    ]
+];
+```
 
 ### Validation Rules
 
@@ -314,12 +460,14 @@ return [
     'product_price' => [
         'type' => 'number',
         'label' => 'Product Price',
-        'validation' => ['required' => true, 'min' => 0]
+        'validation' => ['required' => true, 'min' => 0],
+        'value' => 'getProductPrice'
     ],
     'product_sku' => [
         'type' => 'text',
         'label' => 'SKU',
-        'validation' => ['required' => true]
+        'validation' => ['required' => true],
+        'value' => 'getProductSku'
     ]
 ];
 ```
@@ -359,9 +507,22 @@ class ProductDetailsMetabox {
     public function renderMetabox( $post ): void {
         wp_nonce_field( 'product_details_nonce', 'product_details_nonce' );
 
+        // Create entity wrapper for post meta
+        $entity = new class($post) {
+            public function __construct(private $post) {}
+
+            public function getProductPrice() {
+                return get_post_meta($this->post->ID, 'product_price', true);
+            }
+
+            public function getProductSku() {
+                return get_post_meta($this->post->ID, 'product_sku', true);
+            }
+        };
+
         Renderer::render([
             'schema' => $this->schema,
-            'entity' => $post,
+            'entity' => $entity,
             'form_prefix' => 'product_meta'
         ]);
     }

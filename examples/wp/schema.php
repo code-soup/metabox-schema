@@ -13,11 +13,12 @@
  * Each field configuration supports:
  * - type: Field type (text, number, email, url, textarea, select, etc.)
  * - label: Field label displayed to user
+ * - value: Entity method name to retrieve current value (e.g., 'getProductPrice')
+ * - default: Default value when value is empty
  * - attributes: HTML attributes (placeholder, step, class, etc.)
  * - validation: Validation rules (required, min, max, pattern, format)
  * - errors: Custom error messages for validation failures
  * - help: Help text displayed below field
- * - default: Default value
  * - options: Available options for select fields
  * - rows: Number of rows for textarea
  *
@@ -40,6 +41,7 @@ return array(
 			'required' => true,
 			'min'      => 0,
 		),
+		'value'      => 'getProductPrice',
 		'help'       => __( 'Enter price in USD', 'codesoup-metabox-schema' ),
 	),
 	'product_sku'         => array(
@@ -52,6 +54,7 @@ return array(
 			'required' => true,
 			'pattern'  => '/^[A-Z0-9-]+$/',
 		),
+		'value'      => 'getProductSku',
 		'errors'     => array(
 			'pattern' => __( 'SKU must contain only uppercase letters, numbers, and hyphens', 'codesoup-metabox-schema' ),
 		),
@@ -63,6 +66,7 @@ return array(
 		'validation' => array(
 			'max' => 500,
 		),
+		'value'      => 'getProductDescription',
 		'help'       => __( 'Maximum 500 characters', 'codesoup-metabox-schema' ),
 	),
 	'product_status'      => array(
@@ -71,6 +75,7 @@ return array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value'      => 'getProductStatus',
 		'default'    => 'in_stock',
 		'options'    => array(
 			'in_stock'     => __( 'In Stock', 'codesoup-metabox-schema' ),

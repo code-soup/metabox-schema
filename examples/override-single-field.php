@@ -29,23 +29,27 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
+		'value'      => 'My Article Title',
 	),
 	'featured_content' => array(
 		'type'          => 'textarea',
 		'label'         => 'Featured Content',
 		'rows'          => 5,
 		'template_path' => __DIR__ . '/templates/featured-textarea.php',
+		'value'         => 'This is featured content with custom styling.',
 		'help'          => 'This field uses a custom template with special styling',
 	),
 	'description'      => array(
 		'type'  => 'textarea',
 		'label' => 'Regular Description',
 		'rows'  => 3,
+		'value' => 'This is a regular description.',
 		'help'  => 'This field uses the default template',
 	),
 	'status'           => array(
 		'type'    => 'select',
 		'label'   => 'Status',
+		'value'   => 'draft',
 		'options' => array(
 			'draft'     => 'Draft',
 			'published' => 'Published',
