@@ -36,7 +36,7 @@ class Renderer {
 	 */
 	protected function render_fields( array $config ): void {
 		$schema        = $config['schema'];
-		$entity        = $config['entity'];
+		$entity        = $config['entity'] ?? null;
 		$form_prefix   = $config['form_prefix'];
 		$template_base = $config['template_base'] ?? null;
 

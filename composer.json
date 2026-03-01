@@ -27,7 +27,7 @@
     },
     "autoload": {
         "classmap": [
-            "src/"
+            "includes/"
         ]
     },
     "archive": {
@@ -49,7 +49,9 @@
         },
         "platform": {
             "php": "8.1.0"
-        }
+        },
+        "sort-packages": true,
+        "optimize-autoloader": true
     },
     "scripts": {
         "lint": "@php ./vendor/bin/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git",

@@ -46,7 +46,7 @@
     <!-- Exclude patterns. -->
     <exclude-pattern>/agent-skills/*</exclude-pattern>
     <exclude-pattern>/examples/*</exclude-pattern>
-    <exclude-pattern>/src/fields/*</exclude-pattern>
+    <exclude-pattern>/includes/fields/*</exclude-pattern>
     <exclude-pattern>/vendor/*</exclude-pattern>
     <exclude-pattern>/node_modules/*</exclude-pattern>
     <exclude-pattern>*.md</exclude-pattern>
