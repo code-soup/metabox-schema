@@ -2,17 +2,18 @@
 /**
  * Label Template
  *
+ * @package CodeSoup\MetaboxSchema
  * @var \CodeSoup\MetaboxSchema\Field $this
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$label = $this->getLabel();
+$label = $this->get_label();
 
 if ( $label ) {
 	printf(
 		'<label for="%s">%s</label>',
-		esc_attr( $this->getFieldId() ),
-		esc_html( $label )
+		$this->get_field_id(),
+		$label
 	);
 }

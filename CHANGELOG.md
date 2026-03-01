@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2026-02-28
+
+### Added
+
+- Constants class - centralized package constants
+- Config_Sanitizer class - configuration sanitization
+- String_Formatter class - string formatting utilities
+- Value_Resolver trait - shared value resolution logic
+- Terminology section in README
+- Advanced Usage section in README
+- Package Architecture section in README
+- utility-classes Agent Skill
+
+### Changed
+
+- Field class now uses Value_Resolver trait and Config_Sanitizer
+- Validator class now uses Value_Resolver trait and String_Formatter
+- All utility class names use WordPress underscore convention
+- Updated all documentation with new architecture
+- Enhanced Requirements section with WordPress functions list
+- Improved Extending Classes section with utility class examples
+
+### Fixed
+
+- Removed dead code in Validator::resolve_default()
+- Removed duplication between Field and Validator classes
+- Date validation now uses strict DateTime::createFromFormat()
+- URL validation now uses wp_http_validate_url() for consistency
+- Reserved keyword warning for $default parameter
+- Field constructor now uses array_key_exists() instead of isset() to allow null entity values
+- Field class now references Constants:: instead of self:: for package constants
+
 ## [0.0.3] - 2026-02-07
 
 ### Changed

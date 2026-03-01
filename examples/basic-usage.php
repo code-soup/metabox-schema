@@ -18,7 +18,6 @@ $schema = array(
 		'type'       => 'text',
 		'label'      => 'Username',
 		'attributes' => array(
-			'id'          => 'username',
 			'class'       => 'form-control',
 			'placeholder' => 'Enter username',
 			'data-validate' => 'true',
@@ -215,10 +214,10 @@ $test_data = array(
 $validator = new Validator();
 $validated = $validator->validate( $test_data, $schema );
 
-if ( $validator->hasErrors() ) {
+if ( $validator->has_errors() ) {
 	echo '<h3>Validation Errors:</h3>';
 	echo '<ul>';
-	foreach ( $validator->getErrors() as $field => $error ) {
+	foreach ( $validator->get_errors() as $field => $error ) {
 		printf(
 			'<li><strong>%s:</strong> %s</li>',
 			$field,

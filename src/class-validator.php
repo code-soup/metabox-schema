@@ -12,11 +12,20 @@ declare( strict_types=1 );
 
 namespace CodeSoup\MetaboxSchema;
 
+/**
+ * Validator Class.
+ *
+ * Handles validation and sanitization of form data.
+ */
 class Validator {
 
-	private const DEFAULT_TYPE = 'text';
-	private const SKIP_VALIDATION_TYPES = array( 'heading' );
+	use Value_Resolver;
 
+	/**
+	 * Validation errors array.
+	 *
+	 * @var array
+	 */
 	private array $errors = array();
 
 	/**
@@ -31,36 +40,36 @@ class Validator {
 	 */
 	public function validate( array $data, array $schema ): array {
 		$this->errors = array();
-		$validated = array();
+		$validated    = array();
 
 		foreach ( $schema as $field_name => $field_config ) {
-			$type = $field_config['type'] ?? self::DEFAULT_TYPE;
+			$type = $field_config['type'] ?? Constants::DEFAULT_TYPE;
 
-			if ( in_array( $type, self::SKIP_VALIDATION_TYPES, true ) ) {
+			if ( in_array( $type, Constants::SKIP_VALIDATION_TYPES, true ) ) {
 				continue;
 			}
 
-			$context = $this->buildFieldContext( $field_name, $field_config );
-			$value = $data[ $field_name ] ?? null;
+			$context = $this->build_field_context( $field_name, $field_config );
+			$value   = $data[ $field_name ] ?? null;
 
-			if ( $this->isEmptyValue( $value ) ) {
-				$validated[ $field_name ] = $this->handleEmptyValue( $field_name, $context );
+			if ( $this->is_empty_value( $value ) ) {
+				$validated[ $field_name ] = $this->handle_empty_value( $field_name, $context );
 				continue;
 			}
 
-			$sanitized = $this->sanitizeValue( $value, $field_config );
+			$sanitized = $this->sanitize_value( $value, $field_config );
 
-			if ( $context['is_required'] && $this->isEmptyValue( $sanitized ) ) {
-				$this->errors[ $field_name ] = $this->getRequiredError( $context );
-				$validated[ $field_name ] = $this->resolveDefault( $field_config );
+			if ( $context['is_required'] && $this->is_empty_value( $sanitized ) ) {
+				$this->errors[ $field_name ] = $this->get_required_error( $context );
+				$validated[ $field_name ]    = $this->resolve_default( $field_config );
 				continue;
 			}
 
-			$validation_result = $this->validateValue( $sanitized, $context );
+			$validation_result = $this->validate_value( $sanitized, $context );
 
-			if ( $validation_result !== true ) {
+			if ( true !== $validation_result ) {
 				$this->errors[ $field_name ] = $validation_result;
-				$validated[ $field_name ] = $this->resolveDefault( $field_config );
+				$validated[ $field_name ]    = $this->resolve_default( $field_config );
 				continue;
 			}
 
@@ -75,7 +84,7 @@ class Validator {
 	 *
 	 * @return array Array of field names to error messages.
 	 */
-	public function getErrors(): array {
+	public function get_errors(): array {
 		return $this->errors;
 	}
 
@@ -84,7 +93,7 @@ class Validator {
 	 *
 	 * @return bool True if errors exist, false otherwise.
 	 */
-	public function hasErrors(): bool {
+	public function has_errors(): bool {
 		return ! empty( $this->errors );
 	}
 
@@ -98,15 +107,15 @@ class Validator {
 	 * @param array  $field_config Field configuration.
 	 * @return array Field context with label, validation, errors, type.
 	 */
-	protected function buildFieldContext( string $field_name, array $field_config ): array {
+	protected function build_field_context( string $field_name, array $field_config ): array {
 		$validation = $field_config['validation'] ?? array();
 
 		return array(
 			'field_name'  => $field_name,
-			'label'       => $field_config['label'] ?? $this->formatFieldName( $field_name ),
+			'label'       => $field_config['label'] ?? String_Formatter::format_field_name( $field_name ),
 			'validation'  => $validation,
 			'errors'      => $field_config['errors'] ?? array(),
-			'type'        => $field_config['type'] ?? self::DEFAULT_TYPE,
+			'type'        => $field_config['type'] ?? Constants::DEFAULT_TYPE,
 			'is_required' => $validation['required'] ?? false,
 			'options'     => $field_config['options'] ?? array(),
 		);
@@ -120,7 +129,7 @@ class Validator {
 	 * @param mixed $value Value to check.
 	 * @return bool True if empty, false otherwise.
 	 */
-	protected function isEmptyValue( $value ): bool {
+	protected function is_empty_value( $value ): bool {
 		return null === $value || '' === $value;
 	}
 
@@ -131,12 +140,12 @@ class Validator {
 	 * @param array  $context    Field context.
 	 * @return mixed Default value or empty string.
 	 */
-	protected function handleEmptyValue( string $field_name, array $context ) {
+	protected function handle_empty_value( string $field_name, array $context ) {
 		if ( $context['is_required'] ) {
-			$this->errors[ $field_name ] = $this->getRequiredError( $context );
+			$this->errors[ $field_name ] = $this->get_required_error( $context );
 		}
 
-		return $this->resolveDefault( array( 'default' => '' ) );
+		return $this->resolve_default( array( 'default' => '' ) );
 	}
 
 	/**
@@ -145,11 +154,21 @@ class Validator {
 	 * @param array $context Field context.
 	 * @return string Error message.
 	 */
-	protected function getRequiredError( array $context ): string {
-		return $context['errors']['required'] ?? sprintf(
-			'%s is required',
-			$context['label']
-		);
+	protected function get_required_error( array $context ): string {
+		return $this->get_error_message( $context['errors'], 'required', '%s is required', $context['label'] );
+	}
+
+	/**
+	 * Get error message with fallback.
+	 *
+	 * @param array  $errors          Custom error messages.
+	 * @param string $key             Error key.
+	 * @param string $default_message Default message format.
+	 * @param mixed  ...$args         Arguments for sprintf.
+	 * @return string Error message.
+	 */
+	protected function get_error_message( array $errors, string $key, string $default_message, ...$args ): string {
+		return $errors[ $key ] ?? sprintf( $default_message, ...$args );
 	}
 
 	/**
@@ -162,7 +181,7 @@ class Validator {
 	 * @param array $config Field configuration.
 	 * @return mixed Sanitized value.
 	 */
-	protected function sanitizeValue( $value, array $config ): mixed {
+	protected function sanitize_value( $value, array $config ): mixed {
 		$sanitize = $config['sanitize'] ?? null;
 
 		if ( is_callable( $sanitize ) ) {
@@ -170,12 +189,12 @@ class Validator {
 		}
 
 		if ( is_array( $sanitize ) ) {
-			return $this->applySanitizeCallbacks( $value, $sanitize );
+			return $this->apply_sanitize_callbacks( $value, $sanitize );
 		}
 
-		$type = $config['type'] ?? self::DEFAULT_TYPE;
+		$type = $config['type'] ?? Constants::DEFAULT_TYPE;
 
-		return $this->sanitizeByType( $value, $type );
+		return $this->sanitize_by_type( $value, $type );
 	}
 
 	/**
@@ -185,7 +204,7 @@ class Validator {
 	 * @param array $callbacks Array of sanitization callbacks.
 	 * @return mixed Sanitized value.
 	 */
-	protected function applySanitizeCallbacks( $value, array $callbacks ): mixed {
+	protected function apply_sanitize_callbacks( $value, array $callbacks ): mixed {
 		foreach ( $callbacks as $callback ) {
 			if ( ! is_callable( $callback ) ) {
 				continue;
@@ -203,7 +222,7 @@ class Validator {
 	 * @param string $type  Field type.
 	 * @return mixed Sanitized value.
 	 */
-	protected function sanitizeByType( $value, string $type ): mixed {
+	protected function sanitize_by_type( $value, string $type ): mixed {
 		switch ( $type ) {
 			case 'number':
 				return is_numeric( $value )
@@ -211,24 +230,16 @@ class Validator {
 					: 0;
 
 			case 'email':
-				return function_exists( 'sanitize_email' )
-					? sanitize_email( $value )
-					: filter_var( $value, FILTER_SANITIZE_EMAIL );
+				return sanitize_email( $value );
 
 			case 'url':
-				return function_exists( 'esc_url_raw' )
-					? esc_url_raw( $value )
-					: filter_var( $value, FILTER_SANITIZE_URL );
+				return esc_url_raw( $value );
 
 			case 'textarea':
-				return function_exists( 'sanitize_textarea_field' )
-					? sanitize_textarea_field( $value )
-					: trim( (string) $value );
+				return sanitize_textarea_field( $value );
 
 			default:
-				return function_exists( 'sanitize_text_field' )
-					? sanitize_text_field( trim( (string) $value ) )
-					: trim( strip_tags( (string) $value ) );
+				return sanitize_text_field( trim( (string) $value ) );
 		}
 	}
 
@@ -241,51 +252,51 @@ class Validator {
 	 * @param array $context Field context.
 	 * @return string|bool True if valid, error message string if invalid.
 	 */
-	protected function validateValue( $value, array $context ): string|bool {
+	protected function validate_value( $value, array $context ): string|bool {
 		$validation = $context['validation'];
-		$errors = $context['errors'];
-		$label = $context['label'];
-		$type = $context['type'];
+		$errors     = $context['errors'];
+		$label      = $context['label'];
+		$type       = $context['type'];
 
 		if ( isset( $validation['min'] ) ) {
-			$min_error = $this->validateMin( $value, $validation['min'], $type, $label, $errors );
-			if ( $min_error !== true ) {
-				return $min_error;
+			$result = $this->validate_min( $value, $validation['min'], $type, $label, $errors );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
 		if ( isset( $validation['max'] ) ) {
-			$max_error = $this->validateMax( $value, $validation['max'], $type, $label, $errors );
-			if ( $max_error !== true ) {
-				return $max_error;
+			$result = $this->validate_max( $value, $validation['max'], $type, $label, $errors );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
 		if ( isset( $validation['pattern'] ) ) {
-			$pattern_error = $this->validatePattern( $value, $validation['pattern'], $label, $errors );
-			if ( $pattern_error !== true ) {
-				return $pattern_error;
+			$result = $this->validate_pattern( $value, $validation['pattern'], $label, $errors );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
 		if ( isset( $validation['format'] ) ) {
-			$format_error = $this->validateFormat( $value, $validation['format'], $label, $errors );
-			if ( $format_error !== true ) {
-				return $format_error;
+			$result = $this->validate_format( $value, $validation['format'], $label, $errors, $validation );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
 		if ( 'select' === $type && ! empty( $context['options'] ) ) {
-			$options_error = $this->validateOptions( $value, $context['options'], $label, $errors );
-			if ( $options_error !== true ) {
-				return $options_error;
+			$result = $this->validate_options( $value, $context['options'], $label, $errors );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
 		if ( isset( $validation['validate'] ) && is_callable( $validation['validate'] ) ) {
-			$custom_error = $this->validateCustom( $value, $validation['validate'], $label );
-			if ( $custom_error !== true ) {
-				return $custom_error;
+			$result = $this->validate_custom( $value, $validation['validate'], $label );
+			if ( true !== $result ) {
+				return $result;
 			}
 		}
 
@@ -302,21 +313,13 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateMin( $value, int $min, string $type, string $label, array $errors ): string|bool {
+	protected function validate_min( $value, int $min, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( $value < $min ) {
-				return $errors['min'] ?? sprintf(
-					'%s must be at least %d',
-					$label,
-					$min
-				);
+				return $this->get_error_message( $errors, 'min', '%s must be at least %d', $label, $min );
 			}
 		} elseif ( strlen( (string) $value ) < $min ) {
-			return $errors['min'] ?? sprintf(
-				'%s must be at least %d characters',
-				$label,
-				$min
-			);
+			return $this->get_error_message( $errors, 'min', '%s must be at least %d characters', $label, $min );
 		}
 
 		return true;
@@ -332,21 +335,13 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateMax( $value, int $max, string $type, string $label, array $errors ): string|bool {
+	protected function validate_max( $value, int $max, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( $value > $max ) {
-				return $errors['max'] ?? sprintf(
-					'%s must be at most %d',
-					$label,
-					$max
-				);
+				return $this->get_error_message( $errors, 'max', '%s must be at most %d', $label, $max );
 			}
 		} elseif ( strlen( (string) $value ) > $max ) {
-			return $errors['max'] ?? sprintf(
-				'%s must be at most %d characters',
-				$label,
-				$max
-			);
+			return $this->get_error_message( $errors, 'max', '%s must be at most %d characters', $label, $max );
 		}
 
 		return true;
@@ -361,21 +356,15 @@ class Validator {
 	 * @param array  $errors  Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validatePattern( $value, string $pattern, string $label, array $errors ): string|bool {
+	protected function validate_pattern( $value, string $pattern, string $label, array $errors ): string|bool {
 		$result = @preg_match( $pattern, (string) $value );
 
 		if ( false === $result ) {
-			return sprintf(
-				'%s has invalid validation pattern',
-				$label
-			);
+			return sprintf( '%s has invalid validation pattern', $label );
 		}
 
 		if ( ! $result ) {
-			return $errors['pattern'] ?? sprintf(
-				'%s format is invalid',
-				$label
-			);
+			return $this->get_error_message( $errors, 'pattern', '%s format is invalid', $label );
 		}
 
 		return true;
@@ -390,12 +379,9 @@ class Validator {
 	 * @param array  $errors  Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateOptions( $value, array $options, string $label, array $errors ): string|bool {
+	protected function validate_options( $value, array $options, string $label, array $errors ): string|bool {
 		if ( ! array_key_exists( $value, $options ) ) {
-			return $errors['options'] ?? sprintf(
-				'%s must be one of the available options',
-				$label
-			);
+			return $this->get_error_message( $errors, 'options', '%s must be one of the available options', $label );
 		}
 
 		return true;
@@ -409,16 +395,11 @@ class Validator {
 	 * @param string   $label    Field label.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateCustom( $value, callable $callback, string $label ): string|bool {
+	protected function validate_custom( $value, callable $callback, string $label ): string|bool {
 		$result = $callback( $value );
 
-		if ( $result !== true ) {
-			return is_string( $result )
-				? $result
-				: sprintf(
-					'%s is invalid',
-					$label
-				);
+		if ( true !== $result ) {
+			return is_string( $result ) ? $result : sprintf( '%s is invalid', $label );
 		}
 
 		return true;
@@ -429,21 +410,24 @@ class Validator {
 	 *
 	 * Validates value against specific format types (email, url, date).
 	 *
-	 * @param mixed  $value  Value to validate.
-	 * @param string $format Format type.
-	 * @param string $label  Field label.
-	 * @param array  $errors Custom error messages.
+	 * @param mixed  $value      Value to validate.
+	 * @param string $format     Format type.
+	 * @param string $label      Field label.
+	 * @param array  $errors     Custom error messages.
+	 * @param array  $validation Validation rules array.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateFormat( $value, string $format, string $label, array $errors ): string|bool {
+	protected function validate_format( $value, string $format, string $label, array $errors, array $validation = array() ): string|bool {
 		if ( '' === $value ) {
 			return true;
 		}
 
+		$date_format = $validation['date_format'] ?? 'Y-m-d';
+
 		return match ( $format ) {
-			'email' => $this->validateEmailFormat( $value, $label, $errors ),
-			'url' => $this->validateUrlFormat( $value, $label, $errors ),
-			'date' => $this->validateDateFormat( $value, $label, $errors ),
+			'email' => $this->validate_email_format( $value, $label, $errors ),
+			'url' => $this->validate_url_format( $value, $label, $errors ),
+			'date' => $this->validate_date_format( $value, $label, $errors, $date_format ),
 			default => true,
 		};
 	}
@@ -456,16 +440,9 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateEmailFormat( $value, string $label, array $errors ): string|bool {
-		$is_valid = function_exists( 'is_email' )
-			? is_email( $value )
-			: filter_var( $value, FILTER_VALIDATE_EMAIL );
-
-		if ( ! $is_valid ) {
-			return $errors['format'] ?? sprintf(
-				'%s must be a valid email address',
-				$label
-			);
+	protected function validate_email_format( $value, string $label, array $errors ): string|bool {
+		if ( ! is_email( $value ) ) {
+			return $this->get_error_message( $errors, 'format', '%s must be a valid email address', $label );
 		}
 
 		return true;
@@ -479,12 +456,9 @@ class Validator {
 	 * @param array  $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateUrlFormat( $value, string $label, array $errors ): string|bool {
-		if ( false === filter_var( $value, FILTER_VALIDATE_URL ) ) {
-			return $errors['format'] ?? sprintf(
-				'%s must be a valid URL',
-				$label
-			);
+	protected function validate_url_format( $value, string $label, array $errors ): string|bool {
+		if ( false === wp_http_validate_url( $value ) ) {
+			return $this->get_error_message( $errors, 'format', '%s must be a valid URL', $label );
 		}
 
 		return true;
@@ -493,63 +467,35 @@ class Validator {
 	/**
 	 * Validate date format.
 	 *
-	 * @param mixed  $value  Value to validate.
-	 * @param string $label  Field label.
-	 * @param array  $errors Custom error messages.
+	 * @param mixed  $value   Value to validate.
+	 * @param string $label   Field label.
+	 * @param array  $errors  Custom error messages.
+	 * @param string $format  Date format (default: Y-m-d).
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validateDateFormat( $value, string $label, array $errors ): string|bool {
-		$timestamp = strtotime( $value );
+	protected function validate_date_format( $value, string $label, array $errors, string $format = 'Y-m-d' ): string|bool {
+		$date = \DateTime::createFromFormat( $format, $value );
 
-		if ( false === $timestamp ) {
-			return $errors['format'] ?? sprintf(
-				'%s must be a valid date',
-				$label
-			);
+		if ( false === $date || $date->format( $format ) !== $value ) {
+			return $this->get_error_message( $errors, 'format', '%s must be a valid date in ' . $format . ' format', $label );
 		}
 
 		return true;
 	}
 
-	/**
-	 * Format field name for display.
-	 *
-	 * Converts field_name or field-name to "Field name".
-	 *
-	 * @param string $field_name Field name.
-	 * @return string Formatted field name.
-	 */
-	protected function formatFieldName( string $field_name ): string {
-		$formatted = str_replace(
-			array( '_', '-' ),
-			' ',
-			$field_name
-		);
-		return ucfirst( $formatted );
-	}
+
 
 	/**
 	 * Resolve default value.
 	 *
-	 * Handles callable defaults, array-based method calls, and static values.
+	 * Handles callable defaults and static values.
+	 * Uses Value_Resolver trait for consistent behavior.
 	 *
 	 * @param array $config Field configuration.
 	 * @return mixed Default value.
 	 */
-	protected function resolveDefault( array $config ): mixed {
+	protected function resolve_default( array $config ): mixed {
 		$default = $config['default'] ?? '';
-
-		if ( is_callable( $default ) ) {
-			return $default();
-		}
-
-		if ( is_array( $default ) && isset( $default[0], $default[1] ) ) {
-			if ( is_callable( $default ) ) {
-				return $default();
-			}
-		}
-
-		return $default;
+		return $this->resolve_callable( $default );
 	}
 }
-

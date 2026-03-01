@@ -2,6 +2,7 @@
 /**
  * Input Field Template
  *
+ * @package CodeSoup\MetaboxSchema
  * @var \CodeSoup\MetaboxSchema\Field $this
  */
 
@@ -9,11 +10,10 @@ defined( 'ABSPATH' ) || exit;
 
 printf(
 	'<input id="%s" name="%s" type="%s" value="%s"%s%s />',
-	esc_attr( $this->getFieldId() ),
-	esc_attr( $this->getFieldName() ),
-	esc_attr( $this->getType() ),
-	esc_attr( $this->getValue() ),
-	$this->getRequiredAttr(),
-	$this->getAttributesString()
+	$this->get_field_id(),
+	$this->get_field_name(),
+	$this->get_type(),
+	$this->get_escaped_value(),
+	$this->get_required_attr(),
+	$this->get_attributes_string()
 );
-

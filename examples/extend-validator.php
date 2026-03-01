@@ -23,23 +23,23 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use CodeSoup\MetaboxSchema\Validator;
 
-class CustomValidator extends Validator {
+class Custom_Validator extends Validator {
 
-	protected function sanitizeByType( $value, string $type ): mixed {
+	protected function sanitize_by_type( $value, string $type ): mixed {
 		return match ( $type ) {
-			'phone' => $this->sanitizePhone( $value ),
-			'slug' => $this->sanitizeSlug( $value ),
-			'currency' => $this->sanitizeCurrency( $value ),
-			default => parent::sanitizeByType( $value, $type ),
+			'phone' => $this->sanitize_phone( $value ),
+			'slug' => $this->sanitize_slug( $value ),
+			'currency' => $this->sanitize_currency( $value ),
+			default => parent::sanitize_by_type( $value, $type ),
 		};
 	}
 
-	protected function validateValue( $value, array $context ): string|bool {
+	protected function validate_value( $value, array $context ): string|bool {
 		$validation = $context['validation'];
 		$type = $context['type'];
 
 		if ( 'phone' === $type && isset( $validation['phone_format'] ) ) {
-			$phone_error = $this->validatePhoneFormat(
+			$phone_error = $this->validate_phone_format(
 				$value,
 				$validation['phone_format'],
 				$context['label'],
@@ -51,7 +51,7 @@ class CustomValidator extends Validator {
 		}
 
 		if ( isset( $validation['unique'] ) && $validation['unique'] ) {
-			$unique_error = $this->validateUnique(
+			$unique_error = $this->validate_unique(
 				$value,
 				$context['field_name'],
 				$context['label']
@@ -61,10 +61,10 @@ class CustomValidator extends Validator {
 			}
 		}
 
-		return parent::validateValue( $value, $context );
+		return parent::validate_value( $value, $context );
 	}
 
-	private function sanitizePhone( $value ): string {
+	private function sanitize_phone( $value ): string {
 		return preg_replace(
 			'/[^0-9+\-() ]/',
 			'',
@@ -72,7 +72,7 @@ class CustomValidator extends Validator {
 		);
 	}
 
-	private function sanitizeSlug( $value ): string {
+	private function sanitize_slug( $value ): string {
 		$slug = strtolower( trim( (string) $value ) );
 		$slug = preg_replace(
 			'/[^a-z0-9-]/',
@@ -86,7 +86,7 @@ class CustomValidator extends Validator {
 		);
 	}
 
-	private function sanitizeCurrency( $value ): float {
+	private function sanitize_currency( $value ): float {
 		$cleaned = preg_replace(
 			'/[^0-9.]/',
 			'',
@@ -98,7 +98,7 @@ class CustomValidator extends Validator {
 		);
 	}
 
-	private function validatePhoneFormat(
+	private function validate_phone_format(
 		$value,
 		string $format,
 		string $label,
@@ -122,12 +122,12 @@ class CustomValidator extends Validator {
 		return true;
 	}
 
-	private function validateUnique(
+	private function validate_unique(
 		$value,
 		string $field_name,
 		string $label
 	): string|bool {
-		if ( $this->valueExists( $field_name, $value ) ) {
+		if ( $this->value_exists( $field_name, $value ) ) {
 			return sprintf(
 				'%s must be unique. This value already exists.',
 				$label
@@ -137,7 +137,7 @@ class CustomValidator extends Validator {
 		return true;
 	}
 
-	private function valueExists( string $field_name, $value ): bool {
+	private function value_exists( string $field_name, $value ): bool {
 		return false;
 	}
 }
@@ -174,13 +174,16 @@ $test_data = array(
 	'price' => '$99.99',
 );
 
+if ( ! function_exists( 'esc_html' ) ) {
+	function esc_html( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
 echo '<h1>Custom Validator Example</h1>';
 
-$validator = new CustomValidator();
-$validated = $validator->validate(
-	$test_data,
-	$schema
-);
+$validator = new Custom_Validator();
+$validated = $validator->validate( $test_data, $schema );
 
 echo '<h2>Input Data:</h2>';
 echo '<pre>';
@@ -192,10 +195,10 @@ echo '<pre>';
 print_r( $validated );
 echo '</pre>';
 
-if ( $validator->hasErrors() ) {
+if ( $validator->has_errors() ) {
 	echo '<h2>Validation Errors:</h2>';
 	echo '<ul>';
-	foreach ( $validator->getErrors() as $field => $error ) {
+	foreach ( $validator->get_errors() as $field => $error ) {
 		printf(
 			'<li><strong>%s:</strong> %s</li>',
 			esc_html( $field ),

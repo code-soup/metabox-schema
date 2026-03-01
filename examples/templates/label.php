@@ -6,21 +6,21 @@
  * It adds Bootstrap classes and a required indicator.
  *
  * AVAILABLE METHODS:
- * - $this->getLabel(): Get field label text
- * - $this->getFieldId(): Get field ID attribute
- * - $this->isRequired(): Check if field is required
+ * - $this->get_label(): Get field label text
+ * - $this->get_field_id(): Get field ID attribute
+ * - $this->is_required(): Check if field is required
  *
  * @var \CodeSoup\MetaboxSchema\Field $this
  */
 
-$label = $this->getLabel();
+$label = $this->get_label();
 
 if ( $label ) {
 	printf(
 		'<label for="%s" class="form-label">%s%s</label>',
-		esc_attr( $this->getFieldId() ),
+		$this->get_field_id(),
 		esc_html( $label ),
-		$this->isRequired()
+		$this->is_required()
 			? ' <span class="required">*</span>'
 			: ''
 	);

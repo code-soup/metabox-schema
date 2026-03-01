@@ -12,6 +12,11 @@ declare( strict_types=1 );
 
 namespace CodeSoup\MetaboxSchema;
 
+/**
+ * Renderer Class.
+ *
+ * Handles rendering of form fields from schema definitions.
+ */
 class Renderer {
 
 	/**
@@ -21,7 +26,7 @@ class Renderer {
 	 */
 	public static function render( array $config ): void {
 		$instance = new static();
-		$instance->renderFields( $config );
+		$instance->render_fields( $config );
 	}
 
 	/**
@@ -29,14 +34,21 @@ class Renderer {
 	 *
 	 * @param array $config Configuration array with schema, entity, and form_prefix.
 	 */
-	protected function renderFields( array $config ): void {
-		$schema = $config['schema'];
-		$entity = $config['entity'];
-		$form_prefix = $config['form_prefix'];
+	protected function render_fields( array $config ): void {
+		$schema        = $config['schema'];
+		$entity        = $config['entity'];
+		$form_prefix   = $config['form_prefix'];
 		$template_base = $config['template_base'] ?? null;
 
+		if ( isset( $config['values'] ) && is_array( $config['values'] ) ) {
+			$schema = $this->map_values_to_schema(
+				$schema,
+				$config['values']
+			);
+		}
+
 		foreach ( $schema as $field_name => $field_config ) {
-			$this->renderField(
+			$this->render_field(
 				$field_name,
 				$field_config,
 				$entity,
@@ -55,7 +67,7 @@ class Renderer {
 	 * @param string      $form_prefix   Form prefix.
 	 * @param string|null $template_base Template base directory.
 	 */
-	protected function renderField(
+	protected function render_field(
 		string $field_name,
 		array $field_config,
 		mixed $entity,
@@ -65,13 +77,13 @@ class Renderer {
 		$grid = $field_config['grid'] ?? false;
 
 		if ( 'start' === $grid ) {
-			$this->openGrid();
+			$this->open_grid();
 		}
 
 		ob_start();
 
 		try {
-			$field = $this->createField(
+			$field = $this->create_field(
 				$field_name,
 				$field_config,
 				$entity,
@@ -80,15 +92,33 @@ class Renderer {
 			);
 			$field->render();
 
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Template output already sanitized in Field class.
 			echo ob_get_clean();
 		} catch ( \Exception $e ) {
 			ob_end_clean();
-			$this->handleRenderError( $e );
+			$this->handle_render_error( $e );
 		}
 
 		if ( 'end' === $grid ) {
-			$this->closeGrid();
+			$this->close_grid();
 		}
+	}
+
+	/**
+	 * Map values array to schema fields.
+	 *
+	 * @param array $schema Schema definition.
+	 * @param array $values Values to map (field_name => value).
+	 * @return array Modified schema with values mapped.
+	 */
+	protected function map_values_to_schema( array $schema, array $values ): array {
+		foreach ( $values as $key => $value ) {
+			if ( isset( $schema[ $key ] ) ) {
+				$schema[ $key ]['value'] = $value;
+			}
+		}
+
+		return $schema;
 	}
 
 	/**
@@ -101,7 +131,7 @@ class Renderer {
 	 * @param string|null $template_base Template base directory.
 	 * @return Field Field instance.
 	 */
-	protected function createField(
+	protected function create_field(
 		string $field_name,
 		array $field_config,
 		mixed $entity,
@@ -127,14 +157,14 @@ class Renderer {
 	/**
 	 * Open grid wrapper.
 	 */
-	protected function openGrid(): void {
+	protected function open_grid(): void {
 		printf( '<div class="grid">' );
 	}
 
 	/**
 	 * Close grid wrapper.
 	 */
-	protected function closeGrid(): void {
+	protected function close_grid(): void {
 		printf( '</div>' );
 	}
 
@@ -143,7 +173,7 @@ class Renderer {
 	 *
 	 * @param \Exception $e Exception.
 	 */
-	protected function handleRenderError( \Exception $e ): void {
+	protected function handle_render_error( \Exception $e ): void {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			printf(
 				'<!-- Field rendering error: %s -->',
@@ -152,4 +182,3 @@ class Renderer {
 		}
 	}
 }
-

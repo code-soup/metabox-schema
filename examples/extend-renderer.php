@@ -27,17 +27,47 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use CodeSoup\MetaboxSchema\Renderer;
 use CodeSoup\MetaboxSchema\Field;
 
-class BootstrapRenderer extends Renderer {
+if ( ! function_exists( 'esc_html' ) ) {
+	function esc_html( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
 
-	protected function openGrid(): void {
+if ( ! function_exists( 'sanitize_key' ) ) {
+	function sanitize_key( $key ) {
+		return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) );
+	}
+}
+
+if ( ! function_exists( 'sanitize_text_field' ) ) {
+	function sanitize_text_field( $str ) {
+		return strip_tags( (string) $str );
+	}
+}
+
+if ( ! function_exists( 'absint' ) ) {
+	function absint( $maybeint ) {
+		return abs( (int) $maybeint );
+	}
+}
+
+if ( ! function_exists( 'esc_attr' ) ) {
+	function esc_attr( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+class Bootstrap_Renderer extends Renderer {
+
+	protected function open_grid(): void {
 		printf( '<div class="row">' );
 	}
 
-	protected function closeGrid(): void {
+	protected function close_grid(): void {
 		printf( '</div>' );
 	}
 
-	protected function renderField(
+	protected function render_field(
 		string $field_name,
 		array $field_config,
 		mixed $entity,
@@ -51,7 +81,7 @@ class BootstrapRenderer extends Renderer {
 			$columns
 		);
 
-		parent::renderField(
+		parent::render_field(
 			$field_name,
 			$field_config,
 			$entity,
@@ -62,7 +92,7 @@ class BootstrapRenderer extends Renderer {
 		printf( '</div>' );
 	}
 
-	protected function handleRenderError( \Exception $e ): void {
+	protected function handle_render_error( \Exception $e ): void {
 		printf(
 			'<div class="alert alert-danger">Field rendering error: %s</div>',
 			esc_html( $e->getMessage() )
@@ -70,35 +100,35 @@ class BootstrapRenderer extends Renderer {
 	}
 }
 
-class CustomField extends Field {
+class Custom_Field extends Field {
 
-	protected function openWrapper( string $wrapper ): void {
+	protected function open_wrapper( string $wrapper ): void {
 		if ( 'p' === $wrapper ) {
 			printf( '<div class="form-group mb-3">' );
 		} else {
-			parent::openWrapper( $wrapper );
+			parent::open_wrapper( $wrapper );
 		}
 	}
 
-	protected function closeWrapper( string $wrapper ): void {
+	protected function close_wrapper( string $wrapper ): void {
 		if ( 'p' === $wrapper ) {
 			printf( '</div>' );
 		} else {
-			parent::closeWrapper( $wrapper );
+			parent::close_wrapper( $wrapper );
 		}
 	}
 
-	protected function generateFieldId(): string {
-		$id = parent::generateFieldId();
+	protected function generate_field_id(): string {
+		$id = parent::generate_field_id();
 		return 'custom-' . $id;
 	}
 
-	public function getAttributesString(): string {
-		$attributes = $this->getAttributes();
+	public function get_attributes_string(): string {
+		$attributes = $this->get_attributes();
 
 		$attributes['data-field-name'] = $this->config['name'];
 
-		if ( $this->isRequired() ) {
+		if ( $this->is_required() ) {
 			$attributes['aria-required'] = 'true';
 		}
 
@@ -125,31 +155,7 @@ class CustomField extends Field {
 	}
 }
 
-class CustomBootstrapRenderer extends BootstrapRenderer {
 
-	protected function createField(
-		string $field_name,
-		array $field_config,
-		mixed $entity,
-		string $form_prefix,
-		?string $template_base
-	): Field {
-		$config = array_merge(
-			$field_config,
-			array(
-				'name'        => $field_name,
-				'entity'      => $entity,
-				'form_prefix' => $form_prefix,
-			)
-		);
-
-		if ( $template_base ) {
-			$config['template_base'] = $template_base;
-		}
-
-		return new CustomField( $config );
-	}
-}
 
 $schema = array(
 	'username' => array(
@@ -203,7 +209,7 @@ echo '<h1>Custom Renderer Example</h1>';
 echo '<p>This example demonstrates extending Renderer and Field classes with Bootstrap integration.</p>';
 
 echo '<form>';
-CustomBootstrapRenderer::render(
+Bootstrap_Renderer::render(
 	array(
 		'schema' => $schema,
 		'entity' => null,

@@ -2,12 +2,13 @@
 /**
  * Help Text Template
  *
+ * @package CodeSoup\MetaboxSchema
  * @var \CodeSoup\MetaboxSchema\Field $this
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$help = $this->getHelp();
+$help = $this->get_help();
 
 if ( $help ) {
 	$allowed_html = array(
@@ -21,13 +22,8 @@ if ( $help ) {
 		'code'   => array(),
 	);
 
-	$sanitized_help = function_exists( 'wp_kses' )
-		? wp_kses( $help, $allowed_html )
-		: strip_tags( $help, '<a><strong><em><code>' );
-
 	printf(
 		'<small>%s</small>',
-		$sanitized_help
+		wp_kses( $help, $allowed_html )
 	);
 }
-

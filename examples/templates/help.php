@@ -6,12 +6,12 @@
  * It adds Bootstrap form-text class and closes the form-group div.
  *
  * AVAILABLE METHODS:
- * - $this->getHelp(): Get help text
+ * - $this->get_help(): Get help text
  *
  * @var \CodeSoup\MetaboxSchema\Field $this
  */
 
-$help = $this->getHelp();
+$help = $this->get_help();
 
 if ( $help ) {
 	printf(
