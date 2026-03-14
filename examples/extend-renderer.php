@@ -25,7 +25,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use CodeSoup\MetaboxSchema\Renderer;
-use CodeSoup\MetaboxSchema\Field;
+use CodeSoup\MetaboxSchema\Abstract_Field;
 
 if ( ! function_exists( 'esc_html' ) ) {
 	function esc_html( $text ) {
@@ -100,7 +100,19 @@ class Bootstrap_Renderer extends Renderer {
 	}
 }
 
-class Custom_Field extends Field {
+/**
+ * Example: Extending a field class to create custom field behavior
+ *
+ * This example shows how to extend Input_Field to add custom attributes and wrapper behavior.
+ *
+ * To use this custom field:
+ * 1. Create your own Field_Factory that maps types to your custom classes
+ * 2. Create your own Renderer that uses your custom Field_Factory
+ *
+ * This is an advanced example showing the architecture - most users should use
+ * the built-in field types and customize via templates and configuration.
+ */
+class Custom_Input_Field extends \CodeSoup\MetaboxSchema\Fields\Input_Field {
 
 	protected function open_wrapper( string $wrapper ): void {
 		if ( 'p' === $wrapper ) {
@@ -123,8 +135,8 @@ class Custom_Field extends Field {
 		return 'custom-' . $id;
 	}
 
-	public function get_attributes_string(): string {
-		$attributes = $this->get_attributes();
+	public function get_attributes(): array {
+		$attributes = parent::get_attributes();
 
 		$attributes['data-field-name'] = $this->config['name'];
 
@@ -132,26 +144,7 @@ class Custom_Field extends Field {
 			$attributes['aria-required'] = 'true';
 		}
 
-		$parts = array();
-		foreach ( $attributes as $key => $value ) {
-			$escaped_key = function_exists( 'esc_attr' )
-				? esc_attr( $key )
-				: htmlspecialchars( $key, ENT_QUOTES, 'UTF-8' );
-
-			$escaped_value = function_exists( 'esc_attr' )
-				? esc_attr( (string) $value )
-				: htmlspecialchars( (string) $value, ENT_QUOTES, 'UTF-8' );
-
-			$parts[] = sprintf(
-				'%s="%s"',
-				$escaped_key,
-				$escaped_value
-			);
-		}
-
-		return $parts
-			? ' ' . implode( ' ', $parts )
-			: '';
+		return $attributes;
 	}
 }
 
@@ -159,41 +152,41 @@ class Custom_Field extends Field {
 
 $schema = array(
 	'username' => array(
-		'type' => 'text',
-		'label' => 'Username',
-		'columns' => 6,
+		'type'       => 'text',
+		'label'      => 'Username',
+		'columns'    => 6,
 		'attributes' => array(
 			'placeholder' => 'Enter username',
-			'class' => 'form-control',
+			'class'       => 'form-control',
 		),
 		'validation' => array(
 			'required' => true,
 		),
-		'value' => 'john_doe',
-		'help' => 'Choose a unique username',
+		'value'      => 'john_doe',
+		'help'       => 'Choose a unique username',
 	),
-	'email' => array(
-		'type' => 'email',
-		'label' => 'Email',
-		'columns' => 6,
+	'email'    => array(
+		'type'       => 'email',
+		'label'      => 'Email',
+		'columns'    => 6,
 		'attributes' => array(
 			'placeholder' => 'you@example.com',
-			'class' => 'form-control',
+			'class'       => 'form-control',
 		),
 		'validation' => array(
 			'required' => true,
 		),
-		'value' => 'john@example.com',
+		'value'      => 'john@example.com',
 	),
-	'bio' => array(
-		'type' => 'textarea',
-		'label' => 'Biography',
-		'columns' => 12,
+	'bio'      => array(
+		'type'       => 'textarea',
+		'label'      => 'Biography',
+		'columns'    => 12,
 		'attributes' => array(
 			'class' => 'form-control',
 		),
-		'rows' => 4,
-		'value' => 'Software developer passionate about clean code.',
+		'rows'       => 4,
+		'value'      => 'Software developer passionate about clean code.',
 	),
 );
 
@@ -211,8 +204,8 @@ echo '<p>This example demonstrates extending Renderer and Field classes with Boo
 echo '<form>';
 Bootstrap_Renderer::render(
 	array(
-		'schema' => $schema,
-		'entity' => null,
+		'schema'      => $schema,
+		'entity'      => null,
 		'form_prefix' => 'custom_form',
 	)
 );
@@ -222,4 +215,3 @@ echo '</form>';
 echo '</div>';
 echo '</body>';
 echo '</html>';
-

@@ -33,8 +33,17 @@ class Renderer {
 	 * Render fields from configuration.
 	 *
 	 * @param array $config Configuration array with schema, entity, and form_prefix.
+	 * @throws \InvalidArgumentException If required config keys are missing.
 	 */
 	protected function render_fields( array $config ): void {
+		if ( ! isset( $config['schema'] ) || ! is_array( $config['schema'] ) ) {
+			throw new \InvalidArgumentException( 'Renderer config must include schema array' );
+		}
+
+		if ( ! isset( $config['form_prefix'] ) || ! is_string( $config['form_prefix'] ) ) {
+			throw new \InvalidArgumentException( 'Renderer config must include form_prefix string' );
+		}
+
 		$schema        = $config['schema'];
 		$entity        = $config['entity'] ?? null;
 		$form_prefix   = $config['form_prefix'];
@@ -80,6 +89,7 @@ class Renderer {
 			$this->open_grid();
 		}
 
+		$ob_level = ob_get_level();
 		ob_start();
 
 		try {
@@ -95,7 +105,9 @@ class Renderer {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Template output already sanitized in Field class.
 			echo ob_get_clean();
 		} catch ( \Exception $e ) {
-			ob_end_clean();
+			if ( ob_get_level() > $ob_level ) {
+				ob_end_clean();
+			}
 			$this->handle_render_error( $e );
 		}
 
@@ -129,7 +141,7 @@ class Renderer {
 	 * @param mixed       $entity        Entity object.
 	 * @param string      $form_prefix   Form prefix.
 	 * @param string|null $template_base Template base directory.
-	 * @return Field Field instance.
+	 * @return Abstract_Field Field instance.
 	 */
 	protected function create_field(
 		string $field_name,
@@ -137,35 +149,39 @@ class Renderer {
 		mixed $entity,
 		string $form_prefix,
 		?string $template_base
-	): Field {
-		$config = array_merge(
+	): Abstract_Field {
+		return Field_Factory::create(
+			$field_name,
 			$field_config,
-			array(
-				'name'        => $field_name,
-				'entity'      => $entity,
-				'form_prefix' => $form_prefix,
-			)
+			$entity,
+			$form_prefix,
+			$template_base
 		);
+	}
 
-		if ( $template_base ) {
-			$config['template_base'] = $template_base;
-		}
-
-		return new Field( $config );
+	/**
+	 * Get grid wrapper class name.
+	 *
+	 * Override this method to customize the grid class.
+	 *
+	 * @return string Grid class name.
+	 */
+	protected function get_grid_class(): string {
+		return Constants::DEFAULT_GRID_CLASS;
 	}
 
 	/**
 	 * Open grid wrapper.
 	 */
 	protected function open_grid(): void {
-		printf( '<div class="grid">' );
+		printf( '<div class="%s">', esc_attr( $this->get_grid_class() ) );
 	}
 
 	/**
 	 * Close grid wrapper.
 	 */
 	protected function close_grid(): void {
-		printf( '</div>' );
+		echo '</div>';
 	}
 
 	/**

@@ -42,7 +42,7 @@ $schema = [
 
 ### Required Properties
 
-- **type** (string) - Field type: text, email, url, number, date, password, tel, color, range, textarea, select, wp_editor, heading
+- **type** (string) - Field type: text, email, url, number, date, password, tel, color, range, textarea, select, wp_editor, media, html, label, help
 
 ### Common Properties
 
@@ -63,8 +63,11 @@ $schema = [
 - **options** (array) - For select fields (key => label)
 - **rows** (int) - For textarea/wp_editor (default: 5)
 - **grid** (string) - Grid layout: 'start' or 'end'
-- **heading_tag** (string) - For heading type: h1-h6 (default: h6)
 - **editor_settings** (array) - For wp_editor (WordPress editor config)
+- **content** (string/callable) - For html type: HTML content to display
+- **button_text** (string) - For media type: Button text (default: 'Select Media')
+- **media_type** (string) - For media type: Filter by type (image, video, audio)
+- **preview_size** (string) - For media type: WordPress image size for preview
 
 ## Value Resolution
 

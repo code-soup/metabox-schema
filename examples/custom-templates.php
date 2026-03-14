@@ -16,12 +16,12 @@
  * 3. Your templates are used instead of default ones
  *
  * TEMPLATE FILES AVAILABLE:
- * - input.php: For all input types (text, email, number, etc.)
- * - textarea.php: For textarea fields
- * - select.php: For select dropdowns
- * - label.php: For field labels
- * - help.php: For help text
- * - heading.php: For heading elements
+ * - input/template.php: For all input types (text, email, number, etc.)
+ * - textarea/template.php: For textarea fields
+ * - select/template.php: For select dropdowns
+ * - label/template.php: For field labels
+ * - help/template.php: For help text
+ * - html/template.php: For HTML content
  *
  * @package CodeSoup\MetaboxSchema
  */
@@ -116,4 +116,3 @@ echo "</form>\n";
 
 echo "</body>\n";
 echo "</html>\n";
-

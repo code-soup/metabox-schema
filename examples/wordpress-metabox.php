@@ -201,7 +201,7 @@ class ProductDetailsMetabox {
 	 *
 	 * WHY ENTITY:
 	 * The entity object provides methods to retrieve current field values.
-	 * Schema fields use 'value' => 'getProductPrice' which calls $entity->getProductPrice().
+	 * Schema fields use 'value' => 'get_product_price' which calls $entity->get_product_price().
 	 *
 	 * RENDERER PARAMETERS:
 	 * - schema: Field definitions (what to show)
@@ -223,7 +223,7 @@ class ProductDetailsMetabox {
 		$entity = new class( $post ) {
 			public function __construct( private $post ) {}
 
-			public function getProductPrice() {
+			public function get_product_price() {
 				return get_post_meta(
 					$this->post->ID,
 					'product_price',
@@ -231,7 +231,7 @@ class ProductDetailsMetabox {
 				);
 			}
 
-			public function getProductSku() {
+			public function get_product_sku() {
 				return get_post_meta(
 					$this->post->ID,
 					'product_sku',
@@ -239,7 +239,7 @@ class ProductDetailsMetabox {
 				);
 			}
 
-			public function getProductDescription() {
+			public function get_product_description() {
 				return get_post_meta(
 					$this->post->ID,
 					'product_description',
@@ -247,7 +247,7 @@ class ProductDetailsMetabox {
 				);
 			}
 
-			public function getProductStatus() {
+			public function get_product_status() {
 				return get_post_meta(
 					$this->post->ID,
 					'product_status',
@@ -292,7 +292,7 @@ class ProductDetailsMetabox {
 			return;
 		}
 
-		$validator = new Validator();
+		$validator      = new Validator();
 		$validated_data = $validator->validate(
 			$_POST[ self::FORM_PREFIX ],
 			$this->schema
@@ -558,4 +558,3 @@ class ProductDetailsMetabox {
  * Place this in your plugin or theme's main file.
  */
 new ProductDetailsMetabox();
-

@@ -16,11 +16,11 @@ class MockEntity {
 		$this->data = $data;
 	}
 
-	public function getUsername(): string {
+	public function get_username(): string {
 		return $this->data['username'] ?? '';
 	}
 
-	public function getEmail(): string {
+	public function get_email(): string {
 		return $this->data['email'] ?? '';
 	}
 }
@@ -46,7 +46,7 @@ $schema = array(
 			'max'      => 50,
 		),
 		'sanitize'   => array( 'trim', 'strip_tags' ),
-		'value'      => 'getUsername',
+		'value'      => 'get_username',
 		'help'       => 'Enter your username (3-50 characters)',
 	),
 	'email'    => array(
@@ -58,7 +58,7 @@ $schema = array(
 		'validation' => array(
 			'required' => true,
 		),
-		'value'      => 'getEmail',
+		'value'      => 'get_email',
 	),
 );
 
@@ -80,4 +80,3 @@ Renderer::render(
 echo "</form>\n";
 echo "</body>\n";
 echo "</html>\n";
-

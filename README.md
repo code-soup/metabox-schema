@@ -51,11 +51,8 @@ See the `examples/` directory for complete working examples:
 
 - **`basic-usage.php`** - Complete form rendering and validation
 - **`custom-templates.php`** - Override default field templates
-- **`override-single-field.php`** - Custom template for specific field
 - **`extend-validator.php`** - Add custom validation rules
 - **`extend-renderer.php`** - Customize rendering behavior
-- **`utility-classes.php`** - Using Constants, String_Formatter, Config_Sanitizer
-- **`value-resolver-trait.php`** - Using Value_Resolver trait
 
 ## Core Concepts
 
@@ -93,9 +90,19 @@ $schema = [
 
 ### Supported Field Types
 
-- `text`, `email`, `url`, `number`, `date`
-- `textarea`, `select`, `wysiwyg`
-- `heading` (non-input display element)
+**Input Fields:**
+- `text`, `email`, `url`, `number`, `date`, `password`, `tel`, `color`, `range`
+
+**Content Fields:**
+- `textarea` - Multi-line text input
+- `select` - Dropdown with options
+- `wp_editor` - WordPress rich text editor
+- `media` - WordPress media library picker
+
+**Display Fields:**
+- `html` - HTML content display
+- `label` - Field labels
+- `help` - Help text
 
 ### Validation Rules
 
@@ -120,6 +127,19 @@ Fields can get values from:
 
 ### Custom Templates
 
+Templates are organized in subdirectories by field type:
+
+```
+templates/
+├── input/
+│   └── template.php
+├── textarea/
+│   └── template.php
+├── select/
+│   └── template.php
+└── ...
+```
+
 Override templates globally or per-field:
 
 ```php
@@ -130,7 +150,7 @@ Renderer::render([
 ]);
 
 // Single field override
-$schema['bio']['template_path'] = __DIR__ . '/custom-textarea.php';
+$schema['bio']['template_path'] = __DIR__ . '/templates/textarea/custom.php';
 ```
 
 See `examples/custom-templates.php` and `examples/templates/` for details.
@@ -163,10 +183,18 @@ if ( $validator->has_errors() ) {
 
 ### Field Methods (Available in Templates)
 
+**Common Methods (All Fields):**
 - `get_field_id()`, `get_field_name()`, `get_type()`, `get_label()`
 - `get_value()`, `get_escaped_value()`, `get_escaped_textarea_value()`
 - `is_required()`, `get_required_attr()`, `get_attributes_string()`
-- `get_rows()`, `get_options()`, `get_help()`, `get_wrapper()`, `get_heading_tag()`
+- `get_help()`, `get_wrapper()`
+
+**Field-Specific Methods:**
+- `get_rows()` - Textarea, WP_Editor
+- `get_options()` - Select
+- `get_editor_settings()` - WP_Editor
+- `get_content()` - HTML
+- `get_button_text()`, `get_media_type()`, `get_preview_size()` - Media
 
 See `examples/templates/` for template usage examples.
 
@@ -176,9 +204,7 @@ This package includes AI agent skills for code generation assistance. Located in
 
 - **`schema-definition/`** - Generate schema definitions
 - **`schema-field-renderer/`** - Implement field rendering
-- **`schema-validator/`** - Implement validation logic
 - **`custom-template-creator/`** - Create custom field templates
-- **`utility-classes/`** - Use Constants, String_Formatter, Config_Sanitizer
 
 Each skill includes detailed documentation and usage examples for AI-assisted development.
 
@@ -214,11 +240,13 @@ See `examples/extend-renderer.php` for complete example.
 
 - **Renderer** - Static `render()` method, extensible protected methods
 - **Validator** - Instance-based, extensible validation rules
-- **Field** - Handles individual field rendering and value escaping
+- **Field_Factory** - Creates field instances from configuration
+- **Abstract_Field** - Base class for all field types
+- **Field Classes** - Input_Field, Textarea_Field, Select_Field, Media_Field, WP_Editor_Field, HTML_Field, Label_Field, Help_Field
 - **Value_Resolver** - Trait for resolving values from multiple sources
 - **String_Formatter** - Utility for string transformations
 - **Config_Sanitizer** - Sanitizes and validates configuration arrays
-- **Constants** - Field types, validation rules, error messages
+- **Constants** - Default values and configuration constants
 
 ## License
 
@@ -226,6 +254,6 @@ MIT License - See LICENSE file for details.
 
 ## Requirements
 
-- PHP 7.4+
-- WordPress 5.0+ (for escaping functions and wp_editor)
+- PHP 8.1+
+- WordPress 5.0+ (for escaping functions, wp_editor, and media library)
 

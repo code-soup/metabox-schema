@@ -22,6 +22,13 @@ class Validator {
 	use Value_Resolver;
 
 	/**
+	 * Epsilon for float comparison.
+	 *
+	 * @var float
+	 */
+	private const FLOAT_EPSILON = 0.00001;
+
+	/**
 	 * Validation errors array.
 	 *
 	 * @var array
@@ -227,7 +234,7 @@ class Validator {
 			case 'number':
 				return is_numeric( $value )
 					? (float) $value
-					: 0;
+					: $value;
 
 			case 'email':
 				return sanitize_email( $value );
@@ -315,7 +322,7 @@ class Validator {
 	 */
 	protected function validate_min( $value, int $min, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
-			if ( $value < $min ) {
+			if ( ( $value - $min ) < -self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'min', '%s must be at least %d', $label, $min );
 			}
 		} elseif ( strlen( (string) $value ) < $min ) {
@@ -337,7 +344,7 @@ class Validator {
 	 */
 	protected function validate_max( $value, int $max, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
-			if ( $value > $max ) {
+			if ( ( $value - $max ) > self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'max', '%s must be at most %d', $label, $max );
 			}
 		} elseif ( strlen( (string) $value ) > $max ) {
@@ -357,10 +364,15 @@ class Validator {
 	 * @return string|bool True if valid, error message if invalid.
 	 */
 	protected function validate_pattern( $value, string $pattern, string $label, array $errors ): string|bool {
-		$result = @preg_match( $pattern, (string) $value );
+		$result = preg_match( $pattern, (string) $value );
 
 		if ( false === $result ) {
-			return sprintf( '%s has invalid validation pattern', $label );
+			$error_code = preg_last_error();
+			return sprintf(
+				'%s has invalid validation pattern (PCRE error: %d)',
+				$label,
+				$error_code
+			);
 		}
 
 		if ( ! $result ) {
@@ -422,7 +434,7 @@ class Validator {
 			return true;
 		}
 
-		$date_format = $validation['date_format'] ?? 'Y-m-d';
+		$date_format = $validation['date_format'] ?? Constants::DEFAULT_DATE_FORMAT;
 
 		return match ( $format ) {
 			'email' => $this->validate_email_format( $value, $label, $errors ),
@@ -473,17 +485,21 @@ class Validator {
 	 * @param string $format  Date format (default: Y-m-d).
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validate_date_format( $value, string $label, array $errors, string $format = 'Y-m-d' ): string|bool {
+	protected function validate_date_format( $value, string $label, array $errors, string $format = Constants::DEFAULT_DATE_FORMAT ): string|bool {
 		$date = \DateTime::createFromFormat( $format, $value );
 
 		if ( false === $date || $date->format( $format ) !== $value ) {
-			return $this->get_error_message( $errors, 'format', '%s must be a valid date in ' . $format . ' format', $label );
+			return $this->get_error_message(
+				$errors,
+				'format',
+				'%s must be a valid date in %s format',
+				$label,
+				$format
+			);
 		}
 
 		return true;
 	}
-
-
 
 	/**
 	 * Resolve default value.

@@ -36,7 +36,7 @@ class Custom_Validator extends Validator {
 
 	protected function validate_value( $value, array $context ): string|bool {
 		$validation = $context['validation'];
-		$type = $context['type'];
+		$type       = $context['type'];
 
 		if ( 'phone' === $type && isset( $validation['phone_format'] ) ) {
 			$phone_error = $this->validate_phone_format(
@@ -105,7 +105,7 @@ class Custom_Validator extends Validator {
 		array $errors
 	): string|bool {
 		$patterns = array(
-			'us' => '/^\+?1?\s*\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4}$/',
+			'us'            => '/^\+?1?\s*\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4}$/',
 			'international' => '/^\+?[1-9]\d{1,14}$/',
 		);
 
@@ -144,24 +144,24 @@ class Custom_Validator extends Validator {
 
 $schema = array(
 	'phone' => array(
-		'type' => 'phone',
-		'label' => 'Phone Number',
+		'type'       => 'phone',
+		'label'      => 'Phone Number',
 		'validation' => array(
-			'required' => true,
+			'required'     => true,
 			'phone_format' => 'us',
 		),
 	),
-	'slug' => array(
-		'type' => 'slug',
-		'label' => 'URL Slug',
+	'slug'  => array(
+		'type'       => 'slug',
+		'label'      => 'URL Slug',
 		'validation' => array(
 			'required' => true,
-			'unique' => true,
+			'unique'   => true,
 		),
 	),
 	'price' => array(
-		'type' => 'currency',
-		'label' => 'Price',
+		'type'       => 'currency',
+		'label'      => 'Price',
 		'validation' => array(
 			'required' => true,
 		),
@@ -170,7 +170,7 @@ $schema = array(
 
 $test_data = array(
 	'phone' => '+1 (555) 123-4567',
-	'slug' => 'My Product Title!',
+	'slug'  => 'My Product Title!',
 	'price' => '$99.99',
 );
 
@@ -209,4 +209,3 @@ if ( $validator->has_errors() ) {
 } else {
 	echo '<p><strong>All fields validated successfully!</strong></p>';
 }
-

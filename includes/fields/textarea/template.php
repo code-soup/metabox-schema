@@ -3,7 +3,7 @@
  * Textarea Field Template
  *
  * @package CodeSoup\MetaboxSchema
- * @var \CodeSoup\MetaboxSchema\Field $this
+ * @var \CodeSoup\MetaboxSchema\Fields\Textarea_Field $this
  */
 
 defined( 'ABSPATH' ) || exit;

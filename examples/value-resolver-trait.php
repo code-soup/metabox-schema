@@ -30,7 +30,7 @@ class User {
 
 	public function __construct( string $username, string $email ) {
 		$this->username = $username;
-		$this->email = $email;
+		$this->email    = $email;
 	}
 
 	public function get_username(): string {
@@ -81,7 +81,7 @@ echo '<body>';
 echo '<h1>Value_Resolver Trait Example</h1>';
 
 $processor = new Custom_Processor();
-$user = new User( 'johndoe', 'john@example.com' );
+$user      = new User( 'johndoe', 'john@example.com' );
 
 echo '<div class="section">';
 echo '<h2>1. Static Values</h2>';
@@ -162,11 +162,11 @@ echo '<h2>5. Processing Configuration Arrays</h2>';
 echo '<p>Process entire configuration arrays with mixed value types:</p>';
 
 $config = array(
-	'username' => 'get_username',
-	'email' => 'get_email',
-	'timestamp' => fn() => time(),
+	'username'     => 'get_username',
+	'email'        => 'get_email',
+	'timestamp'    => fn() => time(),
 	'static_field' => 'Static Value',
-	'php_version' => 'phpversion',
+	'php_version'  => 'phpversion',
 );
 
 echo '<h3>Input Configuration:</h3>';
@@ -184,4 +184,3 @@ echo '</div>';
 
 echo '</body>';
 echo '</html>';
-

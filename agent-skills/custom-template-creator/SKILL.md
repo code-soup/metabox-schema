@@ -22,29 +22,39 @@ Create custom field templates for the CodeSoup Metabox Schema renderer.
 
 ## Template Structure
 
-Templates are PHP files that output HTML. Inside templates, `$this` refers to the Field object.
+Templates are PHP files that output HTML. Inside templates, `$this` refers to the specific field class instance (Input_Field, Textarea_Field, etc.).
 
 ### Required Template Files
 
-- `input.php` - All input types (text, email, number, etc.)
-- `textarea.php` - Textarea fields
-- `select.php` - Select dropdowns
-- `wp-editor.php` - WordPress editor
-- `label.php` - Field labels
-- `help.php` - Help text
-- `heading.php` - Section headings
+- `input/template.php` - All input types (text, email, number, etc.)
+- `textarea/template.php` - Textarea fields
+- `select/template.php` - Select dropdowns
+- `wp-editor/template.php` - WordPress editor
+- `media/template.php` - Media library fields
+- `html/template.php` - HTML content
+- `label/template.php` - Field labels
+- `help/template.php` - Help text
 
 ## Template Directory Structure
 
 ```
 templates/
-├── input.php
-├── textarea.php
-├── select.php
-├── wp-editor.php
-├── label.php
-├── help.php
-└── heading.php
+├── input/
+│   └── template.php
+├── textarea/
+│   └── template.php
+├── select/
+│   └── template.php
+├── wp-editor/
+│   └── template.php
+├── media/
+│   └── template.php
+├── html/
+│   └── template.php
+├── label/
+│   └── template.php
+└── help/
+    └── template.php
 ```
 
 ## Using Custom Templates
@@ -82,11 +92,21 @@ All methods return sanitized/escaped data ready for output:
 ### Select/Options
 - `$this->get_options()` - Sanitized options array (key => label)
 
-### WordPress Editor
+### WordPress Editor (WP_Editor_Field)
 - `$this->get_editor_settings()` - Editor settings array
+- `$this->get_rows()` - Number of rows
 
-### Headings
-- `$this->get_heading_tag()` - Sanitized heading tag (h1-h6)
+### Media Fields (Media_Field)
+- `$this->get_button_text()` - Button text
+- `$this->get_change_button_text()` - Change button text
+- `$this->get_remove_button_text()` - Remove button text
+- `$this->get_media_type()` - Media type filter
+- `$this->get_media_library_title()` - Modal title
+- `$this->get_media_library_button()` - Modal button text
+- `$this->get_preview_size()` - Preview image size
+
+### HTML Fields (HTML_Field)
+- `$this->get_content()` - HTML content (raw, sanitized in template)
 
 ## Template Examples
 
@@ -94,7 +114,12 @@ All methods return sanitized/escaped data ready for output:
 
 ```php
 <?php
-// templates/input.php
+/**
+ * Custom Input Template
+ *
+ * @var \CodeSoup\MetaboxSchema\Fields\Input_Field $this
+ */
+// templates/input/template.php
 defined( 'ABSPATH' ) || exit;
 
 printf(
@@ -112,7 +137,12 @@ printf(
 
 ```php
 <?php
-// templates/textarea.php
+/**
+ * Custom Textarea Template
+ *
+ * @var \CodeSoup\MetaboxSchema\Fields\Textarea_Field $this
+ */
+// templates/textarea/template.php
 defined( 'ABSPATH' ) || exit;
 
 printf(

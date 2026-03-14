@@ -44,14 +44,15 @@
     <file>.</file>
 
     <!-- Exclude patterns. -->
+    <exclude-pattern>/_*</exclude-pattern>
+    <exclude-pattern>*.md</exclude-pattern>
+    <exclude-pattern>*.json</exclude-pattern>
+    <exclude-pattern>*.xml</exclude-pattern>
     <exclude-pattern>/agent-skills/*</exclude-pattern>
     <exclude-pattern>/examples/*</exclude-pattern>
     <exclude-pattern>/includes/fields/*</exclude-pattern>
     <exclude-pattern>/vendor/*</exclude-pattern>
     <exclude-pattern>/node_modules/*</exclude-pattern>
-    <exclude-pattern>*.md</exclude-pattern>
-    <exclude-pattern>*.json</exclude-pattern>
-    <exclude-pattern>*.xml</exclude-pattern>
 
     <!--
     #############################################################################

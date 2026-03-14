@@ -14,14 +14,14 @@ use CodeSoup\MetaboxSchema\Renderer;
 use CodeSoup\MetaboxSchema\Validator;
 
 $schema = array(
-	'username'              => array(
+	'username'             => array(
 		'type'       => 'text',
 		'label'      => 'Username',
 		'attributes' => array(
-			'class'       => 'form-control',
-			'placeholder' => 'Enter username',
+			'class'         => 'form-control',
+			'placeholder'   => 'Enter username',
 			'data-validate' => 'true',
-			'maxlength'   => 50,
+			'maxlength'     => 50,
 		),
 		'validation' => array(
 			'required' => true,
@@ -30,7 +30,7 @@ $schema = array(
 			'pattern'  => '/^[a-zA-Z0-9_]+$/',
 		),
 		'sanitize'   => array( 'trim', 'strip_tags' ),
-		'value'      => 'getUsername',
+		'value'      => 'get_username',
 		'default'    => 'guest',
 		'help'       => 'Enter your username (3-50 characters)',
 		'errors'     => array(
@@ -38,7 +38,7 @@ $schema = array(
 			'min'      => 'Username must be at least 3 characters',
 		),
 	),
-	'email'                 => array(
+	'email'                => array(
 		'type'       => 'email',
 		'label'      => 'Email Address',
 		'attributes' => array(
@@ -49,11 +49,11 @@ $schema = array(
 			'format'   => 'email',
 		),
 		'sanitize'   => 'sanitize_email',
-		'value'      => 'getEmail',
+		'value'      => 'get_email',
 		'default'    => '',
 		'help'       => 'Enter a valid email address',
 	),
-	'website'               => array(
+	'website'              => array(
 		'type'       => 'url',
 		'label'      => 'Website',
 		'attributes' => array(
@@ -65,7 +65,7 @@ $schema = array(
 		'sanitize'   => 'esc_url_raw',
 		'default'    => '',
 	),
-	'age'                   => array(
+	'age'                  => array(
 		'type'       => 'number',
 		'label'      => 'Age',
 		'attributes' => array(
@@ -80,7 +80,7 @@ $schema = array(
 		'sanitize'   => 'absint',
 		'default'    => 18,
 	),
-	'bio'                   => array(
+	'bio'                  => array(
 		'type'       => 'textarea',
 		'label'      => 'Biography',
 		'rows'       => 5,
@@ -94,7 +94,7 @@ $schema = array(
 		'default'    => '',
 		'help'       => 'Maximum 500 characters',
 	),
-	'country'               => array(
+	'country'              => array(
 		'type'       => 'select',
 		'label'      => 'Country',
 		'validation' => array(
@@ -109,12 +109,11 @@ $schema = array(
 			'au' => 'Australia',
 		),
 	),
-	'account_type_heading'  => array(
-		'type'        => 'heading',
-		'label'       => 'Account Type',
-		'heading_tag' => 'h4',
+	'account_type_heading' => array(
+		'type'    => 'html',
+		'content' => '<h4>Account Type</h4>',
 	),
-	'account_type'          => array(
+	'account_type'         => array(
 		'type'       => 'select',
 		'label'      => 'Type',
 		'grid'       => 'start',
@@ -123,18 +122,21 @@ $schema = array(
 		),
 		'default'    => 'free',
 		'options'    => array(
-			'free'    => 'Free',
-			'premium' => 'Premium',
+			'free'       => 'Free',
+			'premium'    => 'Premium',
 			'enterprise' => 'Enterprise',
 		),
 	),
-	'subscription_status'   => array(
-		'type'       => 'readonly',
+	'subscription_status'  => array(
+		'type'       => 'text',
 		'label'      => 'Status',
 		'grid'       => 'end',
+		'attributes' => array(
+			'readonly' => 'readonly',
+		),
 		'default'    => 'Active',
 	),
-	'registration_date'     => array(
+	'registration_date'    => array(
 		'type'       => 'date',
 		'label'      => 'Registration Date',
 		'validation' => array(
@@ -142,21 +144,21 @@ $schema = array(
 		),
 		'default'    => array( 'DateHelper', 'getCurrentDate' ),
 	),
-	'newsletter'            => array(
-		'type'       => 'text',
-		'label'      => 'Newsletter Preference',
-		'wrapper'    => 'div',
-		'default'    => 'Yes',
-		'help'       => 'Example with div wrapper instead of default p',
+	'newsletter'           => array(
+		'type'    => 'text',
+		'label'   => 'Newsletter Preference',
+		'wrapper' => 'div',
+		'default' => 'Yes',
+		'help'    => 'Example with div wrapper instead of default p',
 	),
-	'no_wrapper_field'      => array(
-		'type'       => 'text',
-		'label'      => 'Field Without Wrapper',
-		'wrapper'    => '',
-		'default'    => 'No wrapper',
-		'help'       => 'Example with no wrapper element',
+	'no_wrapper_field'     => array(
+		'type'    => 'text',
+		'label'   => 'Field Without Wrapper',
+		'wrapper' => '',
+		'default' => 'No wrapper',
+		'help'    => 'Example with no wrapper element',
 	),
-	'password'              => array(
+	'password'             => array(
 		'type'       => 'password',
 		'label'      => 'Password',
 		'validation' => array(
@@ -165,7 +167,7 @@ $schema = array(
 		),
 		'help'       => 'Example of password input type',
 	),
-	'phone'                 => array(
+	'phone'                => array(
 		'type'       => 'tel',
 		'label'      => 'Phone Number',
 		'attributes' => array(
@@ -173,7 +175,7 @@ $schema = array(
 		),
 		'help'       => 'Example of tel input type',
 	),
-	'favorite_color'        => array(
+	'favorite_color'       => array(
 		'type'    => 'color',
 		'label'   => 'Favorite Color',
 		'default' => '#3498db',
@@ -182,11 +184,11 @@ $schema = array(
 );
 
 class MockEntity {
-	public function getUsername(): string {
+	public function get_username(): string {
 		return 'john_doe';
 	}
 
-	public function getEmail(): string {
+	public function get_email(): string {
 		return 'john@example.com';
 	}
 }
@@ -233,4 +235,3 @@ echo '<h3>Validated Data:</h3>';
 echo '<pre>';
 print_r( $validated );
 echo '</pre>';
-

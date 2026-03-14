@@ -195,7 +195,7 @@ The Validator class uses several utility components:
 
 **Constants:**
 - Provides DEFAULT_TYPE for fields without type
-- Defines SKIP_VALIDATION_TYPES (e.g., 'heading')
+- Defines SKIP_VALIDATION_TYPES (e.g., 'html')
 - Ensures consistency across package
 
 **Field Name Formatting:**

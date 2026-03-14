@@ -13,7 +13,7 @@
  * - $this->get_required_attr(): Get required attribute string
  * - $this->get_attributes_string(): Get custom attributes as string
  *
- * @var \CodeSoup\MetaboxSchema\Field $this
+ * @var \CodeSoup\MetaboxSchema\Fields\Input_Field $this
  */
 
 echo '<div class="form-group">';

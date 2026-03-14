@@ -3,7 +3,7 @@
  * WP Editor Field Template
  *
  * @package CodeSoup\MetaboxSchema
- * @var \CodeSoup\MetaboxSchema\Field $this
+ * @var \CodeSoup\MetaboxSchema\Fields\WP_Editor_Field $this
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -40,8 +40,9 @@ echo '<h3>Default Values:</h3>';
 echo '<pre>';
 echo 'DEFAULT_TYPE: ' . Constants::DEFAULT_TYPE . "\n";
 echo 'DEFAULT_WRAPPER: ' . Constants::DEFAULT_WRAPPER . "\n";
-echo 'DEFAULT_HEADING_TAG: ' . Constants::DEFAULT_HEADING_TAG . "\n";
 echo 'DEFAULT_ROWS: ' . Constants::DEFAULT_ROWS . "\n";
+echo 'DEFAULT_GRID_CLASS: ' . Constants::DEFAULT_GRID_CLASS . "\n";
+echo 'DEFAULT_DATE_FORMAT: ' . Constants::DEFAULT_DATE_FORMAT . "\n";
 echo 'FORM_PREFIX_DELIMITER: ' . Constants::FORM_PREFIX_DELIMITER . "\n";
 echo '</pre>';
 
@@ -50,29 +51,29 @@ echo '<pre>';
 print_r( Constants::VALID_WRAPPER_TAGS );
 echo '</pre>';
 
-echo '<h3>Special Types:</h3>';
-echo '<pre>';
-print_r( Constants::SPECIAL_TYPES );
-echo '</pre>';
-
 echo '<h3>Skip Validation Types:</h3>';
 echo '<pre>';
 print_r( Constants::SKIP_VALIDATION_TYPES );
 echo '</pre>';
 
+echo '<h3>Reserved Attributes:</h3>';
+echo '<pre>';
+print_r( Constants::RESERVED_ATTRIBUTES );
+echo '</pre>';
+
 echo '<h3>Usage Example:</h3>';
 echo '<pre>';
-$wrapper = 'div';
+$wrapper  = 'div';
 $is_valid = in_array( $wrapper, Constants::VALID_WRAPPER_TAGS, true );
 echo "Is 'div' a valid wrapper? " . ( $is_valid ? 'Yes' : 'No' ) . "\n";
 
-$wrapper = 'invalid_tag';
+$wrapper  = 'invalid_tag';
 $is_valid = in_array( $wrapper, Constants::VALID_WRAPPER_TAGS, true );
 echo "Is 'invalid_tag' a valid wrapper? " . ( $is_valid ? 'Yes' : 'No' ) . "\n";
 
-$type = 'heading';
+$type = 'html';
 $skip = in_array( $type, Constants::SKIP_VALIDATION_TYPES, true );
-echo "Should 'heading' skip validation? " . ( $skip ? 'Yes' : 'No' ) . "\n";
+echo "Should 'html' skip validation? " . ( $skip ? 'Yes' : 'No' ) . "\n";
 echo '</pre>';
 echo '</div>';
 
@@ -82,24 +83,24 @@ echo '<p>Format field names and convert between naming conventions:</p>';
 
 echo '<h3>Format Field Name (for display):</h3>';
 echo '<pre>';
-echo "user_email → " . String_Formatter::format_field_name( 'user_email' ) . "\n";
-echo "first-name → " . String_Formatter::format_field_name( 'first-name' ) . "\n";
-echo "product_SKU → " . String_Formatter::format_field_name( 'product_SKU' ) . "\n";
-echo "contact_phone_number → " . String_Formatter::format_field_name( 'contact_phone_number' ) . "\n";
+echo 'user_email → ' . String_Formatter::format_field_name( 'user_email' ) . "\n";
+echo 'first-name → ' . String_Formatter::format_field_name( 'first-name' ) . "\n";
+echo 'product_SKU → ' . String_Formatter::format_field_name( 'product_SKU' ) . "\n";
+echo 'contact_phone_number → ' . String_Formatter::format_field_name( 'contact_phone_number' ) . "\n";
 echo '</pre>';
 
 echo '<h3>Convert to ID Format (dashes):</h3>';
 echo '<pre>';
-echo "user_email → " . String_Formatter::to_id_format( 'user_email' ) . "\n";
-echo "first_name → " . String_Formatter::to_id_format( 'first_name' ) . "\n";
-echo "product_sku → " . String_Formatter::to_id_format( 'product_sku' ) . "\n";
+echo 'user_email → ' . String_Formatter::to_id_format( 'user_email' ) . "\n";
+echo 'first_name → ' . String_Formatter::to_id_format( 'first_name' ) . "\n";
+echo 'product_sku → ' . String_Formatter::to_id_format( 'product_sku' ) . "\n";
 echo '</pre>';
 
 echo '<h3>Convert to Attribute Format (underscores):</h3>';
 echo '<pre>';
-echo "user-email → " . String_Formatter::to_attribute_format( 'user-email' ) . "\n";
-echo "first-name → " . String_Formatter::to_attribute_format( 'first-name' ) . "\n";
-echo "product-sku → " . String_Formatter::to_attribute_format( 'product-sku' ) . "\n";
+echo 'user-email → ' . String_Formatter::to_attribute_format( 'user-email' ) . "\n";
+echo 'first-name → ' . String_Formatter::to_attribute_format( 'first-name' ) . "\n";
+echo 'product-sku → ' . String_Formatter::to_attribute_format( 'product-sku' ) . "\n";
 echo '</pre>';
 echo '</div>';
 
@@ -108,19 +109,19 @@ echo '<h2>3. Config_Sanitizer Class</h2>';
 echo '<p>Sanitize field configuration arrays to prevent XSS:</p>';
 
 $raw_config = array(
-	'name' => 'user_email',
-	'type' => 'email',
-	'label' => '<script>alert("xss")</script>Email Address',
-	'wrapper' => 'invalid_tag',
-	'rows' => '10',
-	'options' => array(
+	'name'       => 'user_email',
+	'type'       => 'email',
+	'label'      => '<script>alert("xss")</script>Email Address',
+	'wrapper'    => 'invalid_tag',
+	'rows'       => '10',
+	'options'    => array(
 		'key1' => '<b>Option 1</b>',
 		'key2' => 'Option 2',
 	),
 	'attributes' => array(
-		'class' => 'form-control',
+		'class'         => 'form-control',
 		'data-validate' => 'email',
-		'onclick' => 'alert("xss")',
+		'onclick'       => 'alert("xss")',
 	),
 );
 
@@ -129,7 +130,7 @@ echo '<pre>';
 print_r( $raw_config );
 echo '</pre>';
 
-$sanitizer = new Config_Sanitizer();
+$sanitizer    = new Config_Sanitizer();
 $clean_config = $sanitizer->sanitize( $raw_config );
 
 echo '<h3>Sanitized Configuration:</h3>';
@@ -149,4 +150,3 @@ echo '</div>';
 
 echo '</body>';
 echo '</html>';
-

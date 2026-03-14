@@ -33,14 +33,15 @@ use CodeSoup\MetaboxSchema\Constants;
 // Default values
 Constants::DEFAULT_TYPE           // 'text'
 Constants::DEFAULT_WRAPPER        // 'p'
-Constants::DEFAULT_HEADING_TAG    // 'h6'
 Constants::DEFAULT_ROWS           // 5
+Constants::DEFAULT_GRID_CLASS     // 'grid'
+Constants::DEFAULT_DATE_FORMAT    // 'Y-m-d'
 Constants::FORM_PREFIX_DELIMITER  // '_'
 
 // Arrays
-Constants::SKIP_VALIDATION_TYPES  // ['heading']
-Constants::SPECIAL_TYPES          // ['textarea', 'select', 'wp_editor']
+Constants::SKIP_VALIDATION_TYPES  // ['html']
 Constants::VALID_WRAPPER_TAGS     // ['', 'p', 'div', 'span', 'section', 'article']
+Constants::RESERVED_ATTRIBUTES    // ['id', 'name']
 ```
 
 ### Usage Examples
@@ -67,11 +68,11 @@ Sanitizes field configuration arrays to prevent XSS and ensure valid values.
 ### What It Sanitizes
 
 - Field names, types, labels (sanitize_key, sanitize_text_field)
-- Form prefix, heading tags (sanitize_key)
+- Form prefix (sanitize_key)
 - Rows (absint)
 - Wrapper tags (validates against whitelist)
 - Options arrays (sanitizes all values)
-- Attributes (sanitizes keys and values)
+- Attributes (sanitizes keys, values escaped at output)
 
 ### Usage
 

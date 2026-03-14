@@ -58,7 +58,10 @@ Renderer::render([
 - **textarea** - Multi-line text
 - **select** - Dropdown with options
 - **wp_editor** - WordPress rich text editor
-- **heading** - Section headings (h1-h6)
+- **media** - WordPress media library picker
+- **html** - HTML content display
+- **label** - Field labels
+- **help** - Help text
 
 ## Field Schema Properties
 
@@ -73,6 +76,10 @@ Renderer::render([
 - `options` - For select fields (key => label array)
 - `rows` - For textarea/wp_editor (default: 5)
 - `editor_settings` - For wp_editor (WordPress editor config)
+- `content` - For html type (string or callable)
+- `button_text` - For media type (default: 'Select Media')
+- `media_type` - For media type (image, video, audio)
+- `preview_size` - For media type (WordPress image size)
 
 ## Custom Templates
 
@@ -94,7 +101,7 @@ Template files needed:
 - `wp-editor.php` - WordPress editor
 - `label.php` - Field labels
 - `help.php` - Help text
-- `heading.php` - Headings
+
 
 ## Available Methods in Templates
 
@@ -112,7 +119,7 @@ Inside templates, `$this` refers to Field object:
 - `$this->get_help()` - Help text
 - `$this->get_rows()` - Textarea rows
 - `$this->get_options()` - Sanitized select options
-- `$this->get_heading_tag()` - Sanitized heading tag
+
 - `$this->get_editor_settings()` - WP editor settings
 
 ## Important Notes

@@ -3,7 +3,7 @@
  * Select Field Template
  *
  * @package CodeSoup\MetaboxSchema
- * @var \CodeSoup\MetaboxSchema\Field $this
+ * @var \CodeSoup\MetaboxSchema\Fields\Select_Field $this
  */
 
 defined( 'ABSPATH' ) || exit;

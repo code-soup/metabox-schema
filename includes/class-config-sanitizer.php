@@ -31,7 +31,6 @@ class Config_Sanitizer {
 		'type'        => 'sanitize_key',
 		'label'       => 'sanitize_text_field',
 		'form_prefix' => 'sanitize_key',
-		'heading_tag' => 'sanitize_key',
 		'rows'        => 'absint',
 	);
 
@@ -47,8 +46,8 @@ class Config_Sanitizer {
 		$sanitized = $config;
 
 		foreach ( self::SANITIZATION_RULES as $key => $callback ) {
-			if ( isset( $sanitized[ $key ] ) ) {
-				$sanitized[ $key ] = $callback( $sanitized[ $key ] );
+			if ( isset( $sanitized[ $key ] ) && is_callable( $callback ) ) {
+				$sanitized[ $key ] = call_user_func( $callback, $sanitized[ $key ] );
 			}
 		}
 
@@ -84,7 +83,11 @@ class Config_Sanitizer {
 	 */
 	protected function sanitize_options( array $config ): array {
 		if ( isset( $config['options'] ) && is_array( $config['options'] ) ) {
-			$config['options'] = array_map( 'sanitize_text_field', $config['options'] );
+			$sanitized_options = array();
+			foreach ( $config['options'] as $key => $value ) {
+				$sanitized_options[ $key ] = sanitize_text_field( $value );
+			}
+			$config['options'] = $sanitized_options;
 		}
 		return $config;
 	}
@@ -92,16 +95,19 @@ class Config_Sanitizer {
 	/**
 	 * Sanitize attributes array.
 	 *
-	 * Sanitizes both keys and values of HTML attributes.
+	 * Validates attribute structure and filters non-scalar values.
+	 * Note: Attribute values are NOT escaped here - they will be escaped at output time.
 	 *
 	 * @param array $config Configuration array.
-	 * @return array Configuration with sanitized attributes.
+	 * @return array Configuration with validated attributes.
 	 */
 	protected function sanitize_attributes( array $config ): array {
 		if ( isset( $config['attributes'] ) && is_array( $config['attributes'] ) ) {
 			$sanitized_attrs = array();
 			foreach ( $config['attributes'] as $key => $value ) {
-				$sanitized_attrs[ sanitize_key( $key ) ] = sanitize_text_field( (string) $value );
+				if ( is_scalar( $value ) ) {
+					$sanitized_attrs[ sanitize_key( $key ) ] = $value;
+				}
 			}
 			$config['attributes'] = $sanitized_attrs;
 		}

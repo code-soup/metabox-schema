@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-03-14
+
+### Added
+
+- Field_Factory class for creating field instances
+- Abstract_Field base class for all field types
+- Dedicated field classes: Input_Field, Textarea_Field, Select_Field, Media_Field, WP_Editor_Field, HTML_Field, Label_Field, Help_Field
+- Media field with WordPress media library integration
+- HTML field for custom content display
+- Label and Help field types
+- Constants: DEFAULT_GRID_CLASS, DEFAULT_DATE_FORMAT, RESERVED_ATTRIBUTES
+- Media field assets (CSS/JS) in field subdirectories
+- Template structure with subdirectories (input/template.php, etc.)
+
+### Changed
+
+- PHP 8.1+ required
+- Template structure uses subdirectories
+- Field assets organized in field-specific folders
+- Method names follow WordPress snake_case convention
+- Grid class now configurable via get_grid_class() method
+
+### Fixed
+
+- XSS vulnerability in field attributes
+- DRY violations and code duplication
+- Error handling in Value_Resolver trait
+- Float comparison precision issues
+- WPCS violations
+
 ## [0.0.4] - 2026-02-28
 
 ### Added
