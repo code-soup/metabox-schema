@@ -1,8 +1,8 @@
 ---
-name: custom-template-creator
-description: Create custom field templates for WordPress form fields.
+name: template-creator
+description: Create custom field templates for WordPress form fields. Use when customizing field HTML output, overriding default templates, integrating with CSS frameworks, or creating new field types.
 license: MIT
-author: code-soup
+location: includes/fields/
 metadata:
   author: code-soup
   version: "1.0"
@@ -11,7 +11,7 @@ metadata:
 
 # Custom Template Creator
 
-Create custom field templates for the CodeSoup Metabox Schema renderer.
+Create custom field templates for WordPress form fields.
 
 ## When to Use
 

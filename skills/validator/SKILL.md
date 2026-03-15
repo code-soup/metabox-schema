@@ -1,13 +1,8 @@
 ---
-name: schema-validator
-description: Validate and sanitize form data against schema definitions.
+name: validator
+description: Validate and sanitize form data against schema definitions. Use when validating POST data, sanitizing user input, checking field requirements, or applying custom validation rules.
 license: MIT
-author: code-soup
-tags:
-  - wordpress
-  - validation
-  - forms
-  - sanitization
+location: includes/core/class-validator.php
 metadata:
     author: code-soup
     version: "1.0"
@@ -16,7 +11,7 @@ metadata:
 
 # Schema Validator
 
-Validate and sanitize form data against schema definitions using the CodeSoup Metabox Schema Validator class.
+Validate and sanitize form data against schema definitions for WordPress forms.
 
 ## When to Use
 

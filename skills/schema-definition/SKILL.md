@@ -1,13 +1,8 @@
 ---
 name: schema-definition
-description: Define field schemas with validation and sanitization rules for WordPress forms.
+description: Define field schemas with validation and sanitization rules for WordPress forms. Use when creating form schemas, defining validation rules, configuring field properties, or setting up entity value resolution.
 license: MIT
-author: code-soup
-tags:
-  - wordpress
-  - forms
-  - schema
-  - validation
+location: includes/fields/class-abstract-field.php
 metadata:
   author: code-soup
   version: "1.0"
@@ -16,7 +11,7 @@ metadata:
 
 # Schema Definition
 
-Define and structure field schemas correctly for the CodeSoup Metabox Schema package.
+Define and structure field schemas for WordPress forms with validation and sanitization rules.
 
 ## When to Use
 

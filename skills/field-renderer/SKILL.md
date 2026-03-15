@@ -1,8 +1,8 @@
 ---
-name: field-renderer-schema
-description: Render HTML form fields from schema definitions for WordPress forms.
+name: field-renderer
+description: Render HTML form fields from schema definitions for WordPress forms. Use when rendering forms from schemas, generating metabox HTML, or working with entity objects and value arrays.
 license: MIT
-author: code-soup
+location: includes/core/class-renderer.php
 metadata:
     author: code-soup
     version: "1.0"
@@ -11,7 +11,7 @@ metadata:
 
 # Schema Field Renderer
 
-Render HTML form fields from schema definitions using the CodeSoup Metabox Schema Renderer class.
+Render HTML form fields from schema definitions for WordPress forms.
 
 ## When to Use
 

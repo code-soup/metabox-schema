@@ -1,8 +1,8 @@
 ---
-name: utility-classes
-description: Use utility classes for constants, sanitization, string formatting, and value resolution.
+name: utilities
+description: Use utility classes for constants, sanitization, string formatting, and value resolution. Use when accessing package constants, sanitizing field configuration, formatting field names, or resolving callable and entity method values.
 license: MIT
-author: code-soup
+location: includes/utilities/
 metadata:
     author: code-soup
     version: "1.0"
@@ -11,7 +11,7 @@ metadata:
 
 # Utility Classes
 
-Utility classes and traits that power the CodeSoup Metabox Schema package. These can be used independently or when extending the package.
+Utility classes and traits for constants, sanitization, string formatting, and value resolution. Can be used independently or when extending field functionality.
 
 ## When to Use
 

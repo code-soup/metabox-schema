@@ -1,14 +1,12 @@
 ---
-name: metabox-custom-field-registration
-description: Register custom field types with Field_Factory
-version: 1.0.0
+name: custom-field-registration
+description: Register custom field types with Field_Factory. Use when creating specialized field types, adding custom behavior to fields, building reusable field components, or overriding built-in field types.
 license: MIT
-tags:
-    - wordpress
-    - forms
-    - custom-fields
-    - extensibility
-author: code-soup
+location: includes/core/class-field-factory.php
+metadata:
+    author: code-soup
+    version: "1.0"
+    package: codesoup/metabox-schema
 ---
 
 # Custom Field Type Registration
