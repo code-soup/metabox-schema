@@ -213,16 +213,6 @@ if ( $validator->has_errors() ) {
 
 See `examples/templates/` for template usage examples.
 
-## Agent Skills
-
-This package includes AI agent skills for code generation assistance. Located in `agent-skills/`:
-
-- **`schema-definition/`** - Generate schema definitions
-- **`schema-field-renderer/`** - Implement field rendering
-- **`custom-template-creator/`** - Create custom field templates
-
-Each skill includes detailed documentation and usage examples for AI-assisted development.
-
 ## Extending
 
 ### Custom Validator
