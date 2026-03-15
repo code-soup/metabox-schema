@@ -56,7 +56,7 @@ if ( $validator->has_errors() ) {
 
 ## Examples
 
-See the `examples/` directory for complete working examples:
+See the `docs/` directory for complete working examples:
 
 - **`basic-usage.php`** - Complete form rendering and validation
 - **`custom-templates.php`** - Override default field templates
@@ -166,7 +166,7 @@ Renderer::render([
 $schema['bio']['template_path'] = __DIR__ . '/templates/textarea/custom.php';
 ```
 
-See `examples/custom-templates.php` and `examples/templates/` for details.
+See `docs/custom-templates.php` and `docs/templates/` for details.
 
 ## API Reference
 
@@ -211,7 +211,7 @@ if ( $validator->has_errors() ) {
 - `get_content()` - HTML
 - `get_button_text()`, `get_media_type()`, `get_preview_size()` - Media
 
-See `examples/templates/` for template usage examples.
+See `docs/templates/` for template usage examples.
 
 ## Extending
 
@@ -226,7 +226,7 @@ class Custom_Validator extends Validator {
 }
 ```
 
-See `examples/extend-validator.php` for complete example.
+See `docs/extend-validator.php` for complete example.
 
 ### Custom Renderer
 
@@ -239,7 +239,7 @@ class Custom_Renderer extends Renderer {
 }
 ```
 
-See `examples/extend-renderer.php` for complete example.
+See `docs/extend-renderer.php` for complete example.
 
 ## Architecture
 

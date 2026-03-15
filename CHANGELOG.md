@@ -104,8 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `protected openGrid()` method to `Renderer` class
 - Added `protected closeGrid()` method to `Renderer` class
 - Added `protected handleRenderError()` method to `Renderer` class
-- Added `examples/extend-validator.php` demonstrating custom validation rules
-- Added `examples/extend-renderer.php` demonstrating custom rendering with Bootstrap integration
+- Added `docs/extend-validator.php` demonstrating custom validation rules
+- Added `docs/extend-renderer.php` demonstrating custom rendering with Bootstrap integration
 - Added "Extending Classes" section to README.md with documentation and examples
 
 ### Fixed
