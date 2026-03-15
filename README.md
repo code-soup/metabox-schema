@@ -1,13 +1,22 @@
 # CodeSoup Metabox Schema
 
-Drop-in schema-based form field renderer and validator. Define your fields once, render forms and validate data.
+Schema-driven form field system for WordPress. Define fields as PHP arrays - includes Renderer and Validator classes to render forms, sanitize POST data, and validate user input against your schema.
 
 ## What This Package Does
 
 1. **Render form fields** from a schema definition
-2. **Validate submitted data** against the same schema
+2. **Sanitize and validate submitted data** against the same schema
 
-This is **not** a complete form solution. You handle form submission, data persistence, and integration.
+## Key Features
+
+- 15+ field types included
+- Custom field type registration support
+- Template override (global, per-type, per-field)
+- Extensible validation and rendering
+- WordPress media library integration
+- Grid layout support
+- PHP 8.0+ with strict typing
+- AI agent skills compatible with [Skillshare](https://skillshare.runkids.cc/).
 
 ## Installation
 
@@ -91,15 +100,18 @@ $schema = [
 ### Supported Field Types
 
 **Input Fields:**
+
 - `text`, `email`, `url`, `number`, `date`, `password`, `tel`, `color`, `range`
 
 **Content Fields:**
+
 - `textarea` - Multi-line text input
 - `select` - Dropdown with options
 - `wp_editor` - WordPress rich text editor
 - `media` - WordPress media library picker
 
 **Display Fields:**
+
 - `html` - HTML content display
 - `label` - Field labels
 - `help` - Help text
@@ -120,6 +132,7 @@ Each field automatically gets an ID in format `form-prefix-field-name`. Use `att
 ### Value Resolution
 
 Fields can get values from:
+
 1. Static `'value'` in schema
 2. Callable `'value' => fn() => get_option('key')`
 3. Entity methods `'value' => 'get_email'` (calls `$entity->get_email()`)
@@ -184,12 +197,14 @@ if ( $validator->has_errors() ) {
 ### Field Methods (Available in Templates)
 
 **Common Methods (All Fields):**
+
 - `get_field_id()`, `get_field_name()`, `get_type()`, `get_label()`
 - `get_value()`, `get_escaped_value()`, `get_escaped_textarea_value()`
 - `is_required()`, `get_required_attr()`, `get_attributes_string()`
 - `get_help()`, `get_wrapper()`
 
 **Field-Specific Methods:**
+
 - `get_rows()` - Textarea, WP_Editor
 - `get_options()` - Select
 - `get_editor_settings()` - WP_Editor
@@ -256,4 +271,3 @@ MIT License - See LICENSE file for details.
 
 - PHP 8.1+
 - WordPress 5.0+ (for escaping functions, wp_editor, and media library)
-

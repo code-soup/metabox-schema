@@ -114,5 +114,45 @@ Renderer::render(
 );
 echo "</form>\n";
 
+echo "<hr>\n";
+
+echo "<h2>Per-Field Template Override</h2>\n";
+echo "<p>Override template for a single field while others use defaults:</p>\n";
+
+$schema_with_override = array(
+	'featured_bio' => array(
+		'type'          => 'textarea',
+		'label'         => 'Featured Biography',
+		'rows'          => 5,
+		'value'         => 'This field uses a custom template!',
+		'template_path' => __DIR__ . '/templates/featured-textarea.php',
+	),
+	'regular_bio'  => array(
+		'type'  => 'textarea',
+		'label' => 'Regular Biography',
+		'rows'  => 5,
+		'value' => 'This field uses the default template.',
+	),
+);
+
+echo "<form>\n";
+Renderer::render(
+	array(
+		'schema'      => $schema_with_override,
+		'entity'      => null,
+		'form_prefix' => 'override_form',
+	)
+);
+echo "</form>\n";
+
+echo "<hr>\n";
+
+echo "<h3>Template Override Methods:</h3>\n";
+echo "<ol>\n";
+echo "<li><strong>Global override:</strong> Use <code>template_base</code> to override all fields of a type</li>\n";
+echo "<li><strong>Per-field override:</strong> Use <code>template_path</code> to override a specific field</li>\n";
+echo "<li><strong>Custom field type:</strong> Register custom field type with different template name</li>\n";
+echo "</ol>\n";
+
 echo "</body>\n";
 echo "</html>\n";

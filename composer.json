@@ -1,6 +1,6 @@
 {
     "name": "codesoup/metabox-schema",
-    "description": "Drop-in schema-based form field renderer and validator. Define your fields once, programatically render forms and validate data all at once.",
+    "description": "Schema-driven form field system for WordPress. Define fields as PHP arrays with validation and sanitization rules - the system automatically renders forms, sanitizes and validates user input against your schema.",
     "type": "library",
     "license": "MIT",
     "keywords": [

@@ -20,6 +20,18 @@ Define and structure field schemas correctly for the CodeSoup Metabox Schema pac
 - Setting up field properties
 - Working with entity value resolution
 
+## When NOT to Use
+
+- Simple one-off forms without validation
+- Non-WordPress projects
+- Forms that don't need reusable configuration
+
+## Assets
+
+- `assets/basic-schema.php` - Basic field schema structure
+- `assets/validation-example.php` - Validation rules examples
+- `assets/value-resolution.php` - Value resolution patterns
+
 ## Basic Schema Structure
 
 ```php
