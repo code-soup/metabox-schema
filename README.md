@@ -1,6 +1,6 @@
 # CodeSoup Metabox Schema
 
-Schema-driven form field system for WordPress. Define fields as PHP arrays - includes Renderer and Validator classes to render forms, sanitize POST data, and validate user input against your schema.
+Schema-driven form builder system for WordPress. Define fields as PHP arrays, use Renderer class to render forms and sanitize POST data. Use Validator to validate user input against your schema.
 
 ## What This Package Does
 
