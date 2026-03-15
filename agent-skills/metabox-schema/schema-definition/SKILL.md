@@ -1,9 +1,14 @@
 ---
 name: schema-definition
-description: Define and structure field schemas for CodeSoup Metabox Schema package. Use when creating schemas, defining fields, configuring validation, or when user mentions schema structure, field configuration, or form definitions.
+description: Define field schemas with validation and sanitization rules for WordPress forms.
 license: MIT
+tags:
+  - wordpress
+  - forms
+  - schema
+  - validation
 metadata:
-  author: codesoup
+  author: code-soup
   version: "1.0"
   package: codesoup/metabox-schema
 ---
@@ -26,29 +31,15 @@ Define and structure field schemas correctly for the CodeSoup Metabox Schema pac
 - Non-WordPress projects
 - Forms that don't need reusable configuration
 
-## Assets
+## Examples
 
-- `assets/basic-schema.php` - Basic field schema structure
-- `assets/validation-example.php` - Validation rules examples
-- `assets/value-resolution.php` - Value resolution patterns
+- `examples/basic-schema.php` - Basic field schema structure
+- `examples/validation-example.php` - Validation rules examples
+- `examples/value-resolution.php` - Value resolution patterns
 
 ## Basic Schema Structure
 
-```php
-$schema = [
-    'field_name' => [
-        'type' => 'text',
-        'label' => 'Field Label',
-        'value' => 'static_value',
-        'default' => 'default_value',
-        'attributes' => [],
-        'validation' => [],
-        'sanitize' => null,
-        'help' => '',
-        'wrapper' => 'p'
-    ]
-];
-```
+See `examples/basic-schema.php` for complete example.
 
 ## Field Properties Reference
 
@@ -83,157 +74,23 @@ $schema = [
 
 ## Value Resolution
 
-### Static Values
+See `examples/value-resolution.php` for complete examples of:
+- Static values
+- Entity method resolution
+- Callable functions
+- Default values
 
-```php
-'username' => [
-    'type' => 'text',
-    'value' => 'john_doe'
-]
-```
+## Examples
 
-### Entity Method
-
-```php
-'email' => [
-    'type' => 'email',
-    'value' => 'getEmail'  // Calls $entity->getEmail()
-]
-```
-
-### Callable
-
-```php
-'created_at' => [
-    'type' => 'date',
-    'value' => function() {
-        return date('Y-m-d');
-    }
-]
-```
-
-### Values Array
-
-When rendering with values array, field name is used as key:
-
-```php
-Renderer::render([
-    'schema' => $schema,
-    'values' => ['username' => 'john'],  // Overrides schema value
-    'entity' => null,
-    'form_prefix' => 'form'
-]);
-```
-
-## Default Values
-
-### Static Default
-
-```php
-'country' => [
-    'type' => 'text',
-    'default' => 'USA'
-]
-```
-
-### Callable Default
-
-```php
-'registration_date' => [
-    'type' => 'date',
-    'default' => function() {
-        return date('Y-m-d');
-    }
-]
-```
-
-## Field Types Examples
-
-### Text Input
-
-```php
-'username' => [
-    'type' => 'text',
-    'label' => 'Username',
-    'attributes' => [
-        'class' => 'regular-text form-control',
-        'placeholder' => 'Enter username',
-        'maxlength' => 50,
-        'data-validate' => 'username'
-    ],
-    'validation' => [
-        'required' => true,
-        'min' => 3,
-        'max' => 50
-    ],
-    'errors' => [
-        'required' => 'Username is required',
-        'min' => 'Username must be at least 3 characters'
-    ]
-]
-// Renders with auto-generated id="form-prefix-username"
-```
-
-### Email
-
-```php
-'email' => [
-    'type' => 'email',
-    'label' => 'Email Address',
-    'validation' => [
-        'required' => true,
-        'format' => 'email'
-    ]
-]
-```
-
-### Select Dropdown
-
-```php
-'role' => [
-    'type' => 'select',
-    'label' => 'User Role',
-    'options' => [
-        'admin' => 'Administrator',
-        'editor' => 'Editor',
-        'author' => 'Author'
-    ],
-    'validation' => ['required' => true]
-]
-```
-
-### Textarea
-
-```php
-'bio' => [
-    'type' => 'textarea',
-    'label' => 'Biography',
-    'rows' => 10,
-    'attributes' => ['class' => 'large-text']
-]
-```
-
-### WordPress Editor
-
-```php
-'content' => [
-    'type' => 'wp_editor',
-    'label' => 'Page Content',
-    'rows' => 15,
-    'editor_settings' => [
-        'media_buttons' => true,
-        'teeny' => false,
-        'tinymce' => [
-            'toolbar1' => 'formatselect,bold,italic,link'
-        ]
-    ]
-]
-```
+All code examples are in the `examples/` folder:
+- `examples/basic-schema.php` - Basic field structure
+- `examples/validation-example.php` - Validation rules
+- `examples/value-resolution.php` - Value resolution patterns
 
 ## See Also
 
-- [Schema Field Renderer](../schema-field-renderer/SKILL.md) for rendering
-- [Schema Validator](../schema-validator/SKILL.md) for validation
-- [Custom Templates](../custom-template-creator/SKILL.md) for customization
-- [Utility Classes](../utility-classes/SKILL.md) for Constants and default values
+- [field-renderer](../field-renderer/SKILL.md) - Render forms from schemas
+- [validator](../validator/SKILL.md) - Validate and sanitize user input
+- [template-creator](../template-creator/SKILL.md) - Create custom templates
+- [utilities](../utilities/SKILL.md) - Use Constants and utility classes
 

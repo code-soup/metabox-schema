@@ -263,11 +263,46 @@ See `examples/extend-renderer.php` for complete example.
 - **Config_Sanitizer** - Sanitizes and validates configuration arrays
 - **Constants** - Default values and configuration constants
 
-## License
-
-MIT License - See LICENSE file for details.
-
 ## Requirements
 
 - PHP 8.1+
 - WordPress 5.0+ (for escaping functions, wp_editor, and media library)
+
+## Agent Skills
+
+This package includes [Agent Skills](https://agentskills.io/) for AI-assisted development, compatible with [Skillshare](https://skillshare.runkids.cc/).
+
+### Available Skills
+
+- **schema-definition** - Define field schemas with validation rules
+- **field-renderer** - Render forms from schemas
+- **template-creator** - Create custom field templates
+- **validator** - Validate and sanitize user input
+- **custom-field-registration** - Register custom field types
+- **utilities** - Use utility classes
+
+### Installation
+
+```bash
+# Local installation (recommended)
+cd /path/to/metabox-schema
+skillshare install ./agent-skills --track
+skillshare sync
+```
+
+### From GitHub
+
+```bash
+# SSH
+skillshare install git@github.com:code-soup/metabox-schema.git/agent-skills
+
+# HTTPS with token
+export GITHUB_TOKEN=your_token_here
+skillshare install github.com/code-soup/metabox-schema/agent-skills
+```
+
+See `agent-skills/README.md` for details.
+
+## License
+
+MIT License - See LICENSE file for details.

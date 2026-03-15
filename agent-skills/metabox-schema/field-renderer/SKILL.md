@@ -3,7 +3,7 @@ name: schema-field-renderer
 description: Render HTML form fields from schema definitions using CodeSoup Metabox Schema package. Use when working with form rendering, field schemas, HTML output, WordPress forms, or when user mentions rendering fields, schemas, or form generation.
 license: MIT
 metadata:
-  author: codesoup
+  author: code-soup
   version: "1.0"
   package: codesoup/metabox-schema
 ---
@@ -21,36 +21,11 @@ Render HTML form fields from schema definitions using the CodeSoup Metabox Schem
 
 ## Basic Usage
 
-### Render with Values Array
+## Examples
 
-```php
-use CodeSoup\MetaboxSchema\Renderer;
-
-$schema = [
-    'username' => [
-        'type' => 'text',
-        'label' => 'Username',
-        'validation' => ['required' => true, 'min' => 3]
-    ]
-];
-
-Renderer::render([
-    'schema' => $schema,
-    'values' => ['username' => 'john'],
-    'entity' => null,
-    'form_prefix' => 'my_form'
-]);
-```
-
-### Render with Entity Object
-
-```php
-Renderer::render([
-    'schema' => $schema,
-    'entity' => $userObject,
-    'form_prefix' => 'user'
-]);
-```
+See `examples/` folder for complete examples:
+- `examples/basic-render.php` - Basic rendering
+- `examples/custom-template-render.php` - Custom template override
 
 ## Available Field Types
 
@@ -83,24 +58,17 @@ Renderer::render([
 
 ## Custom Templates
 
-Override default templates by specifying template directory:
+See `examples/custom-template-render.php` for template override example.
 
-```php
-Renderer::render([
-    'schema' => $schema,
-    'entity' => $entity,
-    'form_prefix' => 'custom',
-    'template_base' => '/path/to/templates'
-]);
-```
-
-Template files needed:
-- `input.php` - All input types
-- `textarea.php` - Textarea fields
-- `select.php` - Select dropdowns
-- `wp-editor.php` - WordPress editor
-- `label.php` - Field labels
-- `help.php` - Help text
+Template structure:
+- `input/template.php` - All input types
+- `textarea/template.php` - Textarea fields
+- `select/template.php` - Select dropdowns
+- `wp-editor/template.php` - WordPress editor
+- `media/template.php` - Media library
+- `html/template.php` - HTML content
+- `label/template.php` - Field labels
+- `help/template.php` - Help text
 
 
 ## Available Methods in Templates

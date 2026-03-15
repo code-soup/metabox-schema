@@ -3,7 +3,7 @@ name: custom-template-creator
 description: Create custom field templates for CodeSoup Metabox Schema renderer. Use when customizing field appearance, creating new field types, overriding default templates, or when user mentions template customization, field styling, or custom HTML output.
 license: MIT
 metadata:
-  author: codesoup
+  author: code-soup
   version: "1.0"
   package: codesoup/metabox-schema
 ---
@@ -110,122 +110,23 @@ All methods return sanitized/escaped data ready for output:
 
 ## Template Examples
 
-### Custom Input Template
+See `examples/` folder for complete examples:
 
-```php
-<?php
-/**
- * Custom Input Template
- *
- * @var \CodeSoup\MetaboxSchema\Fields\Input_Field $this
- */
-// templates/input/template.php
-defined( 'ABSPATH' ) || exit;
+- `examples/input-template.php` - Custom input field template
+- `examples/textarea-template.php` - Custom textarea field template
 
-printf(
-    '<div class="form-field"><input id="%s" name="%s" type="%s" value="%s"%s%s class="custom-input" /></div>',
-    $this->get_field_id(),
-    $this->get_field_name(),
-    $this->get_type(),
-    $this->get_escaped_value(),
-    $this->get_required_attr(),
-    $this->get_attributes_string()
-);
-```
-
-### Custom Textarea Template
-
-```php
-<?php
-/**
- * Custom Textarea Template
- *
- * @var \CodeSoup\MetaboxSchema\Fields\Textarea_Field $this
- */
-// templates/textarea/template.php
-defined( 'ABSPATH' ) || exit;
-
-printf(
-    '<textarea id="%s" name="%s" rows="%s"%s%s class="custom-textarea">%s</textarea>',
-    $this->get_field_id(),
-    $this->get_field_name(),
-    $this->get_rows(),
-    $this->get_required_attr(),
-    $this->get_attributes_string(),
-    $this->get_escaped_textarea_value()
-);
-```
-
-### Custom Select Template
-
-```php
-<?php
-// templates/select.php
-defined( 'ABSPATH' ) || exit;
-
-$options_html = '';
-foreach ( $this->get_options() as $option_value => $option_label ) {
-    $options_html .= sprintf(
-        '<option value="%s"%s>%s</option>',
-        $option_value,
-        selected( $this->get_value(), $option_value, false ),
-        $option_label
-    );
-}
-
-printf(
-    '<select id="%s" name="%s"%s%s>%s</select>',
-    $this->get_field_id(),
-    $this->get_field_name(),
-    $this->get_required_attr(),
-    $this->get_attributes_string(),
-    $options_html
-);
-```
-
-### Custom Label Template
-
-```php
-<?php
-// templates/label.php
-defined( 'ABSPATH' ) || exit;
-
-$label = $this->get_label();
-
-if ( $label ) {
-    printf(
-        '<label for="%s" class="custom-label">%s</label>',
-        $this->get_field_id(),
-        $label
-    );
-}
-```
+Templates have access to the field instance via `$this` and can call any public method.
 
 ## Important Notes
 
 - All data from Field methods is already sanitized/escaped
 - Templates should NOT add additional escaping
 - Use `get_escaped_value()` for inputs, `get_escaped_textarea_value()` for textareas
-- Schema data is sanitized at construction
-- Templates just output clean data
-- Requires WordPress functions to be available
 - Templates are included via PHP `include`, so `$this` context is available
-
-## Override Single Field
-
-Override template for specific field only:
-
-```php
-'bio' => [
-    'type' => 'textarea',
-    'label' => 'Biography',
-    'template_path' => __DIR__ . '/templates/featured-textarea.php'
-]
-```
 
 ## See Also
 
-- [Schema Field Renderer](../schema-field-renderer/SKILL.md) for rendering
-- [Schema Definition](../schema-definition/SKILL.md) for schema structure
-- [Utility Classes](../utility-classes/SKILL.md) for Constants and Config_Sanitizer
+- [field-renderer](../field-renderer/SKILL.md) - Render forms from schemas
+- [schema-definition](../schema-definition/SKILL.md) - Define field schemas
+- [utilities](../utilities/SKILL.md) - Use Constants and utility classes
 

@@ -3,7 +3,7 @@ name: utility-classes
 description: Use utility classes (Constants, Config_Sanitizer, String_Formatter, Value_Resolver) from CodeSoup Metabox Schema package. Use when working with package internals, extending classes, sanitizing configuration, formatting strings, or resolving values.
 license: MIT
 metadata:
-  author: codesoup
+  author: code-soup
   version: "1.0"
   package: codesoup/metabox-schema
 ---
@@ -25,159 +25,25 @@ Utility classes and traits that power the CodeSoup Metabox Schema package. These
 
 Centralized package constants for consistent configuration.
 
-### Available Constants
-
-```php
-use CodeSoup\MetaboxSchema\Constants;
-
-// Default values
-Constants::DEFAULT_TYPE           // 'text'
-Constants::DEFAULT_WRAPPER        // 'p'
-Constants::DEFAULT_ROWS           // 5
-Constants::DEFAULT_GRID_CLASS     // 'grid'
-Constants::DEFAULT_DATE_FORMAT    // 'Y-m-d'
-Constants::FORM_PREFIX_DELIMITER  // '_'
-
-// Arrays
-Constants::SKIP_VALIDATION_TYPES  // ['html']
-Constants::VALID_WRAPPER_TAGS     // ['', 'p', 'div', 'span', 'section', 'article']
-Constants::RESERVED_ATTRIBUTES    // ['id', 'name']
-```
-
-### Usage Examples
-
-```php
-// Check valid wrapper
-if (in_array($wrapper, Constants::VALID_WRAPPER_TAGS, true)) {
-    // Valid
-}
-
-// Use default type
-$type = $config['type'] ?? Constants::DEFAULT_TYPE;
-
-// Check if validation should be skipped
-if (in_array($type, Constants::SKIP_VALIDATION_TYPES, true)) {
-    // Skip validation
-}
-```
+See `examples/constants-usage.php` for complete examples.
 
 ## Config_Sanitizer
 
 Sanitizes field configuration arrays to prevent XSS and ensure valid values.
 
-### What It Sanitizes
-
-- Field names, types, labels (sanitize_key, sanitize_text_field)
-- Form prefix (sanitize_key)
-- Rows (absint)
-- Wrapper tags (validates against whitelist)
-- Options arrays (sanitizes all values)
-- Attributes (sanitizes keys, values escaped at output)
-
-### Usage
-
-```php
-use CodeSoup\MetaboxSchema\Config_Sanitizer;
-
-$sanitizer = new Config_Sanitizer();
-$clean = $sanitizer->sanitize($raw_config);
-```
-
-### Extending
-
-```php
-class Custom_Sanitizer extends Config_Sanitizer {
-    public function sanitize(array $config): array {
-        $config = parent::sanitize($config);
-        
-        // Add custom sanitization
-        if (isset($config['custom_field'])) {
-            $config['custom_field'] = sanitize_text_field($config['custom_field']);
-        }
-        
-        return $config;
-    }
-}
-```
+Sanitizes: field names, types, labels, form prefix, rows, wrapper tags, options, attributes.
 
 ## String_Formatter
 
 String formatting utilities for field names and conversions.
 
-### Methods
-
-```php
-use CodeSoup\MetaboxSchema\String_Formatter;
-
-// Format field name for display
-String_Formatter::format_field_name('user_email')  // "User email"
-String_Formatter::format_field_name('first-name')  // "First name"
-
-// Convert to ID format (dashes)
-String_Formatter::to_id_format('user_email')       // "user-email"
-
-// Convert to attribute format (underscores)
-String_Formatter::to_attribute_format('user-email') // "user_email"
-```
-
-### Usage in Validator
-
-The Validator class uses String_Formatter automatically for field labels when no label is provided:
-
-```php
-'user_email' => [
-    'validation' => ['required' => true]
-    // Error message: "User email is required"
-]
-```
+Methods: `format_field_name()`, `to_id_format()`, `to_attribute_format()`.
 
 ## Value_Resolver Trait
 
 Provides value resolution logic for callable and entity method values.
 
-### Methods
-
-```php
-// Resolve callable values
-protected function resolve_callable($value): mixed
-
-// Resolve entity method calls
-protected function resolve_entity_method($value, ?object $entity): mixed
-```
-
-### Usage in Custom Classes
-
-```php
-use CodeSoup\MetaboxSchema\Value_Resolver;
-
-class My_Processor {
-    use Value_Resolver;
-    
-    public function get_value($value, $entity = null) {
-        $value = $this->resolve_callable($value);
-        $value = $this->resolve_entity_method($value, $entity);
-        return $value;
-    }
-}
-```
-
-### How It Works
-
-**resolve_callable:**
-- Checks if value is callable (closure, function name, array callable)
-- Executes callable and returns result
-- Returns value as-is if not callable
-
-**resolve_entity_method:**
-- Checks if value is string method name
-- Checks if entity exists and has that method
-- Calls entity method and returns result
-- Returns value as-is if not entity method
-
-### Used By
-
-- Field class (for value resolution)
-- Validator class (for default value resolution)
+See `examples/value-resolver-usage.php` for complete usage example.
 
 ## Important Notes
 

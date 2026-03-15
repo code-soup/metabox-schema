@@ -1,53 +1,17 @@
 # Metabox Schema - Agent Skills
 
-Agent skills for the Metabox Schema package, compatible with [Skillshare](https://skillshare.runkids.cc/).
+Agent skills for AI-assisted development, compatible with [Skillshare](https://skillshare.runkids.cc/).
 
 ## Available Skills
 
-### metabox-schema/schema-definition
-Define field schemas with validation and sanitization rules.
+- **schema-definition** - Define field schemas with validation rules
+- **field-renderer** - Render forms from schemas
+- **template-creator** - Create custom field templates
+- **validator** - Validate and sanitize user input
+- **custom-field-registration** - Register custom field types
+- **utilities** - Use utility classes
 
-### metabox-schema/field-renderer
-Render forms from schema definitions.
-
-### metabox-schema/template-creator
-Create custom field templates.
-
-### metabox-schema/validator
-Validate and sanitize user input against schemas.
-
-### metabox-schema/utilities
-Use utility classes (Constants, String_Formatter, Value_Resolver).
-
-## Installation
-
-### Local Installation
-
-```bash
-# From the metabox-schema project directory
-skillshare install ./agent-skills --track
-```
-
-### From GitHub
-
-```bash
-skillshare install github.com/codesoup/metabox-schema/agent-skills
-```
-
-## Usage
-
-After installation, sync to your AI tools:
-
-```bash
-skillshare sync
-```
-
-Check status:
-
-```bash
-skillshare status
-skillshare list
-```
+See main [README.md](../README.md#agent-skills) for installation instructions.
 
 ## Structure
 
@@ -77,4 +41,3 @@ metabox-schema/
 ## License
 
 MIT
-
