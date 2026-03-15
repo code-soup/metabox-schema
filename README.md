@@ -16,7 +16,7 @@ Schema-driven form builder system for WordPress. Define fields as PHP arrays, us
 - WordPress media library integration
 - Grid layout support
 - PHP 8.0+ with strict typing
-- AI agent skills compatible with [Skillshare](https://skillshare.runkids.cc/).
+- Agent skills for AI-assisted development, compatible with [Skillshare](https://skillshare.runkids.cc/).
 
 ## Installation
 
