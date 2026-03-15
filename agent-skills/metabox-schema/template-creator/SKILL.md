@@ -1,7 +1,8 @@
 ---
 name: custom-template-creator
-description: Create custom field templates for CodeSoup Metabox Schema renderer. Use when customizing field appearance, creating new field types, overriding default templates, or when user mentions template customization, field styling, or custom HTML output.
+description: Create custom field templates for WordPress form fields.
 license: MIT
+author: code-soup
 metadata:
   author: code-soup
   version: "1.0"
@@ -26,35 +27,35 @@ Templates are PHP files that output HTML. Inside templates, `$this` refers to th
 
 ### Required Template Files
 
-- `input/template.php` - All input types (text, email, number, etc.)
-- `textarea/template.php` - Textarea fields
-- `select/template.php` - Select dropdowns
-- `wp-editor/template.php` - WordPress editor
-- `media/template.php` - Media library fields
-- `html/template.php` - HTML content
-- `label/template.php` - Field labels
-- `help/template.php` - Help text
+- `input/template.md` - All input types (text, email, number, etc.)
+- `textarea/template.md` - Textarea fields
+- `select/template.md` - Select dropdowns
+- `wp-editor/template.md` - WordPress editor
+- `media/template.md` - Media library fields
+- `html/template.md` - HTML content
+- `label/template.md` - Field labels
+- `help/template.md` - Help text
 
 ## Template Directory Structure
 
 ```
 templates/
 ├── input/
-│   └── template.php
+│   └── template.md
 ├── textarea/
-│   └── template.php
+│   └── template.md
 ├── select/
-│   └── template.php
+│   └── template.md
 ├── wp-editor/
-│   └── template.php
+│   └── template.md
 ├── media/
-│   └── template.php
+│   └── template.md
 ├── html/
-│   └── template.php
+│   └── template.md
 ├── label/
-│   └── template.php
+│   └── template.md
 └── help/
-    └── template.php
+    └── template.md
 ```
 
 ## Using Custom Templates
@@ -112,8 +113,8 @@ All methods return sanitized/escaped data ready for output:
 
 See `examples/` folder for complete examples:
 
-- `examples/input-template.php` - Custom input field template
-- `examples/textarea-template.php` - Custom textarea field template
+- `examples/input-template.md` - Custom input field template
+- `examples/textarea-template.md` - Custom textarea field template
 
 Templates have access to the field instance via `$this` and can call any public method.
 

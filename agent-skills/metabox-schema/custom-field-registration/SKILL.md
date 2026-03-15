@@ -4,10 +4,10 @@ description: Register custom field types with Field_Factory
 version: 1.0.0
 license: MIT
 tags:
-  - wordpress
-  - forms
-  - custom-fields
-  - extensibility
+    - wordpress
+    - forms
+    - custom-fields
+    - extensibility
 author: code-soup
 ---
 
@@ -32,9 +32,9 @@ Register custom field types with the Metabox Schema package. Extend built-in fie
 
 ## Examples
 
-- `examples/basic-custom-field.php` - Basic custom field implementation
-- `examples/color-picker-field.php` - Complete color picker example
-- `examples/override-builtin.php` - Override built-in field type
+- `examples/basic-custom-field.md` - Basic custom field implementation
+- `examples/color-picker-field.md` - Complete color picker example
+- `examples/override-builtin.md` - Override built-in field type
 
 ## How It Works
 
@@ -55,6 +55,7 @@ Field_Factory::register_field_type( 'color_picker', Color_Picker_Field::class );
 ## Validation
 
 The registration method validates:
+
 - Field type name is not empty
 - Class exists
 - Class extends `Abstract_Field`
@@ -79,18 +80,21 @@ Create template in your custom location:
 ```
 templates/
 └── color-picker/
-    └── template.php
+    └── template.md
 ```
 
 ## Common Use Cases
 
 ### Custom Field Type
+
 Create new field type with custom behavior and template.
 
 ### Override Built-in Type
+
 Replace built-in field type with custom implementation.
 
 ### Extend Existing Type
+
 Extend existing field class to add functionality.
 
 ## Related Skills
@@ -102,5 +106,4 @@ Extend existing field class to add functionality.
 ## References
 
 - [CUSTOM-FIELD-TYPES.md](../../../CUSTOM-FIELD-TYPES.md) - Full documentation
-- [examples/register-custom-field-type.php](../../../examples/register-custom-field-type.php) - Working example
-
+- [examples/register-custom-field-type.md](../../../examples/register-custom-field-type.md) - Working example

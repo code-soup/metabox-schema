@@ -2,6 +2,7 @@
 name: schema-validator
 description: Validate and sanitize form data against schema definitions.
 license: MIT
+author: code-soup
 tags:
   - wordpress
   - validation
@@ -27,7 +28,7 @@ Validate and sanitize form data against schema definitions using the CodeSoup Me
 
 ## Basic Usage
 
-See `examples/basic-validation.php` for complete example.
+See `examples/basic-validation.md` for complete example.
 
 ## Public Methods
 
@@ -55,7 +56,7 @@ See `examples/basic-validation.php` for complete example.
 
 ## Custom Validation
 
-See `examples/custom-validation.php` for examples of:
+See `examples/custom-validation.md` for examples of:
 - Custom validation callbacks
 - Custom error messages
 - Complex validation logic

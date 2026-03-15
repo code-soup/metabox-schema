@@ -1,11 +1,12 @@
 ---
-name: schema-field-renderer
-description: Render HTML form fields from schema definitions using CodeSoup Metabox Schema package. Use when working with form rendering, field schemas, HTML output, WordPress forms, or when user mentions rendering fields, schemas, or form generation.
+name: field-renderer-schema
+description: Render HTML form fields from schema definitions for WordPress forms.
 license: MIT
+author: code-soup
 metadata:
-  author: code-soup
-  version: "1.0"
-  package: codesoup/metabox-schema
+    author: code-soup
+    version: "1.0"
+    package: codesoup/metabox-schema
 ---
 
 # Schema Field Renderer
@@ -24,8 +25,9 @@ Render HTML form fields from schema definitions using the CodeSoup Metabox Schem
 ## Examples
 
 See `examples/` folder for complete examples:
-- `examples/basic-render.php` - Basic rendering
-- `examples/custom-template-render.php` - Custom template override
+
+- `examples/basic-render.md` - Basic rendering
+- `examples/custom-template-render.md` - Custom template override
 
 ## Available Field Types
 
@@ -58,18 +60,18 @@ See `examples/` folder for complete examples:
 
 ## Custom Templates
 
-See `examples/custom-template-render.php` for template override example.
+See `examples/custom-template-render.md` for template override example.
 
 Template structure:
-- `input/template.php` - All input types
-- `textarea/template.php` - Textarea fields
-- `select/template.php` - Select dropdowns
-- `wp-editor/template.php` - WordPress editor
-- `media/template.php` - Media library
-- `html/template.php` - HTML content
-- `label/template.php` - Field labels
-- `help/template.php` - Help text
 
+- `input/template.md` - All input types
+- `textarea/template.md` - Textarea fields
+- `select/template.md` - Select dropdowns
+- `wp-editor/template.md` - WordPress editor
+- `media/template.md` - Media library
+- `html/template.md` - HTML content
+- `label/template.md` - Field labels
+- `help/template.md` - Help text
 
 ## Available Methods in Templates
 
@@ -104,21 +106,25 @@ Inside templates, `$this` refers to Field object:
 The Field class uses several utility components:
 
 **Value_Resolver Trait:**
+
 - Resolves callable values (closures, functions)
 - Resolves entity method calls
 - Ensures consistent value resolution
 
 **Config_Sanitizer:**
+
 - Sanitizes configuration at construction
 - Validates wrapper tags
 - Sanitizes options and attributes
 
 **Constants:**
+
 - Provides default values (DEFAULT_TYPE, DEFAULT_WRAPPER, DEFAULT_ROWS)
 - Defines valid wrapper tags
 - Defines special field types
 
 **When Extending Field:**
+
 ```php
 use CodeSoup\MetaboxSchema\Field;
 use CodeSoup\MetaboxSchema\Constants;
@@ -143,4 +149,3 @@ class Custom_Field extends Field {
 - [Schema Definition](../schema-definition/SKILL.md) for schema structure
 - [Custom Templates](../custom-template-creator/SKILL.md) for template customization
 - [Utility Classes](../utility-classes/SKILL.md) for Constants, Config_Sanitizer, Value_Resolver
-

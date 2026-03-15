@@ -2,6 +2,7 @@
 name: schema-definition
 description: Define field schemas with validation and sanitization rules for WordPress forms.
 license: MIT
+author: code-soup
 tags:
   - wordpress
   - forms
@@ -33,13 +34,13 @@ Define and structure field schemas correctly for the CodeSoup Metabox Schema pac
 
 ## Examples
 
-- `examples/basic-schema.php` - Basic field schema structure
-- `examples/validation-example.php` - Validation rules examples
-- `examples/value-resolution.php` - Value resolution patterns
+- `examples/basic-schema.md` - Basic field schema structure
+- `examples/validation-example.md` - Validation rules examples
+- `examples/value-resolution.md` - Value resolution patterns
 
 ## Basic Schema Structure
 
-See `examples/basic-schema.php` for complete example.
+See `examples/basic-schema.md` for complete example.
 
 ## Field Properties Reference
 
@@ -74,7 +75,7 @@ See `examples/basic-schema.php` for complete example.
 
 ## Value Resolution
 
-See `examples/value-resolution.php` for complete examples of:
+See `examples/value-resolution.md` for complete examples of:
 - Static values
 - Entity method resolution
 - Callable functions
@@ -83,9 +84,9 @@ See `examples/value-resolution.php` for complete examples of:
 ## Examples
 
 All code examples are in the `examples/` folder:
-- `examples/basic-schema.php` - Basic field structure
-- `examples/validation-example.php` - Validation rules
-- `examples/value-resolution.php` - Value resolution patterns
+- `examples/basic-schema.md` - Basic field structure
+- `examples/validation-example.md` - Validation rules
+- `examples/value-resolution.md` - Value resolution patterns
 
 ## See Also
 

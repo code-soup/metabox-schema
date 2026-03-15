@@ -1,11 +1,12 @@
 ---
 name: utility-classes
-description: Use utility classes (Constants, Config_Sanitizer, String_Formatter, Value_Resolver) from CodeSoup Metabox Schema package. Use when working with package internals, extending classes, sanitizing configuration, formatting strings, or resolving values.
+description: Use utility classes for constants, sanitization, string formatting, and value resolution.
 license: MIT
+author: code-soup
 metadata:
-  author: code-soup
-  version: "1.0"
-  package: codesoup/metabox-schema
+    author: code-soup
+    version: "1.0"
+    package: codesoup/metabox-schema
 ---
 
 # Utility Classes
@@ -25,7 +26,7 @@ Utility classes and traits that power the CodeSoup Metabox Schema package. These
 
 Centralized package constants for consistent configuration.
 
-See `examples/constants-usage.php` for complete examples.
+See `examples/constants-usage.md` for complete examples.
 
 ## Config_Sanitizer
 
@@ -43,7 +44,7 @@ Methods: `format_field_name()`, `to_id_format()`, `to_attribute_format()`.
 
 Provides value resolution logic for callable and entity method values.
 
-See `examples/value-resolver-usage.php` for complete usage example.
+See `examples/value-resolver-usage.md` for complete usage example.
 
 ## Important Notes
 
@@ -59,4 +60,3 @@ See `examples/value-resolver-usage.php` for complete usage example.
 - [Schema Field Renderer](../schema-field-renderer/SKILL.md) - Uses Value_Resolver and Config_Sanitizer
 - [Schema Validator](../schema-validator/SKILL.md) - Uses Value_Resolver and String_Formatter
 - [Schema Definition](../schema-definition/SKILL.md) - Field configuration structure
-
