@@ -145,7 +145,7 @@ class Custom_Field extends Field {
 
 ## See Also
 
-- [validator](../validator/SKILL.md) - Validate and sanitize user input
-- [schema-definition](../schema-definition/SKILL.md) - Define field schemas
-- [template-creator](../template-creator/SKILL.md) - Create custom templates
-- [utilities](../utilities/SKILL.md) - Use Constants and utility classes
+- [validator](/skills/validator/SKILL.md) - Validate and sanitize user input
+- [schema-definition](/skills/schema-definition/SKILL.md) - Define field schemas
+- [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
+- [utilities](/skills/utilities/SKILL.md) - Use Constants and utility classes

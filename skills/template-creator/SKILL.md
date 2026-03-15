@@ -127,7 +127,7 @@ Templates have access to the field instance via `$this` and can call any public 
 
 ## See Also
 
-- [field-renderer](../field-renderer/SKILL.md) - Render forms from schemas
-- [schema-definition](../schema-definition/SKILL.md) - Define field schemas
-- [utilities](../utilities/SKILL.md) - Use Constants and utility classes
+- [field-renderer](/skills/field-renderer/SKILL.md) - Render forms from schemas
+- [schema-definition](/skills/schema-definition/SKILL.md) - Define field schemas
+- [utilities](/skills/utilities/SKILL.md) - Use Constants and utility classes
 

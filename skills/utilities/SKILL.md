@@ -57,6 +57,6 @@ See `examples/value-resolver-usage.md` for complete usage example.
 
 ## See Also
 
-- [field-renderer](../field-renderer/SKILL.md) - Uses Value_Resolver and Config_Sanitizer
-- [validator](../validator/SKILL.md) - Uses Value_Resolver and String_Formatter
-- [schema-definition](../schema-definition/SKILL.md) - Field configuration structure
+- [field-renderer](/skills/field-renderer/SKILL.md) - Uses Value_Resolver and Config_Sanitizer
+- [validator](/skills/validator/SKILL.md) - Uses Value_Resolver and String_Formatter
+- [schema-definition](/skills/schema-definition/SKILL.md) - Field configuration structure

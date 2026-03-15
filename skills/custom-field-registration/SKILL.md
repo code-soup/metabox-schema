@@ -99,9 +99,9 @@ Extend existing field class to add functionality.
 
 ## Related Skills
 
-- `schema-definition` - Define field schemas
-- `template-creator` - Create custom templates
-- `field-renderer` - Render forms
+- [schema-definition](/skills/schema-definition/SKILL.md) - Define field schemas
+- [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
+- [field-renderer](/skills/field-renderer/SKILL.md) - Render forms
 
 ## References
 

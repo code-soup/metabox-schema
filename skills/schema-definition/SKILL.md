@@ -90,8 +90,8 @@ All code examples are in the `examples/` folder:
 
 ## See Also
 
-- [field-renderer](../field-renderer/SKILL.md) - Render forms from schemas
-- [validator](../validator/SKILL.md) - Validate and sanitize user input
-- [template-creator](../template-creator/SKILL.md) - Create custom templates
-- [utilities](../utilities/SKILL.md) - Use Constants and utility classes
+- [field-renderer](/skills/field-renderer/SKILL.md) - Render forms from schemas
+- [validator](/skills/validator/SKILL.md) - Validate and sanitize user input
+- [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
+- [utilities](/skills/utilities/SKILL.md) - Use Constants and utility classes
 
