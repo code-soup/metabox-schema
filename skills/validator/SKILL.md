@@ -82,6 +82,6 @@ Custom sanitization via `sanitize` config (single callback or array of callbacks
 
 ## See Also
 
-- [Schema Field Renderer](../schema-field-renderer/SKILL.md) for rendering
-- [Schema Definition](../schema-definition/SKILL.md) for schema structure
-- [Utility Classes](../utility-classes/SKILL.md) for String_Formatter, Value_Resolver, Constants
+- [field-renderer](../field-renderer/SKILL.md) - Render forms from schemas
+- [schema-definition](../schema-definition/SKILL.md) - Define field schemas
+- [utilities](../utilities/SKILL.md) - Use Constants and utility classes

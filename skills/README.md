@@ -11,25 +11,33 @@ Agent skills for AI-assisted development, compatible with [Skillshare](https://s
 - **custom-field-registration** - Register custom field types
 - **utilities** - Use utility classes
 
-See main [README.md](../README.md#agent-skills) for installation instructions.
+## Installation
+
+See [SKILLSHARE.md](SKILLSHARE.md) for detailed installation instructions.
+
+Quick start:
+```bash
+skillshare install github.com/code-soup/metabox-schema/skills --track
+skillshare sync
+```
 
 ## Structure
 
 Each skill follows the [Agent Skills specification](https://agentskills.io/specification):
 
 ```
-metabox-schema/
+skills/
 ├── schema-definition/
 │   ├── SKILL.md
-│   └── assets/
-│       ├── basic-schema.php
-│       ├── validation-example.php
-│       └── value-resolution.php
+│   └── examples/
+│       ├── basic-schema.md
+│       ├── validation-example.md
+│       └── value-resolution.md
 ├── field-renderer/
 │   ├── SKILL.md
-│   └── assets/
-│       ├── basic-render.php
-│       └── custom-template-render.php
+│   └── examples/
+│       ├── basic-render.md
+│       └── custom-template-render.md
 └── ...
 ```
 

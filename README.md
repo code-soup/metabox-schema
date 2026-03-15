@@ -276,7 +276,7 @@ This package includes [Agent Skills](https://agentskills.io/) for AI-assisted de
 ```bash
 # Local installation (recommended)
 cd /path/to/metabox-schema
-skillshare install ./agent-skills --track
+skillshare install ./skills --track
 skillshare sync
 ```
 
@@ -284,14 +284,14 @@ skillshare sync
 
 ```bash
 # SSH
-skillshare install git@github.com:code-soup/metabox-schema.git/agent-skills
+skillshare install git@github.com:code-soup/metabox-schema.git/skills
 
 # HTTPS with token
 export GITHUB_TOKEN=your_token_here
-skillshare install github.com/code-soup/metabox-schema/agent-skills
+skillshare install github.com/code-soup/metabox-schema/skills
 ```
 
-See `agent-skills/README.md` for details.
+See `skills/README.md` for details.
 
 ## License
 

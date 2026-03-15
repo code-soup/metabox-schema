@@ -99,11 +99,11 @@ Extend existing field class to add functionality.
 
 ## Related Skills
 
-- `metabox-schema/schema-definition` - Define field schemas
-- `metabox-schema/template-creator` - Create custom templates
-- `metabox-schema/field-renderer` - Render forms
+- `schema-definition` - Define field schemas
+- `template-creator` - Create custom templates
+- `field-renderer` - Render forms
 
 ## References
 
-- [CUSTOM-FIELD-TYPES.md](../../../CUSTOM-FIELD-TYPES.md) - Full documentation
-- [examples/register-custom-field-type.md](../../../examples/register-custom-field-type.md) - Working example
+- [CUSTOM-FIELD-TYPES.md](../../CUSTOM-FIELD-TYPES.md) - Full documentation
+- [examples/register-custom-field-type.php](../../examples/register-custom-field-type.php) - Working example
