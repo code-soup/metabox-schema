@@ -101,7 +101,9 @@ Extend existing field class to add functionality.
 - [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
 - [field-renderer](/skills/field-renderer/SKILL.md) - Render forms
 
-## References
+## Examples
 
-- [CUSTOM-FIELD-TYPES.md](../../CUSTOM-FIELD-TYPES.md) - Full documentation
-- [examples/register-custom-field-type.php](../../examples/register-custom-field-type.php) - Working example
+See `examples/` folder for complete working examples:
+- `basic-custom-field.md` - Simple rating field
+- `color-picker-field.md` - Advanced color picker with options
+- `override-builtin.md` - Override built-in text field

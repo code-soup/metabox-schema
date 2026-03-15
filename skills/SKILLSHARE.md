@@ -1,6 +1,6 @@
 # Installing Metabox Schema Skills via Skillshare
 
-Agent skills for the Metabox Schema package, compatible with [Skillshare](https://skillshare.runkids.cc/).
+Agent skills for the Metabox Schema package, compatible with Skillshare.
 
 ## Prerequisites
 
@@ -9,8 +9,6 @@ Install Skillshare CLI:
 ```bash
 brew install runkids/tap/skillshare
 ```
-
-Or see [installation guide](https://skillshare.runkids.cc/docs/learn/getting-started).
 
 ## Installation
 
@@ -27,8 +25,7 @@ skillshare sync
 ### From Local Clone
 
 ```bash
-# Clone the repository
-git clone https://github.com/code-soup/metabox-schema.git
+# Clone the repository first, then:
 cd metabox-schema
 
 # Install skills
@@ -89,9 +86,7 @@ skillshare sync
 
 ## Documentation
 
-- [Main README](../README.md) - Package documentation
 - [Skills README](README.md) - Skills overview
-- [Skillshare Docs](https://skillshare.runkids.cc/) - Skillshare documentation
 
 ## License
 

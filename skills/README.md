@@ -1,6 +1,6 @@
 # Metabox Schema - Agent Skills
 
-Agent skills for AI-assisted development, compatible with [Skillshare](https://skillshare.runkids.cc/).
+Agent skills for AI-assisted development, compatible with Skillshare.
 
 ## Available Skills
 
@@ -23,7 +23,7 @@ skillshare sync
 
 ## Structure
 
-Each skill follows the [Agent Skills specification](https://agentskills.io/specification):
+Each skill follows the Agent Skills specification:
 
 ```
 skills/
@@ -43,7 +43,7 @@ skills/
 
 ## Requirements
 
-- [Skillshare CLI](https://skillshare.runkids.cc/) installed
+- Skillshare CLI installed
 - AI tool with Skillshare support (Cursor, Windsurf, etc.)
 
 ## License
