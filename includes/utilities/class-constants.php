@@ -27,7 +27,7 @@ class Constants {
 	/**
 	 * Default wrapper element.
 	 */
-	public const DEFAULT_WRAPPER = 'p';
+	public const DEFAULT_WRAPPER = 'div';
 
 	/**
 	 * Default number of rows for textarea/editor.

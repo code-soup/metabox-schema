@@ -201,7 +201,7 @@ abstract class Abstract_Field {
 			return $this->config['template_path'];
 		}
 
-		$template_base = $this->config['template_base'] ?? __DIR__ . '/fields';
+		$template_base = $this->config['template_base'] ?? __DIR__;
 		$base_path     = rtrim( $template_base, '/' );
 
 		$template_file = sprintf( '%s/%s/template.php', $base_path, $type );
