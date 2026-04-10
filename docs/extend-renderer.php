@@ -72,8 +72,9 @@ class Bootstrap_Renderer extends Renderer {
 		array $field_config,
 		mixed $entity,
 		string $form_prefix,
-		?string $template_base
-	): void {
+		?string $template_base,
+		bool $grid_is_open = false
+	): bool {
 		$columns = $field_config['columns'] ?? 12;
 
 		printf(
@@ -81,15 +82,18 @@ class Bootstrap_Renderer extends Renderer {
 			$columns
 		);
 
-		parent::render_field(
+		$grid_is_open = parent::render_field(
 			$field_name,
 			$field_config,
 			$entity,
 			$form_prefix,
-			$template_base
+			$template_base,
+			$grid_is_open
 		);
 
 		printf( '</div>' );
+
+		return $grid_is_open;
 	}
 
 	protected function handle_render_error( \Exception $e ): void {

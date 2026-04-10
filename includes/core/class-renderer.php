@@ -56,14 +56,21 @@ class Renderer {
 			);
 		}
 
+		$grid_is_open = false;
+
 		foreach ( $schema as $field_name => $field_config ) {
-			$this->render_field(
+			$grid_is_open = $this->render_field(
 				$field_name,
 				$field_config,
 				$entity,
 				$form_prefix,
-				$template_base
+				$template_base,
+				$grid_is_open
 			);
+		}
+
+		if ( $grid_is_open ) {
+			$this->close_grid();
 		}
 	}
 
@@ -75,18 +82,22 @@ class Renderer {
 	 * @param mixed       $entity        Entity object.
 	 * @param string      $form_prefix   Form prefix.
 	 * @param string|null $template_base Template base directory.
+	 * @param bool        $grid_is_open  Whether grid is currently open.
+	 * @return bool Whether grid is open after rendering this field.
 	 */
 	protected function render_field(
 		string $field_name,
 		array $field_config,
 		mixed $entity,
 		string $form_prefix,
-		?string $template_base
-	): void {
+		?string $template_base,
+		bool $grid_is_open = false
+	): bool {
 		$grid = $field_config['grid'] ?? false;
 
 		if ( 'start' === $grid ) {
 			$this->open_grid();
+			$grid_is_open = true;
 		}
 
 		$ob_level = ob_get_level();
@@ -113,7 +124,10 @@ class Renderer {
 
 		if ( 'end' === $grid ) {
 			$this->close_grid();
+			$grid_is_open = false;
 		}
+
+		return $grid_is_open;
 	}
 
 	/**
