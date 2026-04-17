@@ -19,6 +19,8 @@ namespace CodeSoup\MetaboxSchema;
  */
 trait Value_Resolver {
 
+	use Debug_Helper;
+
 	/**
 	 * Resolve callable value.
 	 *
@@ -77,18 +79,11 @@ trait Value_Resolver {
 		try {
 			return $callback();
 		} catch ( \Throwable $e ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error -- Intentional debug warning for developers.
-				trigger_error(
-					sprintf(
-						'%s: %s',
-						$error_prefix, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Debug message for developers, not user output.
-						esc_html( $e->getMessage() )
-					),
-					E_USER_WARNING
-				);
-			}
-			return $fallback ?? $callback;
+			$this->maybe_trigger_error(
+				sprintf( '%s: %s', $error_prefix, esc_html( $e->getMessage() ) ),
+				E_USER_WARNING
+			);
+			return $fallback;
 		}
 	}
 }

@@ -29,13 +29,6 @@ use CodeSoup\MetaboxSchema\Fields\Help_Field;
 class Field_Factory {
 
 	/**
-	 * Custom field types registry.
-	 *
-	 * @var array
-	 */
-	private static array $custom_field_types = array();
-
-	/**
 	 * Field type to class mapping.
 	 *
 	 * @var array<string, string>
@@ -59,51 +52,7 @@ class Field_Factory {
 		'help'      => Help_Field::class,
 	);
 
-	/**
-	 * Register a custom field type.
-	 *
-	 * @param string $type Field type identifier.
-	 * @param string $class_name Fully qualified class name.
-	 * @throws \InvalidArgumentException If validation fails.
-	 */
-	public static function register_field_type( string $type, string $class_name ): void {
-		if ( '' === trim( $type ) ) {
-			throw new \InvalidArgumentException( 'Field type cannot be empty' );
-		}
 
-		if ( ! class_exists( $class_name ) ) {
-			throw new \InvalidArgumentException(
-				sprintf(
-					'Class %s does not exist',
-					$class_name // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for developers.
-				)
-			);
-		}
-
-		if ( ! is_subclass_of( $class_name, Abstract_Field::class ) ) {
-			throw new \InvalidArgumentException(
-				sprintf(
-					'Class %s must extend %s',
-					$class_name, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for developers.
-					Abstract_Field::class // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for developers.
-				)
-			);
-		}
-
-		if ( isset( self::$custom_field_types[ $type ] ) && function_exists( '_doing_it_wrong' ) ) {
-			_doing_it_wrong(
-				__METHOD__,
-				sprintf(
-					'Field type "%s" is already registered. Overriding with %s',
-					esc_html( $type ),
-					esc_html( $class_name )
-				),
-				'1.0.0'
-			);
-		}
-
-		self::$custom_field_types[ $type ] = $class_name;
-	}
 
 	/**
 	 * Create a field instance.
@@ -125,9 +74,16 @@ class Field_Factory {
 	): Abstract_Field {
 		$type = $field_config['type'] ?? Constants::DEFAULT_TYPE;
 
-		if ( isset( self::$custom_field_types[ $type ] ) ) {
-			$class_name = self::$custom_field_types[ $type ];
-		} elseif ( isset( self::FIELD_TYPE_MAP[ $type ] ) ) {
+		if ( ! is_string( $type ) ) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'Field type must be a string, %s given',
+					gettype( $type ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are for developers.
+				)
+			);
+		}
+
+		if ( isset( self::FIELD_TYPE_MAP[ $type ] ) ) {
 			$class_name = self::FIELD_TYPE_MAP[ $type ];
 		} else {
 			throw new \InvalidArgumentException(
@@ -151,7 +107,12 @@ class Field_Factory {
 			$config['template_base'] = $template_base;
 		}
 
-		return new $class_name( $config );
+		$instance = new $class_name( $config );
+
+		// Type assertion for static analysis tools.
+		assert( $instance instanceof Abstract_Field );
+
+		return $instance;
 	}
 
 	/**

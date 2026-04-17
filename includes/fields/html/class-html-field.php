@@ -48,4 +48,73 @@ class HTML_Field extends Abstract_Field {
 		$content = $this->config['content'] ?? '';
 		return (string) $this->resolve_callable( $content );
 	}
+
+	/**
+	 * Get allowed HTML tags for wp_kses.
+	 *
+	 * Returns custom allowlist from config or default admin-safe tags.
+	 *
+	 * @return array Allowed HTML tags.
+	 */
+	public function get_allowed_html(): array {
+		if ( isset( $this->config['allowed_html'] ) && is_array( $this->config['allowed_html'] ) ) {
+			return $this->config['allowed_html'];
+		}
+
+		// Default admin-safe allowlist.
+		return array(
+			'p'      => array(),
+			'br'     => array(),
+			'strong' => array(),
+			'em'     => array(),
+			'b'      => array(),
+			'i'      => array(),
+			'a'      => array(
+				'href'   => array(),
+				'target' => array(),
+				'rel'    => array(),
+				'class'  => array(),
+			),
+			'ul'     => array(
+				'class' => array(),
+			),
+			'ol'     => array(
+				'class' => array(),
+			),
+			'li'     => array(
+				'class' => array(),
+			),
+			'h1'     => array(
+				'class' => array(),
+			),
+			'h2'     => array(
+				'class' => array(),
+			),
+			'h3'     => array(
+				'class' => array(),
+			),
+			'h4'     => array(
+				'class' => array(),
+			),
+			'h5'     => array(
+				'class' => array(),
+			),
+			'h6'     => array(
+				'class' => array(),
+			),
+			'code'   => array(
+				'class' => array(),
+			),
+			'pre'    => array(
+				'class' => array(),
+			),
+			'div'    => array(
+				'class' => array(),
+				'id'    => array(),
+			),
+			'span'   => array(
+				'class' => array(),
+			),
+		);
+	}
 }

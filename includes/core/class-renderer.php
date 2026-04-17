@@ -19,8 +19,17 @@ namespace CodeSoup\MetaboxSchema;
  */
 class Renderer {
 
+	use Debug_Helper;
+
 	/**
-	 * Render schema fields.
+	 * Instance-based custom field type registry.
+	 *
+	 * @var array<string, string>
+	 */
+	protected array $custom_field_types = array();
+
+	/**
+	 * Render schema fields (static facade).
 	 *
 	 * @param array $config Configuration array with schema, entity, and form_prefix.
 	 */
@@ -30,18 +39,76 @@ class Renderer {
 	}
 
 	/**
+	 * Register a custom field type for this renderer instance.
+	 *
+	 * @param string $type Field type name.
+	 * @param string $class_name Fully qualified class name extending Abstract_Field.
+	 * @throws \InvalidArgumentException If type is empty or class doesn't extend Abstract_Field.
+	 */
+	public function register_field_type( string $type, string $class_name ): void {
+		if ( empty( $type ) ) {
+			throw new \InvalidArgumentException( 'Field type cannot be empty' );
+		}
+
+		if ( ! class_exists( $class_name ) ) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'Class %s does not exist',
+					$class_name // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+				)
+			);
+		}
+
+		if ( ! is_subclass_of( $class_name, Abstract_Field::class ) ) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'Class %s must extend %s',
+					$class_name, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					Abstract_Field::class // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+				)
+			);
+		}
+
+		$this->custom_field_types[ $type ] = $class_name;
+	}
+
+	/**
 	 * Render fields from configuration.
+	 *
+	 * Public method allows direct instance usage or extension.
 	 *
 	 * @param array $config Configuration array with schema, entity, and form_prefix.
 	 * @throws \InvalidArgumentException If required config keys are missing.
 	 */
-	protected function render_fields( array $config ): void {
+	public function render_fields( array $config ): void {
 		if ( ! isset( $config['schema'] ) || ! is_array( $config['schema'] ) ) {
 			throw new \InvalidArgumentException( 'Renderer config must include schema array' );
 		}
 
 		if ( ! isset( $config['form_prefix'] ) || ! is_string( $config['form_prefix'] ) ) {
 			throw new \InvalidArgumentException( 'Renderer config must include form_prefix string' );
+		}
+
+		// Validate schema structure.
+		foreach ( $config['schema'] as $field_name => $field_config ) {
+			if ( ! is_string( $field_name ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'Field name must be a string, %s given',
+						gettype( $field_name ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					)
+				);
+			}
+
+			if ( ! is_array( $field_config ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'Field config for "%s" must be an array, %s given',
+						$field_name, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+						gettype( $field_config ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					)
+				);
+			}
 		}
 
 		$schema        = $config['schema'];
@@ -58,6 +125,9 @@ class Renderer {
 
 		$grid_is_open = false;
 
+		// Buffer entire form output for better performance.
+		ob_start();
+
 		foreach ( $schema as $field_name => $field_config ) {
 			$grid_is_open = $this->render_field(
 				$field_name,
@@ -70,8 +140,15 @@ class Renderer {
 		}
 
 		if ( $grid_is_open ) {
+			$this->maybe_trigger_error(
+				'Grid was not explicitly closed in schema. Auto-closing grid.',
+				E_USER_NOTICE
+			);
 			$this->close_grid();
 		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Field templates handle escaping.
+		echo ob_get_clean();
 	}
 
 	/**
@@ -100,9 +177,6 @@ class Renderer {
 			$grid_is_open = true;
 		}
 
-		$ob_level = ob_get_level();
-		ob_start();
-
 		try {
 			$field = $this->create_field(
 				$field_name,
@@ -112,13 +186,7 @@ class Renderer {
 				$template_base
 			);
 			$field->render();
-
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Template output already sanitized in Field class.
-			echo ob_get_clean();
 		} catch ( \Exception $e ) {
-			if ( ob_get_level() > $ob_level ) {
-				ob_end_clean();
-			}
 			$this->handle_render_error( $e );
 		}
 
@@ -150,6 +218,8 @@ class Renderer {
 	/**
 	 * Create field instance.
 	 *
+	 * Checks instance registry first, then falls back to Field_Factory.
+	 *
 	 * @param string      $field_name    Field name.
 	 * @param array       $field_config  Field configuration.
 	 * @param mixed       $entity        Entity object.
@@ -164,6 +234,21 @@ class Renderer {
 		string $form_prefix,
 		?string $template_base
 	): Abstract_Field {
+		$type = $field_config['type'] ?? Constants::DEFAULT_TYPE;
+
+		// Check instance registry first.
+		if ( isset( $this->custom_field_types[ $type ] ) ) {
+			return $this->create_custom_field(
+				$this->custom_field_types[ $type ],
+				$field_name,
+				$field_config,
+				$entity,
+				$form_prefix,
+				$template_base
+			);
+		}
+
+		// Fall back to Field_Factory for built-in types.
 		return Field_Factory::create(
 			$field_name,
 			$field_config,
@@ -171,6 +256,41 @@ class Renderer {
 			$form_prefix,
 			$template_base
 		);
+	}
+
+	/**
+	 * Create custom field instance from registry.
+	 *
+	 * @param string      $class_name    Field class name.
+	 * @param string      $field_name    Field name.
+	 * @param array       $field_config  Field configuration.
+	 * @param mixed       $entity        Entity object.
+	 * @param string      $form_prefix   Form prefix.
+	 * @param string|null $template_base Template base directory.
+	 * @return Abstract_Field Field instance.
+	 */
+	protected function create_custom_field(
+		string $class_name,
+		string $field_name,
+		array $field_config,
+		mixed $entity,
+		string $form_prefix,
+		?string $template_base
+	): Abstract_Field {
+		$config = array_merge(
+			$field_config,
+			array(
+				'name'        => $field_name,
+				'entity'      => $entity,
+				'form_prefix' => $form_prefix,
+			)
+		);
+
+		if ( null !== $template_base ) {
+			$config['template_base'] = $template_base;
+		}
+
+		return new $class_name( $config );
 	}
 
 	/**
@@ -204,11 +324,8 @@ class Renderer {
 	 * @param \Exception $e Exception.
 	 */
 	protected function handle_render_error( \Exception $e ): void {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			printf(
-				'<!-- Field rendering error: %s -->',
-				esc_html( $e->getMessage() )
-			);
-		}
+		$this->maybe_output_debug_comment(
+			sprintf( 'Field rendering error: %s', $e->getMessage() )
+		);
 	}
 }

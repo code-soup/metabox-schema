@@ -36,8 +36,7 @@ $remove_button_text = $this->get_remove_button_text();
 	/>
 
 	<div
-		class="media-preview"
-		style="<?php echo $value ? '' : 'display:none;'; ?>"
+		class="media-preview<?php echo $value ? '' : ' hidden'; ?>"
 	></div>
 
 	<button
@@ -49,8 +48,7 @@ $remove_button_text = $this->get_remove_button_text();
 
 	<button
 		type="button"
-		class="button media-remove-button"
-		style="<?php echo $value ? '' : 'display:none;'; ?>"
+		class="button media-remove-button<?php echo $value ? '' : ' hidden'; ?>"
 		title="<?php echo esc_attr( $remove_button_text ); ?>"
 	>
 		<span class="dashicons dashicons-no"></span>

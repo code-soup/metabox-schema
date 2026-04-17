@@ -8,6 +8,10 @@
 	margin-bottom: 10px;
 }
 
+.media-preview.hidden {
+	display: none;
+}
+
 .media-preview-image {
 	max-width: 150px;
 	height: auto;

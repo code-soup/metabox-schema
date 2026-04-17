@@ -72,10 +72,10 @@ class Validator {
 				continue;
 			}
 
-			$validation_result = $this->validate_value( $sanitized, $context );
+			$error = $this->has_validation_errors( $sanitized, $context );
 
-			if ( true !== $validation_result ) {
-				$this->errors[ $field_name ] = $validation_result;
+			if ( null !== $error ) {
+				$this->errors[ $field_name ] = $error;
 				$validated[ $field_name ]    = $this->resolve_default( $field_config );
 				continue;
 			}
@@ -131,13 +131,13 @@ class Validator {
 	/**
 	 * Check if value is considered empty.
 	 *
-	 * Treats null and empty string as empty, but allows 0, '0', and false.
+	 * Treats null, empty string, and boolean false as empty, but allows 0 and '0'.
 	 *
 	 * @param mixed $value Value to check.
 	 * @return bool True if empty, false otherwise.
 	 */
 	protected function is_empty_value( $value ): bool {
-		return null === $value || '' === $value;
+		return null === $value || '' === $value || false === $value;
 	}
 
 	/**
@@ -232,9 +232,16 @@ class Validator {
 	protected function sanitize_by_type( $value, string $type ): mixed {
 		switch ( $type ) {
 			case 'number':
-				return is_numeric( $value )
-					? (float) $value
-					: $value;
+				if ( ! is_numeric( $value ) ) {
+					return $value;
+				}
+
+				// Preserve integer type when possible.
+				if ( (string) (int) $value === (string) $value ) {
+					return (int) $value;
+				}
+
+				return (float) $value;
 
 			case 'email':
 				return sanitize_email( $value );
@@ -251,21 +258,31 @@ class Validator {
 	}
 
 	/**
-	 * Validate value against field rules.
+	 * Check if value has validation errors.
 	 *
 	 * Applies validation rules including min/max, pattern, format, options, and custom validators.
 	 *
 	 * @param mixed $value   Sanitized value to validate.
 	 * @param array $context Field context.
-	 * @return string|bool True if valid, error message string if invalid.
+	 * @return string|null Error message string if invalid, null if valid.
 	 */
-	protected function validate_value( $value, array $context ): string|bool {
+	protected function has_validation_errors( $value, array $context ): ?string {
 		$validation = $context['validation'];
 		$errors     = $context['errors'];
 		$label      = $context['label'];
 		$type       = $context['type'];
 
 		if ( isset( $validation['min'] ) ) {
+			if ( ! is_int( $validation['min'] ) && ! is_float( $validation['min'] ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'Min validation for "%s" must be a number, %s given',
+						$label, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+						gettype( $validation['min'] ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					)
+				);
+			}
+
 			$result = $this->validate_min( $value, $validation['min'], $type, $label, $errors );
 			if ( true !== $result ) {
 				return $result;
@@ -273,6 +290,16 @@ class Validator {
 		}
 
 		if ( isset( $validation['max'] ) ) {
+			if ( ! is_int( $validation['max'] ) && ! is_float( $validation['max'] ) ) {
+				throw new \InvalidArgumentException(
+					sprintf(
+						'Max validation for "%s" must be a number, %s given',
+						$label, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+						gettype( $validation['max'] ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					)
+				);
+			}
+
 			$result = $this->validate_max( $value, $validation['max'], $type, $label, $errors );
 			if ( true !== $result ) {
 				return $result;
@@ -307,7 +334,7 @@ class Validator {
 			}
 		}
 
-		return true;
+		return null;
 	}
 
 	/**
@@ -392,7 +419,20 @@ class Validator {
 	 * @return string|bool True if valid, error message if invalid.
 	 */
 	protected function validate_options( $value, array $options, string $label, array $errors ): string|bool {
-		if ( ! array_key_exists( $value, $options ) ) {
+		// Check direct key or nested optgroup.
+		$found = array_key_exists( $value, $options );
+
+		if ( ! $found ) {
+			// Check nested optgroups.
+			foreach ( $options as $option ) {
+				if ( is_array( $option ) && array_key_exists( $value, $option ) ) {
+					$found = true;
+					break;
+				}
+			}
+		}
+
+		if ( ! $found ) {
 			return $this->get_error_message( $errors, 'options', '%s must be one of the available options', $label );
 		}
 

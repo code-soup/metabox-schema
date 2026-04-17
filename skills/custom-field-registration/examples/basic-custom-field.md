@@ -31,8 +31,15 @@ class Rating_Field extends Abstract_Field {
 ## Register Custom Field Type
 
 ```php
-Field_Factory::register_field_type( 'rating', Rating_Field::class );
+use CodeSoup\MetaboxSchema\Renderer;
+
+$renderer = new Renderer();
+$renderer->register_field_type( 'rating', Rating_Field::class );
 ```
+
+**Benefits:**
+- ✅ No plugin conflicts
+- ✅ Isolated field registry per renderer
 
 ## Use in Schema
 
@@ -44,6 +51,18 @@ $schema = array(
         'max_rating' => 5,
     ),
 );
+
+// Render with instance
+$renderer->render_fields([
+    'schema' => $schema,
+    'form_prefix' => 'product_form'
+]);
+
+// Or use static facade (creates new instance)
+Renderer::render([
+    'schema' => $schema,
+    'form_prefix' => 'product_form'
+]);
 ```
 
 ## Requirements

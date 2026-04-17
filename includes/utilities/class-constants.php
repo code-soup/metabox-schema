@@ -35,11 +35,6 @@ class Constants {
 	public const DEFAULT_ROWS = 5;
 
 	/**
-	 * Form prefix delimiter character.
-	 */
-	public const FORM_PREFIX_DELIMITER = '_';
-
-	/**
 	 * Field types that skip validation.
 	 *
 	 * @var array

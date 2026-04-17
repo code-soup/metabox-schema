@@ -12,9 +12,9 @@ $options_html = '';
 foreach ( $this->get_options() as $option_value => $option_label ) {
 	$options_html .= sprintf(
 		'<option value="%s"%s>%s</option>',
-		$option_value,
+		esc_attr( (string) $option_value ),
 		selected( $this->get_value(), $option_value, false ),
-		$option_label
+		esc_html( $option_label )
 	);
 }
 
