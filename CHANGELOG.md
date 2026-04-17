@@ -9,100 +9,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### BREAKING CHANGES
 
-#### Custom Field Registration - Instance-Based Only
+**Custom field registration now instance-based**
 
-Custom field types must now be registered on Renderer instances instead of globally via Field_Factory. This prevents plugin conflicts in multi-plugin WordPress environments.
+Before: `Field_Factory::register_field_type()` (static, global state)
+After: `$renderer->register_field_type()` (instance, isolated)
 
-**Migration Required:**
+Why: Prevents plugin conflicts. Static registry = last registration wins.
 
-Before (v1.0.x):
+Migration:
 ```php
-Field_Factory::register_field_type( 'color_picker', Color_Picker_Field::class );
+// Old
+Field_Factory::register_field_type( 'type', Class::class );
 Renderer::render( $config );
-```
 
-After (v1.1.0):
-```php
+// New
 $renderer = new Renderer();
-$renderer->register_field_type( 'color_picker', Color_Picker_Field::class );
+$renderer->register_field_type( 'type', Class::class );
 $renderer->render_fields( $config );
 ```
 
-**Why:** Static registration created shared global state. Multiple plugins registering the same field type would overwrite each other, causing unpredictable behavior and potential security issues.
-
-See `skills/custom-field-registration/examples/multi-plugin-isolation.md` for detailed migration guide.
-
 ### Added
 
-- **Renderer::register_field_type()** - Instance-based custom field registration with validation
-- **Renderer::create_custom_field()** - Helper method for instantiating custom fields
-- **Media_Field::get_asset_url()** - Auto-detects package location (plugin/theme/vendor)
-- **Media_Field::get_version()** - Reads version from composer.json or METABOX_SCHEMA_VERSION constant
-- **HTML_Field::get_allowed_html()** - Configurable HTML tag allowlist for wp_kses
-- WP_DEBUG warning when grid not explicitly closed in schema
-- Static singleton pattern for Config_Sanitizer (performance: 1 instance instead of N)
-- Multi-plugin isolation example documentation
+- Instance-based field registration - Prevents plugin conflicts
+- Optgroup support for select fields
+- Field name/prefix validation - Alphanumeric, hyphens, underscores only
+- HTML field custom allowlist - Configurable wp_kses tags
 
 ### Changed
 
-- **Renderer::render_fields()** - Changed from `protected` to `public` (allows direct instance usage)
-- **Abstract_Field::__construct()** - Added entity type validation (must be object or null)
-- **Abstract_Field::generate_field_id()** - Forces dashes everywhere (both prefix and name)
-- **Abstract_Field::sanitize_config()** - Uses shared static sanitizer instance
-- **Config_Sanitizer::sanitize()** - Removed unnecessary `is_callable()` checks
-- **Validator::validate_value()** - Renamed to `has_validation_errors()` with `?string` return type
-- **Validator::is_empty_value()** - Now treats boolean `false` as empty
-- **Validator::sanitize_by_type()** - Preserves integer type for whole numbers
-- **Value_Resolver::execute_with_error_handling()** - Returns `$fallback` instead of `$callback` on error
-- **Abstract_Field::resolve_value()** - Uses `array_key_exists()` to detect explicit `null`
-- **HTML template** - Uses custom safe allowlist instead of 'post' context
-- **Media template** - Uses CSS `.hidden` class instead of inline styles
-- **Field_Factory::create()** - Added type assertion for static analysis tools
+- Renderer::render_fields() now public (was protected)
+- Validator::validate_value() renamed to has_validation_errors()
+- Field IDs force dashes (underscores converted)
 
 ### Security
 
-- **Wrapper tags** - Added `esc_html()` escaping
-- **Select options** - Added `esc_attr()` for values, `esc_html()` for labels
-- **Attributes** - Values sanitized with `sanitize_text_field()`
-- **Inline styles** - Replaced with CSS classes
+- Added escaping to wrapper tags, select options, attributes
+- Replaced inline styles with CSS classes
 
 ### Fixed
 
-- **Type Safety:** Entity validation in Abstract_Field constructor (must be object or null)
-- **Type Safety:** Validator return type changed from `string|bool` to `?string` for clarity
-- **Type Safety:** Added assert() in Field_Factory::create() for static analysis tools
-- **Validation:** Field_Factory type must be string (prevents array/object injection)
-- **Validation:** Renderer schema structure validated (field names must be strings, configs must be arrays)
-- **Validation:** Abstract_Field form_prefix format validated (alphanumeric, hyphens, underscores only)
-- **Validation:** Validator min/max must be int or float (prevents array/object injection)
-- Field_Factory::is_supported() now correctly checks custom types (instance registry)
-- Number sanitization preserves integer type when value has no decimals
-- Null value resolution distinguishes explicit `null` from missing config key
-- Callable error fallback no longer returns the callable object itself
-- Grid auto-close warns in WP_DEBUG mode instead of silently closing
+- Injection prevention: Type validation for field config values
+- Optgroup handling in select field sanitization and validation
+- Grid auto-close now triggers WP_DEBUG notice
+- Number sanitization preserves integer type
 
 ### Removed
 
-- **Field_Factory::register_field_type()** - Removed static registration (BREAKING)
-- **Field_Factory::$custom_field_types** - Removed static property (BREAKING)
-- Static custom field type support from Field_Factory::create()
-- Static custom field type check from Field_Factory::is_supported()
+- Field_Factory::register_field_type() and static custom field registry (BREAKING)
+- Unused Select_Field methods and Constants
 
 ### Performance
 
-- Config_Sanitizer: 1 shared instance instead of N instances per render
-- Removed 250 unnecessary `is_callable()` checks per 50-field form
-- Optimized field ID generation with clearer logic
-- Renderer: Buffer entire form once instead of per-field (100 fields = 1 buffer vs 100)
-- Abstract_Field: Direct concatenation for attributes instead of sprintf (500 fewer calls per 100-field form)
-
-### Documentation
-
-- Updated README.md with instance-based registration examples
-- Updated skills/custom-field-registration/SKILL.md
-- Added multi-plugin-isolation.md example showing conflict prevention
-- Updated all custom field registration examples
-- Removed all references to deprecated static methods
+- Form buffering optimization (1 buffer per form vs per field)
+- Config sanitizer singleton pattern
+- Removed unnecessary function calls
 
 ## [1.0.0] - 2026-03-14
 
