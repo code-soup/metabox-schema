@@ -278,6 +278,7 @@ $renderer->render_fields([
 ```
 
 **Benefits of instance-based registration:**
+
 - ✅ No conflicts between plugins using different implementations
 - ✅ Each renderer has isolated field registry
 - ✅ Safe for multi-plugin WordPress environments
