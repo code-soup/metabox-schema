@@ -60,6 +60,9 @@ See `examples/basic-schema.md` for complete example.
 ### Field-Specific Properties
 
 - **options** (array) - For select fields (key => label)
+  - Supports flat arrays: `['value1' => 'Label 1', 'value2' => 'Label 2']`
+  - Supports optgroups: `['Group 1' => ['val1' => 'Label 1'], 'single' => 'Label']`
+- **allowed_html** (array) - For html type: Custom wp_kses allowlist (defaults to admin-safe tags)
 - **rows** (int) - For textarea/wp_editor (default: 5)
 - **grid** (string) - Grid layout: 'start' or 'end'
 - **editor_settings** (array) - For wp_editor (WordPress editor config)
@@ -90,3 +93,10 @@ All code examples are in the `examples/` folder:
 - [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
 - [utilities](/skills/utilities/SKILL.md) - Use Constants and utility classes
 
+## Important Changes (v1.1.0)
+
+- Field names must match pattern: `/^[a-zA-Z0-9_-]+$/` (throws exception if invalid)
+- Form prefix must match same pattern (alphanumeric, hyphens, underscores only)
+- Select field options now support nested arrays for optgroups
+- HTML field `allowed_html` property added for custom tag allowlists
+- Min/max validation rules must be int or float (prevents injection attacks)

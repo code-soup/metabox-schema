@@ -46,8 +46,8 @@ class Config_Sanitizer {
 		$sanitized = $config;
 
 		foreach ( self::SANITIZATION_RULES as $key => $callback ) {
-			if ( isset( $sanitized[ $key ] ) && is_callable( $callback ) ) {
-				$sanitized[ $key ] = call_user_func( $callback, $sanitized[ $key ] );
+			if ( isset( $sanitized[ $key ] ) && function_exists( $callback ) ) {
+				$sanitized[ $key ] = $callback( $sanitized[ $key ] );
 			}
 		}
 
@@ -85,7 +85,12 @@ class Config_Sanitizer {
 		if ( isset( $config['options'] ) && is_array( $config['options'] ) ) {
 			$sanitized_options = array();
 			foreach ( $config['options'] as $key => $value ) {
-				$sanitized_options[ $key ] = sanitize_text_field( $value );
+				if ( is_array( $value ) ) {
+					// Handle optgroup (nested array).
+					$sanitized_options[ sanitize_text_field( $key ) ] = array_map( 'sanitize_text_field', $value );
+				} else {
+					$sanitized_options[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
+				}
 			}
 			$config['options'] = $sanitized_options;
 		}
@@ -96,7 +101,7 @@ class Config_Sanitizer {
 	 * Sanitize attributes array.
 	 *
 	 * Validates attribute structure and filters non-scalar values.
-	 * Note: Attribute values are NOT escaped here - they will be escaped at output time.
+	 * Sanitizes values with sanitize_text_field and escapes at output time.
 	 *
 	 * @param array $config Configuration array.
 	 * @return array Configuration with validated attributes.
@@ -106,7 +111,7 @@ class Config_Sanitizer {
 			$sanitized_attrs = array();
 			foreach ( $config['attributes'] as $key => $value ) {
 				if ( is_scalar( $value ) ) {
-					$sanitized_attrs[ sanitize_key( $key ) ] = $value;
+					$sanitized_attrs[ sanitize_key( $key ) ] = sanitize_text_field( (string) $value );
 				}
 			}
 			$config['attributes'] = $sanitized_attrs;

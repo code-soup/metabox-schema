@@ -20,6 +20,14 @@ namespace CodeSoup\MetaboxSchema;
 abstract class Abstract_Field {
 
 	use Value_Resolver;
+	use Debug_Helper;
+
+	/**
+	 * Shared sanitizer instance for all fields.
+	 *
+	 * @var Config_Sanitizer|null
+	 */
+	private static ?Config_Sanitizer $sanitizer = null;
 
 	/**
 	 * Field configuration array.
@@ -53,7 +61,7 @@ abstract class Abstract_Field {
 	 * Constructor.
 	 *
 	 * @param array $config Field configuration.
-	 * @throws \InvalidArgumentException If required config keys are missing.
+	 * @throws \InvalidArgumentException If required config keys are missing or invalid types.
 	 */
 	public function __construct( array $config ) {
 		if ( ! array_key_exists( 'name', $config ) || ! array_key_exists( 'entity', $config ) || ! array_key_exists( 'form_prefix', $config ) ) {
@@ -62,6 +70,39 @@ abstract class Abstract_Field {
 
 		$this->validate_string_config( $config['name'], 'Field name' );
 		$this->validate_string_config( $config['form_prefix'], 'Form prefix' );
+
+		// Validate field name format matches sanitize_key() expectations.
+		$sanitized_name = sanitize_key( $config['name'] );
+		if ( $sanitized_name !== $config['name'] ) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'Field name "%s" contains invalid characters. Use lowercase alphanumeric and underscores only (sanitized would be: "%s").',
+					$config['name'], // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					$sanitized_name // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+				)
+			);
+		}
+
+		// Validate form_prefix format matches sanitize_key() expectations.
+		if ( empty( trim( $config['form_prefix'] ) ) ) {
+			throw new \InvalidArgumentException( 'Form prefix cannot be empty' );
+		}
+
+		$sanitized_prefix = sanitize_key( $config['form_prefix'] );
+		if ( $sanitized_prefix !== $config['form_prefix'] ) {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'Form prefix "%s" contains invalid characters. Use lowercase alphanumeric and underscores only (sanitized would be: "%s").',
+					$config['form_prefix'], // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					$sanitized_prefix // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+				)
+			);
+		}
+
+		// Validate entity type.
+		if ( null !== $config['entity'] && ! is_object( $config['entity'] ) ) {
+			throw new \InvalidArgumentException( 'Field entity must be an object or null' );
+		}
 
 		$this->config          = $this->sanitize_config( $config );
 		$this->field_id        = $this->generate_field_id();
@@ -119,24 +160,35 @@ abstract class Abstract_Field {
 	/**
 	 * Sanitize field configuration.
 	 *
+	 * Uses shared sanitizer instance for better performance.
+	 *
 	 * @param array $config Raw configuration array.
 	 * @return array Sanitized configuration.
 	 */
 	protected function sanitize_config( array $config ): array {
-		$sanitizer = new Config_Sanitizer();
-		return $sanitizer->sanitize( $config );
+		if ( null === self::$sanitizer ) {
+			self::$sanitizer = new Config_Sanitizer();
+		}
+		return self::$sanitizer->sanitize( $config );
 	}
 
 	/**
 	 * Generate field ID attribute.
 	 *
+	 * Forces dashes in HTML IDs for consistency and HTML spec compliance.
+	 * Strips trailing underscore from form_prefix and converts all underscores to dashes.
+	 *
 	 * @return string Field ID.
 	 */
 	protected function generate_field_id(): string {
+		$prefix = rtrim( $this->config['form_prefix'], '_' );
+		$prefix = str_replace( '_', '-', $prefix );
+		$name   = str_replace( '_', '-', $this->config['name'] );
+
 		return sprintf(
 			'%s-%s',
-			rtrim( $this->config['form_prefix'], Constants::FORM_PREFIX_DELIMITER ),
-			str_replace( Constants::FORM_PREFIX_DELIMITER, '-', $this->config['name'] )
+			$prefix,
+			$name
 		);
 	}
 
@@ -159,7 +211,14 @@ abstract class Abstract_Field {
 	 * @return mixed Resolved value.
 	 */
 	protected function resolve_value(): mixed {
-		$value  = $this->config['value'] ?? $this->config['default'] ?? '';
+		if ( array_key_exists( 'value', $this->config ) ) {
+			$value = $this->config['value'];
+		} elseif ( array_key_exists( 'default', $this->config ) ) {
+			$value = $this->config['default'];
+		} else {
+			$value = '';
+		}
+
 		$entity = $this->config['entity'] ?? null;
 
 		$value = $this->resolve_callable( $value );
@@ -172,6 +231,7 @@ abstract class Abstract_Field {
 	 * Render template file.
 	 *
 	 * @param string $template_name Template name.
+	 * @throws \RuntimeException If template file fails to render.
 	 */
 	protected function render_template( string $template_name ): void {
 		$template_path = $this->get_template_path( $template_name );
@@ -179,13 +239,16 @@ abstract class Abstract_Field {
 			try {
 				require $template_path;
 			} catch ( \Throwable $e ) {
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					printf(
-						'<!-- Template error in %s: %s -->',
-						esc_html( $template_name ),
-						esc_html( $e->getMessage() )
-					);
-				}
+				throw new \RuntimeException(
+					sprintf(
+						'Template rendering failed for "%s". Check template file: %s. Original error: %s',
+						$template_name,
+						$template_path,
+						$e->getMessage()
+					),
+					0,
+					$e
+				);
 			}
 		}
 	}
@@ -234,7 +297,7 @@ abstract class Abstract_Field {
 
 		printf(
 			'<%s>',
-			$wrapper // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Validated against VALID_WRAPPER_TAGS whitelist.
+			esc_html( $wrapper )
 		);
 	}
 
@@ -250,7 +313,7 @@ abstract class Abstract_Field {
 
 		printf(
 			'</%s>',
-			$wrapper // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Validated against VALID_WRAPPER_TAGS whitelist.
+			esc_html( $wrapper )
 		);
 	}
 
@@ -264,12 +327,30 @@ abstract class Abstract_Field {
 	}
 
 	/**
+	 * Get escaped field ID for output.
+	 *
+	 * @return string Escaped field ID.
+	 */
+	public function get_escaped_field_id(): string {
+		return esc_attr( $this->field_id );
+	}
+
+	/**
 	 * Get field name attribute.
 	 *
 	 * @return string Field name.
 	 */
 	public function get_field_name(): string {
 		return $this->field_name_attr;
+	}
+
+	/**
+	 * Get escaped field name for output.
+	 *
+	 * @return string Escaped field name.
+	 */
+	public function get_escaped_field_name(): string {
+		return esc_attr( $this->field_name_attr );
 	}
 
 	/**
@@ -288,6 +369,15 @@ abstract class Abstract_Field {
 	 */
 	public function get_label(): string {
 		return $this->config['label'] ?? '';
+	}
+
+	/**
+	 * Get escaped field label for output.
+	 *
+	 * @return string Escaped field label.
+	 */
+	public function get_escaped_label(): string {
+		return esc_html( $this->config['label'] ?? '' );
 	}
 
 	/**
@@ -359,11 +449,7 @@ abstract class Abstract_Field {
 				continue;
 			}
 
-			$parts[] = sprintf(
-				'%s="%s"',
-				esc_attr( $key ),
-				esc_attr( $value )
-			);
+			$parts[] = esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
 		}
 
 		return $parts

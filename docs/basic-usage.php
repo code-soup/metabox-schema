@@ -102,12 +102,24 @@ $schema = array(
 		),
 		'default'    => 'us',
 		'options'    => array(
-			''   => '— Select Country —',
-			'us' => 'United States',
-			'uk' => 'United Kingdom',
-			'ca' => 'Canada',
-			'au' => 'Australia',
+			''                => '— Select Country —',
+			'North America'   => array(
+				'us' => 'United States',
+				'ca' => 'Canada',
+				'mx' => 'Mexico',
+			),
+			'Europe'          => array(
+				'uk' => 'United Kingdom',
+				'de' => 'Germany',
+				'fr' => 'France',
+			),
+			'Asia & Pacific'  => array(
+				'au' => 'Australia',
+				'jp' => 'Japan',
+				'cn' => 'China',
+			),
 		),
+		'help'       => 'Example of select field with optgroups',
 	),
 	'account_type_heading' => array(
 		'type'    => 'html',

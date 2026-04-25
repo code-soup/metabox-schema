@@ -1,7 +1,5 @@
 # CodeSoup Metabox Schema
 
-Schema-driven form builder system for WordPress. Define fields as PHP arrays, use Renderer class to render forms and sanitize POST data. Use Validator to validate user input against your schema.
-
 ## What This Package Does
 
 1. **Render form fields** from a schema definition
@@ -15,7 +13,6 @@ Schema-driven form builder system for WordPress. Define fields as PHP arrays, us
 - Extensible validation and rendering
 - WordPress media library integration
 - Grid layout support
-- PHP 8.0+ with strict typing
 - Agent skills for AI-assisted development, compatible with [Skillshare](https://skillshare.runkids.cc/).
 
 ## Installation
@@ -240,6 +237,48 @@ class Custom_Renderer extends Renderer {
 ```
 
 See `docs/extend-renderer.php` for complete example.
+
+### Custom Field Types
+
+Register custom field types on a Renderer instance to avoid conflicts with other plugins:
+
+```php
+use CodeSoup\MetaboxSchema\Abstract_Field;
+use CodeSoup\MetaboxSchema\Renderer;
+
+// Create custom field class
+class Color_Picker_Field extends Abstract_Field {
+    protected function get_template_name(): string {
+        return 'color-picker';
+    }
+
+    public function get_palette(): array {
+        return $this->config['palette'] ?? array();
+    }
+}
+
+// Register on renderer instance
+$renderer = new Renderer();
+$renderer->register_field_type( 'color_picker', Color_Picker_Field::class );
+
+// Use in schema
+$renderer->render_fields([
+    'schema' => [
+        'brand_color' => [
+            'type' => 'color_picker',
+            'label' => 'Brand Color',
+            'palette' => [ '#FF0000', '#00FF00', '#0000FF' ]
+        ]
+    ],
+    'form_prefix' => 'settings'
+]);
+```
+
+**Benefits of instance-based registration:**
+
+- ✅ No conflicts between plugins using different implementations
+- ✅ Each renderer has isolated field registry
+- ✅ Safe for multi-plugin WordPress environments
 
 ## Architecture
 

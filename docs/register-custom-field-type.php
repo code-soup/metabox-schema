@@ -10,7 +10,6 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use CodeSoup\MetaboxSchema\Abstract_Field;
-use CodeSoup\MetaboxSchema\Field_Factory;
 use CodeSoup\MetaboxSchema\Renderer;
 
 /**
@@ -48,8 +47,9 @@ class Color_Picker_Field extends Abstract_Field {
 	}
 }
 
-// Register the custom field type
-Field_Factory::register_field_type( 'color_picker', Color_Picker_Field::class );
+// Create renderer instance and register custom field type
+$renderer = new Renderer();
+$renderer->register_field_type( 'color_picker', Color_Picker_Field::class );
 
 // Use the custom field type in a schema
 $schema = array(
@@ -90,7 +90,7 @@ $entity = new class() {
 echo '<h2>Custom Field Type Registration Example</h2>';
 
 echo '<h3>Custom Color Picker Fields:</h3>';
-Renderer::render(
+$renderer->render_fields(
 	array(
 		'schema'      => $schema,
 		'entity'      => $entity,
@@ -105,7 +105,8 @@ echo '<ol>';
 echo '<li>Create a class that extends <code>Abstract_Field</code></li>';
 echo '<li>Implement <code>get_template_name()</code> method</li>';
 echo '<li>Add custom methods for field-specific configuration</li>';
-echo '<li>Register with <code>Field_Factory::register_field_type()</code></li>';
+echo '<li>Create a <code>Renderer</code> instance</li>';
+echo '<li>Register with <code>$renderer->register_field_type()</code></li>';
 echo '<li>Use the custom type in your schema</li>';
 echo '</ol>';
 
@@ -115,6 +116,8 @@ echo '<li>Custom field types integrate seamlessly with existing fields</li>';
 echo '<li>Full access to validation, sanitization, and rendering pipeline</li>';
 echo '<li>Can override any Abstract_Field method for custom behavior</li>';
 echo '<li>Custom types can have their own templates and assets</li>';
+echo '<li><strong>Instance-based registration prevents plugin conflicts</strong></li>';
+echo '<li>Each renderer has isolated field registry</li>';
 echo '</ul>';
 
 echo '<h3>Registration Validation:</h3>';
@@ -123,12 +126,11 @@ echo '<ul>';
 echo '<li>Field type name is not empty</li>';
 echo '<li>Class exists</li>';
 echo '<li>Class extends Abstract_Field</li>';
-echo '<li>Warns if overriding existing type</li>';
 echo '</ul>';
 
 echo '<h3>Resolution Order:</h3>';
 echo '<ol>';
-echo '<li>Custom registered types (highest priority)</li>';
+echo '<li>Instance custom types (highest priority)</li>';
 echo '<li>Built-in field types</li>';
 echo '<li>Throws exception if type not found</li>';
 echo '</ol>';

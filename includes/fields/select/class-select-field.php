@@ -38,23 +38,4 @@ class Select_Field extends Abstract_Field {
 		return $this->config['options'] ?? array();
 	}
 
-	/**
-	 * Check if a value is selected.
-	 *
-	 * @param string $option_value Option value to check.
-	 * @return bool True if selected.
-	 */
-	public function is_selected( string $option_value ): bool {
-		return (string) $this->value === $option_value;
-	}
-
-	/**
-	 * Get selected attribute string.
-	 *
-	 * @param string $option_value Option value to check.
-	 * @return string Selected attribute or empty string.
-	 */
-	public function get_selected_attr( string $option_value ): string {
-		return $this->is_selected( $option_value ) ? ' selected' : '';
-	}
 }

@@ -8,5 +8,4 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$allowed_html = wp_kses_allowed_html( 'post' );
-echo wp_kses( $this->get_content(), $allowed_html );
+echo wp_kses( $this->get_content(), $this->get_allowed_html() );

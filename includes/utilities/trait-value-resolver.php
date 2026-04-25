@@ -19,6 +19,8 @@ namespace CodeSoup\MetaboxSchema;
  */
 trait Value_Resolver {
 
+	use Debug_Helper;
+
 	/**
 	 * Resolve callable value.
 	 *
@@ -70,25 +72,23 @@ trait Value_Resolver {
 	 *
 	 * @param callable $callback Callback to execute.
 	 * @param string   $error_prefix Error message prefix.
-	 * @param mixed    $fallback Fallback value on error.
-	 * @return mixed Result of callback or fallback.
+	 * @param mixed    $fallback Fallback value on error (unused, kept for signature compatibility).
+	 * @return mixed Result of callback.
+	 * @throws \RuntimeException If callback execution fails.
 	 */
 	private function execute_with_error_handling( callable $callback, string $error_prefix, $fallback = null ): mixed {
 		try {
 			return $callback();
 		} catch ( \Throwable $e ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error -- Intentional debug warning for developers.
-				trigger_error(
-					sprintf(
-						'%s: %s',
-						$error_prefix, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Debug message for developers, not user output.
-						esc_html( $e->getMessage() )
-					),
-					E_USER_WARNING
-				);
-			}
-			return $fallback ?? $callback;
+			throw new \RuntimeException(
+				sprintf(
+					'%s: %s',
+					$error_prefix,
+					$e->getMessage()
+				),
+				0,
+				$e
+			);
 		}
 	}
 }

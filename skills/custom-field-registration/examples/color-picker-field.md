@@ -29,7 +29,10 @@ class Color_Picker_Field extends Abstract_Field {
 ## Register
 
 ```php
-Field_Factory::register_field_type( 'color_picker', Color_Picker_Field::class );
+use CodeSoup\MetaboxSchema\Renderer;
+
+$renderer = new Renderer();
+$renderer->register_field_type( 'color_picker', Color_Picker_Field::class );
 ```
 
 ## Use in Schema
@@ -52,6 +55,11 @@ $schema = array(
         'color_format' => 'rgb',
     ),
 );
+
+$renderer->render_fields([
+    'schema' => $schema,
+    'form_prefix' => 'branding'
+]);
 ```
 
 ## Custom Configuration

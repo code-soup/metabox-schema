@@ -33,15 +33,15 @@ See `examples/basic-validation.md` for complete example.
 
 ## Validation Rules
 
-| Rule          | Type     | Description                                        |
-| ------------- | -------- | -------------------------------------------------- |
-| `required`    | bool     | Field is required                                  |
-| `min`         | int      | Minimum length (text) or value (number)            |
-| `max`         | int      | Maximum length (text) or value (number)            |
-| `pattern`     | string   | Regular expression pattern                         |
-| `format`      | string   | Format validation: 'email', 'url', 'date'          |
-| `date_format` | string   | Date format for date validation (default: 'Y-m-d') |
-| `validate`    | callable | Custom validation callback                         |
+| Rule          | Type         | Description                                        |
+| ------------- | ------------ | -------------------------------------------------- |
+| `required`    | bool         | Field is required                                  |
+| `min`         | int\|float   | Minimum length (text) or value (number)            |
+| `max`         | int\|float   | Maximum length (text) or value (number)            |
+| `pattern`     | string       | Regular expression pattern                         |
+| `format`      | string       | Format validation: 'email', 'url', 'ip'            |
+| `date_format` | string       | Date format for date validation (default: 'Y-m-d') |
+| `validate`    | callable     | Custom validation callback                         |
 
 ## Format Validation
 
@@ -69,11 +69,13 @@ Custom sanitization via `sanitize` config (single callback or array of callbacks
 
 ## Important Notes
 
-- Validation happens before sanitization
+- Sanitization happens first, then validation (changed in v1.1.0)
 - Date validation is strict (exact format match required)
 - Custom validators should return `true` or error message string
 - Uses WordPress sanitization functions
 - Field names auto-formatted for error messages (via String_Formatter)
+- Method `validate_value()` renamed to `has_validation_errors()` (returns `?string` instead of `string|bool`)
+- Min/max validation now strictly checks for int/float types (prevents array/object injection)
 
 ## See Also
 

@@ -5,6 +5,65 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-XX-XX
+
+### BREAKING CHANGES
+
+**Custom field registration now instance-based**
+
+Before: `Field_Factory::register_field_type()` (static, global state)
+After: `$renderer->register_field_type()` (instance, isolated)
+
+Why: Prevents plugin conflicts. Static registry = last registration wins.
+
+Migration:
+```php
+// Old
+Field_Factory::register_field_type( 'type', Class::class );
+Renderer::render( $config );
+
+// New
+$renderer = new Renderer();
+$renderer->register_field_type( 'type', Class::class );
+$renderer->render_fields( $config );
+```
+
+### Added
+
+- Instance-based field registration - Prevents plugin conflicts
+- Optgroup support for select fields
+- Field name/prefix validation - Alphanumeric, hyphens, underscores only
+- HTML field custom allowlist - Configurable wp_kses tags
+
+### Changed
+
+- Renderer::render_fields() now public (was protected)
+- Validator::validate_value() renamed to has_validation_errors()
+- Field IDs force dashes (underscores converted)
+
+### Security
+
+- Added escaping to wrapper tags, select options, attributes
+- Replaced inline styles with CSS classes
+
+### Fixed
+
+- Injection prevention: Type validation for field config values
+- Optgroup handling in select field sanitization and validation
+- Grid auto-close now triggers WP_DEBUG notice
+- Number sanitization preserves integer type
+
+### Removed
+
+- Field_Factory::register_field_type() and static custom field registry (BREAKING)
+- Unused Select_Field methods and Constants
+
+### Performance
+
+- Form buffering optimization (1 buffer per form vs per field)
+- Config sanitizer singleton pattern
+- Removed unnecessary function calls
+
 ## [1.0.0] - 2026-03-14
 
 ### Added
