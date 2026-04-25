@@ -1,5 +1,9 @@
 # CodeSoup Metabox Schema
 
+Schema-driven form generator system for WordPress developers. Define fields as PHP arrays, use provided classes to render forms, sanitize data and validate user input against defined schema.
+
+![Metabox Schema Screenshot](assets/screenshot-01.png)
+
 ## What This Package Does
 
 1. **Render form fields** from a schema definition
