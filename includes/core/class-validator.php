@@ -131,13 +131,14 @@ class Validator {
 	/**
 	 * Check if value is considered empty.
 	 *
-	 * Treats null, empty string, and boolean false as empty, but allows 0 and '0'.
+	 * Treats null and empty string as empty, but allows 0, '0', and boolean false.
+	 * Boolean false is valid for checkbox/toggle fields when unchecked.
 	 *
 	 * @param mixed $value Value to check.
 	 * @return bool True if empty, false otherwise.
 	 */
 	protected function is_empty_value( $value ): bool {
-		return null === $value || '' === $value || false === $value;
+		return null === $value || '' === $value;
 	}
 
 	/**
@@ -187,12 +188,24 @@ class Validator {
 	 * @param mixed $value  Value to sanitize.
 	 * @param array $config Field configuration.
 	 * @return mixed Sanitized value.
+	 * @throws \RuntimeException If custom sanitization callback fails.
 	 */
 	protected function sanitize_value( $value, array $config ): mixed {
 		$sanitize = $config['sanitize'] ?? null;
 
 		if ( is_callable( $sanitize ) ) {
-			return $sanitize( $value );
+			try {
+				return $sanitize( $value );
+			} catch ( \Throwable $e ) {
+				throw new \RuntimeException(
+					sprintf(
+						'Custom sanitize callback failed: %s',
+						$e->getMessage()
+					),
+					0,
+					$e
+				);
+			}
 		}
 
 		if ( is_array( $sanitize ) ) {
@@ -210,13 +223,25 @@ class Validator {
 	 * @param mixed $value     Value to sanitize.
 	 * @param array $callbacks Array of sanitization callbacks.
 	 * @return mixed Sanitized value.
+	 * @throws \RuntimeException If sanitization callback fails.
 	 */
 	protected function apply_sanitize_callbacks( $value, array $callbacks ): mixed {
 		foreach ( $callbacks as $callback ) {
 			if ( ! is_callable( $callback ) ) {
 				continue;
 			}
-			$value = $callback( $value );
+			try {
+				$value = $callback( $value );
+			} catch ( \Throwable $e ) {
+				throw new \RuntimeException(
+					sprintf(
+						'Sanitize callback failed: %s',
+						$e->getMessage()
+					),
+					0,
+					$e
+				);
+			}
 		}
 
 		return $value;
@@ -340,14 +365,14 @@ class Validator {
 	/**
 	 * Validate minimum value or length.
 	 *
-	 * @param mixed  $value  Value to validate.
-	 * @param int    $min    Minimum value or length.
-	 * @param string $type   Field type.
-	 * @param string $label  Field label.
-	 * @param array  $errors Custom error messages.
+	 * @param mixed      $value  Value to validate.
+	 * @param int|float  $min    Minimum value or length.
+	 * @param string     $type   Field type.
+	 * @param string     $label  Field label.
+	 * @param array      $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validate_min( $value, int $min, string $type, string $label, array $errors ): string|bool {
+	protected function validate_min( $value, int|float $min, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( ( $value - $min ) < -self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'min', '%s must be at least %d', $label, $min );
@@ -362,14 +387,14 @@ class Validator {
 	/**
 	 * Validate maximum value or length.
 	 *
-	 * @param mixed  $value  Value to validate.
-	 * @param int    $max    Maximum value or length.
-	 * @param string $type   Field type.
-	 * @param string $label  Field label.
-	 * @param array  $errors Custom error messages.
+	 * @param mixed      $value  Value to validate.
+	 * @param int|float  $max    Maximum value or length.
+	 * @param string     $type   Field type.
+	 * @param string     $label  Field label.
+	 * @param array      $errors Custom error messages.
 	 * @return string|bool True if valid, error message if invalid.
 	 */
-	protected function validate_max( $value, int $max, string $type, string $label, array $errors ): string|bool {
+	protected function validate_max( $value, int|float $max, string $type, string $label, array $errors ): string|bool {
 		if ( 'number' === $type ) {
 			if ( ( $value - $max ) > self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'max', '%s must be at most %d', $label, $max );

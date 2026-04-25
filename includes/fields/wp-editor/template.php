@@ -8,6 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// wp_editor() handles escaping internally, so use raw getters.
 wp_editor(
 	$this->get_value(),
 	$this->get_field_id(),

@@ -89,6 +89,11 @@ class Renderer {
 			throw new \InvalidArgumentException( 'Renderer config must include form_prefix string' );
 		}
 
+		// Validate entity type.
+		if ( isset( $config['entity'] ) && null !== $config['entity'] && ! is_object( $config['entity'] ) ) {
+			throw new \InvalidArgumentException( 'Renderer config entity must be object or null' );
+		}
+
 		// Validate schema structure.
 		foreach ( $config['schema'] as $field_name => $field_config ) {
 			if ( ! is_string( $field_name ) ) {
@@ -128,27 +133,32 @@ class Renderer {
 		// Buffer entire form output for better performance.
 		ob_start();
 
-		foreach ( $schema as $field_name => $field_config ) {
-			$grid_is_open = $this->render_field(
-				$field_name,
-				$field_config,
-				$entity,
-				$form_prefix,
-				$template_base,
-				$grid_is_open
-			);
-		}
+		try {
+			foreach ( $schema as $field_name => $field_config ) {
+				$grid_is_open = $this->render_field(
+					$field_name,
+					$field_config,
+					$entity,
+					$form_prefix,
+					$template_base,
+					$grid_is_open
+				);
+			}
 
-		if ( $grid_is_open ) {
-			$this->maybe_trigger_error(
-				'Grid was not explicitly closed in schema. Auto-closing grid.',
-				E_USER_NOTICE
-			);
-			$this->close_grid();
-		}
+			if ( $grid_is_open ) {
+				$this->maybe_trigger_error(
+					'Grid was not explicitly closed in schema. Auto-closing grid.',
+					E_USER_NOTICE
+				);
+				$this->close_grid();
+			}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Field templates handle escaping.
-		echo ob_get_clean();
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Field templates handle escaping.
+			echo ob_get_clean();
+		} catch ( \Exception $e ) {
+			ob_end_clean();
+			throw $e;
+		}
 	}
 
 	/**

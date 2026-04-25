@@ -72,18 +72,23 @@ trait Value_Resolver {
 	 *
 	 * @param callable $callback Callback to execute.
 	 * @param string   $error_prefix Error message prefix.
-	 * @param mixed    $fallback Fallback value on error.
-	 * @return mixed Result of callback or fallback.
+	 * @param mixed    $fallback Fallback value on error (unused, kept for signature compatibility).
+	 * @return mixed Result of callback.
+	 * @throws \RuntimeException If callback execution fails.
 	 */
 	private function execute_with_error_handling( callable $callback, string $error_prefix, $fallback = null ): mixed {
 		try {
 			return $callback();
 		} catch ( \Throwable $e ) {
-			$this->maybe_trigger_error(
-				sprintf( '%s: %s', $error_prefix, esc_html( $e->getMessage() ) ),
-				E_USER_WARNING
+			throw new \RuntimeException(
+				sprintf(
+					'%s: %s',
+					$error_prefix,
+					$e->getMessage()
+				),
+				0,
+				$e
 			);
-			return $fallback;
 		}
 	}
 }

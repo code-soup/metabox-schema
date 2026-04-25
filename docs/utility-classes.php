@@ -43,7 +43,6 @@ echo 'DEFAULT_WRAPPER: ' . Constants::DEFAULT_WRAPPER . "\n";
 echo 'DEFAULT_ROWS: ' . Constants::DEFAULT_ROWS . "\n";
 echo 'DEFAULT_GRID_CLASS: ' . Constants::DEFAULT_GRID_CLASS . "\n";
 echo 'DEFAULT_DATE_FORMAT: ' . Constants::DEFAULT_DATE_FORMAT . "\n";
-echo 'FORM_PREFIX_DELIMITER: ' . Constants::FORM_PREFIX_DELIMITER . "\n";
 echo '</pre>';
 
 echo '<h3>Valid Wrapper Tags:</h3>';

@@ -13,7 +13,7 @@ $label = $this->get_label();
 if ( $label ) {
 	printf(
 		'<label for="%s">%s</label>',
-		$this->get_field_id(),
-		$label
+		$this->get_escaped_field_id(),
+		$this->get_escaped_label()
 	);
 }

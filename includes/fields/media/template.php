@@ -8,8 +8,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$field_id           = $this->get_field_id();
-$field_name         = $this->get_field_name();
+$field_id           = $this->get_escaped_field_id();
+$field_name         = $this->get_escaped_field_name();
 $value              = $this->get_escaped_value();
 $button_text        = $this->get_button_text();
 $change_button_text = $this->get_change_button_text();
@@ -19,7 +19,7 @@ $remove_button_text = $this->get_remove_button_text();
 
 <div
 	class="media-field-wrapper"
-	data-field-id="<?php echo esc_attr( $field_id ); ?>"
+	data-field-id="<?php echo $field_id; ?>"
 	data-has-media="<?php echo $value ? 'true' : 'false'; ?>"
 	data-media-type="<?php echo esc_attr( $this->get_media_type() ); ?>"
 	data-media-library-title="<?php echo esc_attr( $this->get_media_library_title() ); ?>"
@@ -30,9 +30,9 @@ $remove_button_text = $this->get_remove_button_text();
 >
 	<input
 		type="hidden"
-		id="<?php echo esc_attr( $field_id ); ?>"
-		name="<?php echo esc_attr( $field_name ); ?>"
-		value="<?php echo esc_attr( $value ); ?>"
+		id="<?php echo $field_id; ?>"
+		name="<?php echo $field_name; ?>"
+		value="<?php echo $value; ?>"
 	/>
 
 	<div

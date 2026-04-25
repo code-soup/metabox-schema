@@ -46,7 +46,7 @@ class Config_Sanitizer {
 		$sanitized = $config;
 
 		foreach ( self::SANITIZATION_RULES as $key => $callback ) {
-			if ( isset( $sanitized[ $key ] ) ) {
+			if ( isset( $sanitized[ $key ] ) && function_exists( $callback ) ) {
 				$sanitized[ $key ] = $callback( $sanitized[ $key ] );
 			}
 		}

@@ -71,26 +71,30 @@ abstract class Abstract_Field {
 		$this->validate_string_config( $config['name'], 'Field name' );
 		$this->validate_string_config( $config['form_prefix'], 'Form prefix' );
 
-		// Validate field name format.
-		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $config['name'] ) ) {
+		// Validate field name format matches sanitize_key() expectations.
+		$sanitized_name = sanitize_key( $config['name'] );
+		if ( $sanitized_name !== $config['name'] ) {
 			throw new \InvalidArgumentException(
 				sprintf(
-					'Field name "%s" contains invalid characters. Use only alphanumeric, hyphens, and underscores.',
-					$config['name'] // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					'Field name "%s" contains invalid characters. Use lowercase alphanumeric and underscores only (sanitized would be: "%s").',
+					$config['name'], // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					$sanitized_name // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
 				)
 			);
 		}
 
-		// Validate form_prefix format.
+		// Validate form_prefix format matches sanitize_key() expectations.
 		if ( empty( trim( $config['form_prefix'] ) ) ) {
 			throw new \InvalidArgumentException( 'Form prefix cannot be empty' );
 		}
 
-		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $config['form_prefix'] ) ) {
+		$sanitized_prefix = sanitize_key( $config['form_prefix'] );
+		if ( $sanitized_prefix !== $config['form_prefix'] ) {
 			throw new \InvalidArgumentException(
 				sprintf(
-					'Form prefix "%s" contains invalid characters. Use only alphanumeric, hyphens, and underscores.',
-					$config['form_prefix'] // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					'Form prefix "%s" contains invalid characters. Use lowercase alphanumeric and underscores only (sanitized would be: "%s").',
+					$config['form_prefix'], // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
+					$sanitized_prefix // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception for developers.
 				)
 			);
 		}
@@ -227,6 +231,7 @@ abstract class Abstract_Field {
 	 * Render template file.
 	 *
 	 * @param string $template_name Template name.
+	 * @throws \RuntimeException If template file fails to render.
 	 */
 	protected function render_template( string $template_name ): void {
 		$template_path = $this->get_template_path( $template_name );
@@ -234,8 +239,15 @@ abstract class Abstract_Field {
 			try {
 				require $template_path;
 			} catch ( \Throwable $e ) {
-				$this->maybe_output_debug_comment(
-					sprintf( 'Template error in %s: %s', $template_name, $e->getMessage() )
+				throw new \RuntimeException(
+					sprintf(
+						'Template rendering failed for "%s". Check template file: %s. Original error: %s',
+						$template_name,
+						$template_path,
+						$e->getMessage()
+					),
+					0,
+					$e
 				);
 			}
 		}
@@ -315,12 +327,30 @@ abstract class Abstract_Field {
 	}
 
 	/**
+	 * Get escaped field ID for output.
+	 *
+	 * @return string Escaped field ID.
+	 */
+	public function get_escaped_field_id(): string {
+		return esc_attr( $this->field_id );
+	}
+
+	/**
 	 * Get field name attribute.
 	 *
 	 * @return string Field name.
 	 */
 	public function get_field_name(): string {
 		return $this->field_name_attr;
+	}
+
+	/**
+	 * Get escaped field name for output.
+	 *
+	 * @return string Escaped field name.
+	 */
+	public function get_escaped_field_name(): string {
+		return esc_attr( $this->field_name_attr );
 	}
 
 	/**
@@ -339,6 +369,15 @@ abstract class Abstract_Field {
 	 */
 	public function get_label(): string {
 		return $this->config['label'] ?? '';
+	}
+
+	/**
+	 * Get escaped field label for output.
+	 *
+	 * @return string Escaped field label.
+	 */
+	public function get_escaped_label(): string {
+		return esc_html( $this->config['label'] ?? '' );
 	}
 
 	/**

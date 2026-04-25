@@ -28,6 +28,13 @@ class Media_Field extends Abstract_Field {
 	private static bool $assets_enqueued = false;
 
 	/**
+	 * Cached package version.
+	 *
+	 * @var string|null
+	 */
+	private static ?string $cached_version = null;
+
+	/**
 	 * Enqueue assets for media field.
 	 */
 	public function __construct( array $config ) {
@@ -126,16 +133,23 @@ class Media_Field extends Abstract_Field {
 			return METABOX_SCHEMA_VERSION;
 		}
 
+		// Return cached version if already loaded.
+		if ( null !== self::$cached_version ) {
+			return self::$cached_version;
+		}
+
 		// Try to read from composer.json.
 		$composer_file = dirname( __DIR__, 3 ) . '/composer.json';
 		if ( file_exists( $composer_file ) ) {
 			$composer_data = json_decode( file_get_contents( $composer_file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local file, not remote URL.
 			if ( isset( $composer_data['version'] ) ) {
-				return $composer_data['version'];
+				self::$cached_version = $composer_data['version'];
+				return self::$cached_version;
 			}
 		}
 
-		return '1.0.0';
+		self::$cached_version = '1.0.0';
+		return self::$cached_version;
 	}
 
 	/**
