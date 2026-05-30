@@ -254,33 +254,57 @@ class Validator {
 	 * @param string $type  Field type.
 	 * @return mixed Sanitized value.
 	 */
-	protected function sanitize_by_type( $value, string $type ): mixed {
-		switch ( $type ) {
-			case 'number':
-				if ( ! is_numeric( $value ) ) {
-					return $value;
-				}
+	protected function sanitize_by_type($value, string $type): mixed
+    {
+        switch ($type) {
+            case 'number':
+                if (!is_numeric($value)) {
+                    return $value;
+                }
+                // Preserve integer type when possible.
+                if ((string) (int) $value === (string) $value) {
+                    return (int) $value;
+                }
+                return (float) $value;
+            case 'email':
+                return sanitize_email($value);
+            case 'url':
+                return esc_url_raw($value);
+            case 'textarea':
+                return sanitize_textarea_field($value);
+            default:
+                /**
+                 * Filter sanitization for non-standard field types.
+                 *
+                 * Allows custom sanitization for field types not explicitly handled
+                 * by the validator (e.g., custom field types like checkbox_group).
+                 *
+                 * @param mixed|null $filtered_value Sanitized value. Return non-null to override default.
+                 * @param mixed      $value          Original unsanitized value.
+                 * @param string     $type           Field type.
+                 * @return mixed Sanitized value.
+                 */
+                $filtered_value = apply_filters(
+                    'codesoup_metabox_schema_sanitize_default',
+                    null,
+                    $value,
+                    $type
+                );
 
-				// Preserve integer type when possible.
-				if ( (string) (int) $value === (string) $value ) {
-					return (int) $value;
-				}
+                // If filter returned non-null value, use it.
+                if (null !== $filtered_value) {
+                    return $filtered_value;
+                }
 
-				return (float) $value;
+                // Handle arrays (e.g., checkbox groups, multi-selects).
+                if (is_array($value)) {
+                    return array_map('sanitize_text_field', $value);
+                }
 
-			case 'email':
-				return sanitize_email( $value );
-
-			case 'url':
-				return esc_url_raw( $value );
-
-			case 'textarea':
-				return sanitize_textarea_field( $value );
-
-			default:
-				return sanitize_text_field( trim( (string) $value ) );
-		}
-	}
+                // Scalar values.
+                return sanitize_text_field(trim((string) $value));
+        }
+    }
 
 	/**
 	 * Check if value has validation errors.

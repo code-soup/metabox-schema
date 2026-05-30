@@ -220,9 +220,8 @@ abstract class Abstract_Field {
 		}
 
 		$entity = $this->config['entity'] ?? null;
-
-		$value = $this->resolve_callable( $value );
-		$value = $this->resolve_entity_method( $value, $entity );
+		$value  = $this->resolve_entity_method( $value, $entity );
+		$value  = $this->resolve_callable( $value );
 
 		return $value;
 	}

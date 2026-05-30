@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-30
+
+### Added
+
+- Checkbox group field type with multiple selection support
+- `codesoup_metabox_schema_sanitize_default` filter for custom field type sanitization
+
+### Fixed
+
+- Entity method resolution now takes precedence over callable resolution
+  - When field value is a string like 'get_post_types', entity method resolution occurs before callable resolution
+  - Prevents conflicts when a global function exists with the same name as an entity method
+  - Ensures entity methods (e.g., `$entity->get_post_types()`) take precedence over global functions (e.g., WordPress core's `get_post_types()`)
+
 ## [1.1.0] - 2026-XX-XX
 
 ### BREAKING CHANGES
