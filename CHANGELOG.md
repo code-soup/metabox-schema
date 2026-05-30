@@ -15,11 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Entity method resolution now takes precedence over callable resolution
-  - When field value is a string like 'get_post_types', entity method resolution occurs before callable resolution
-  - Prevents conflicts when a global function exists with the same name as an entity method
-  - Ensures entity methods (e.g., `$entity->get_post_types()`) take precedence over global functions (e.g., WordPress core's `get_post_types()`)
+- When field value is a string like 'get_post_types', entity method resolution occurs before callable resolution
+- Prevents conflicts when a global function exists with the same name as an entity method
+- Ensures entity methods (e.g., `$entity->get_post_types()`) take precedence over global functions (e.g., WordPress core's `get_post_types()`)
 
-## [1.1.0] - 2026-XX-XX
+## [1.1.0] - 2026-04-25
 
 ### BREAKING CHANGES
 
@@ -31,6 +31,7 @@ After: `$renderer->register_field_type()` (instance, isolated)
 Why: Prevents plugin conflicts. Static registry = last registration wins.
 
 Migration:
+
 ```php
 // Old
 Field_Factory::register_field_type( 'type', Class::class );

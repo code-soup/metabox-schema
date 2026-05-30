@@ -12,14 +12,15 @@ declare( strict_types=1 );
 
 namespace CodeSoup\MetaboxSchema;
 
-use CodeSoup\MetaboxSchema\Fields\Input_Field;
-use CodeSoup\MetaboxSchema\Fields\Textarea_Field;
-use CodeSoup\MetaboxSchema\Fields\Select_Field;
-use CodeSoup\MetaboxSchema\Fields\Media_Field;
-use CodeSoup\MetaboxSchema\Fields\WP_Editor_Field;
-use CodeSoup\MetaboxSchema\Fields\HTML_Field;
-use CodeSoup\MetaboxSchema\Fields\Label_Field;
+use CodeSoup\MetaboxSchema\Fields\Checkbox_Group_Field;
 use CodeSoup\MetaboxSchema\Fields\Help_Field;
+use CodeSoup\MetaboxSchema\Fields\HTML_Field;
+use CodeSoup\MetaboxSchema\Fields\Input_Field;
+use CodeSoup\MetaboxSchema\Fields\Label_Field;
+use CodeSoup\MetaboxSchema\Fields\Media_Field;
+use CodeSoup\MetaboxSchema\Fields\Select_Field;
+use CodeSoup\MetaboxSchema\Fields\Textarea_Field;
+use CodeSoup\MetaboxSchema\Fields\WP_Editor_Field;
 
 /**
  * Field Factory Class.
@@ -34,22 +35,23 @@ class Field_Factory {
 	 * @var array<string, string>
 	 */
 	private const FIELD_TYPE_MAP = array(
-		'text'      => Input_Field::class,
-		'email'     => Input_Field::class,
-		'url'       => Input_Field::class,
-		'number'    => Input_Field::class,
-		'date'      => Input_Field::class,
-		'password'  => Input_Field::class,
-		'tel'       => Input_Field::class,
-		'color'     => Input_Field::class,
-		'range'     => Input_Field::class,
-		'textarea'  => Textarea_Field::class,
-		'select'    => Select_Field::class,
-		'media'     => Media_Field::class,
-		'wp_editor' => WP_Editor_Field::class,
-		'html'      => HTML_Field::class,
-		'label'     => Label_Field::class,
-		'help'      => Help_Field::class,
+		'checkbox_group' => Checkbox_Group_Field::class,
+		'color'          => Input_Field::class,
+		'date'           => Input_Field::class,
+		'email'          => Input_Field::class,
+		'help'           => Help_Field::class,
+		'html'           => HTML_Field::class,
+		'label'          => Label_Field::class,
+		'media'          => Media_Field::class,
+		'number'         => Input_Field::class,
+		'password'       => Input_Field::class,
+		'range'          => Input_Field::class,
+		'select'         => Select_Field::class,
+		'tel'            => Input_Field::class,
+		'text'           => Input_Field::class,
+		'textarea'       => Textarea_Field::class,
+		'url'            => Input_Field::class,
+		'wp_editor'      => WP_Editor_Field::class,
 	);
 
 
