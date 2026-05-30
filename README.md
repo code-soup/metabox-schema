@@ -11,7 +11,7 @@ Schema-driven form generator system for WordPress developers. Define fields as P
 
 ## Key Features
 
-- 15+ field types included
+- 16+ field types included
 - Custom field type registration support
 - Template override (global, per-type, per-field)
 - Extensible validation and rendering
@@ -108,6 +108,7 @@ $schema = [
 
 - `textarea` - Multi-line text input
 - `select` - Dropdown with options
+- `checkbox_group` - Multiple checkbox options
 - `wp_editor` - WordPress rich text editor
 - `media` - WordPress media library picker
 
