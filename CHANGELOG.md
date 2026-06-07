@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-06-07
+
+### Added
+
+- **Wrapper ID Generation**: All field wrappers now have auto-generated ID in format `{field-id}-wrap`
+- **Custom Wrapper Classes**: New `wrapper_class` field option (supports string or array)
+- **Automatic Required Class**: Wrapper automatically gets CSS class when field is required
+  - Default class: `has-required`
+  - Configurable via `required_class` field option
+  - Global override via `default_required_class` in Renderer config
+- **Help Text Position Control**: New `help_position` field option
+  - Values: `'before'` (between label and field) or `'after'` (after field, default)
+  - Global override via `default_help_position` in Renderer config
+- **Field-Level Filters**: New WordPress filters for per-field customization
+  - `codesoup_metabox_field_required_class` - Filter required class per field
+  - `codesoup_metabox_field_help_position` - Filter help position per field
+- **New Constants**:
+  - `DEFAULT_REQUIRED_CLASS = 'has-required'`
+  - `DEFAULT_HELP_POSITION = 'after'`
+  - `VALID_HELP_POSITIONS = ['before', 'after']`
+- **New Field Methods**:
+  - `get_wrapper_id()` - Returns wrapper element ID
+  - `get_wrapper_class()` - Returns combined wrapper CSS classes
+  - `get_required_class()` - Returns required class name (with filter support)
+  - `get_help_position()` - Returns help text position (with filter support)
+
+### Changed
+
+- Wrapper elements now output `id` and `class` attributes
+- Help text rendering now respects `help_position` configuration
+- Config sanitizer now handles `wrapper_class`, `required_class`, and `help_position`
+- **Architecture**: Global defaults no longer mutate schema array
+  - Defaults passed through field config instead
+  - Fields resolve defaults via getter methods with fallback chain
+  - Improved memory efficiency and eliminated side effects
+
+### Documentation
+
+- Added `docs/wrapper-features-summary.md` - Complete implementation guide
+- Added `docs/wrapper-features-examples.md` - Usage examples
+- Updated README with wrapper features and filter examples
+- Updated all skills documentation
+- Updated `docs/extend-renderer.php` example
+
 ## [1.2.0] - 2026-05-30
 
 ### Added
