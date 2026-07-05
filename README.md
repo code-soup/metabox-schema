@@ -93,7 +93,10 @@ $schema = [
             'data-custom' => 'value',
             'data-validate' => 'true'
         ],
-        'help' => 'Help text'
+        'help' => 'Help text',
+        'help_position' => 'after',
+        'wrapper_class' => 'field-wrapper',
+        'required_class' => 'mandatory'
     ]
 ];
 ```
@@ -127,9 +130,18 @@ $schema = [
 
 Custom error messages via `'errors'` array (see schema example above).
 
-### Field IDs and Attributes
+### Field IDs and Wrapper
 
-Each field automatically gets an ID in format `form-prefix-field-name`. Use `attributes` array for CSS classes and data attributes. Note: `id` and `name` in attributes are ignored (auto-generated).
+**Auto-generated IDs:**
+- Field ID: `form-prefix-field-name`
+- Wrapper ID: `form-prefix-field-name-wrap`
+
+**Wrapper Classes:**
+- Custom classes via `wrapper_class` (string or array)
+- Auto-adds `has-required` class when `validation.required = true`
+- Configurable via `required_class` option
+
+Use `attributes` array for field-level CSS classes and data attributes. Note: `id` and `name` in attributes are ignored (auto-generated).
 
 ### Value Resolution
 
@@ -170,17 +182,59 @@ $schema['bio']['template_path'] = __DIR__ . '/templates/textarea/custom.php';
 
 See `docs/custom-templates.php` and `docs/templates/` for details.
 
+## Filters
+
+The package provides field-level filters for customizing behavior:
+
+### Filter Required Class
+
+```php
+add_filter('codesoup_metabox_field_required_class', function($class, $field_name, $config) {
+    // Override required class for specific fields
+    if ($field_name === 'critical_field') {
+        return 'mandatory-field';
+    }
+    return $class;
+}, 10, 3);
+```
+
+### Filter Help Position
+
+```php
+add_filter('codesoup_metabox_field_help_position', function($position, $field_name, $config) {
+    // Show help before all textarea fields
+    if ($config['type'] === 'textarea') {
+        return 'before';
+    }
+    return $position;
+}, 10, 3);
+```
+
+### Filter Sanitization
+
+```php
+add_filter('codesoup_metabox_schema_sanitize_default', function($filtered, $value, $type) {
+    // Custom sanitization for custom field types
+    if ($type === 'my_custom_type') {
+        return sanitize_text_field($value);
+    }
+    return $filtered;
+}, 10, 3);
+```
+
 ## API Reference
 
 ### Renderer
 
 ```php
 Renderer::render([
-    'schema' => $schema,        // Required
-    'form_prefix' => 'my_form', // Required
-    'entity' => $object,        // Optional
-    'values' => $array,         // Optional
-    'template_base' => $path    // Optional
+    'schema' => $schema,                     // Required
+    'form_prefix' => 'my_form',              // Required
+    'entity' => $object,                     // Optional
+    'values' => $array,                      // Optional
+    'template_base' => $path,                // Optional
+    'default_required_class' => 'is-required', // Optional (default: 'has-required')
+    'default_help_position' => 'before'      // Optional (default: 'after')
 ]);
 ```
 

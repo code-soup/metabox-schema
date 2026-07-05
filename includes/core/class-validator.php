@@ -577,7 +577,17 @@ class Validator {
 	protected function validate_date_format( $value, string $label, array $errors, string $format = Constants::DEFAULT_DATE_FORMAT ): string|bool {
 		$date = \DateTime::createFromFormat( $format, $value );
 
-		if ( false === $date || $date->format( $format ) !== $value ) {
+		if ( false === $date ) {
+			return $this->get_error_message(
+				$errors,
+				'format',
+				'%s must be a valid date in %s format',
+				$label,
+				$format
+			);
+		}
+
+		if ( $date->format( $format ) !== $value ) {
 			return $this->get_error_message(
 				$errors,
 				'format',

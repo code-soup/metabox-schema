@@ -54,8 +54,6 @@ class Field_Factory {
 		'wp_editor'      => WP_Editor_Field::class,
 	);
 
-
-
 	/**
 	 * Create a field instance.
 	 *
