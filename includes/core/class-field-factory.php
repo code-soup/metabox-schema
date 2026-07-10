@@ -12,12 +12,14 @@ declare( strict_types=1 );
 
 namespace CodeSoup\MetaboxSchema;
 
+use CodeSoup\MetaboxSchema\Fields\Checkbox_Field;
 use CodeSoup\MetaboxSchema\Fields\Checkbox_Group_Field;
 use CodeSoup\MetaboxSchema\Fields\Help_Field;
 use CodeSoup\MetaboxSchema\Fields\HTML_Field;
 use CodeSoup\MetaboxSchema\Fields\Input_Field;
 use CodeSoup\MetaboxSchema\Fields\Label_Field;
 use CodeSoup\MetaboxSchema\Fields\Media_Field;
+use CodeSoup\MetaboxSchema\Fields\Radio_Field;
 use CodeSoup\MetaboxSchema\Fields\Select_Field;
 use CodeSoup\MetaboxSchema\Fields\Textarea_Field;
 use CodeSoup\MetaboxSchema\Fields\WP_Editor_Field;
@@ -35,6 +37,7 @@ class Field_Factory {
 	 * @var array<string, string>
 	 */
 	private const FIELD_TYPE_MAP = array(
+		'checkbox'       => Checkbox_Field::class,
 		'checkbox_group' => Checkbox_Group_Field::class,
 		'color'          => Input_Field::class,
 		'date'           => Input_Field::class,
@@ -45,6 +48,7 @@ class Field_Factory {
 		'media'          => Media_Field::class,
 		'number'         => Input_Field::class,
 		'password'       => Input_Field::class,
+		'radio'          => Radio_Field::class,
 		'range'          => Input_Field::class,
 		'select'         => Select_Field::class,
 		'tel'            => Input_Field::class,

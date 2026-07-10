@@ -369,7 +369,7 @@ class Validator {
 			}
 		}
 
-		if ( 'select' === $type && ! empty( $context['options'] ) ) {
+		if ( ( 'select' === $type || 'radio' === $type ) && ! empty( $context['options'] ) ) {
 			$result = $this->validate_options( $value, $context['options'], $label, $errors );
 			if ( true !== $result ) {
 				return $result;
