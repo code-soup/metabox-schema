@@ -184,6 +184,11 @@ class Checkbox_Group_Field extends Abstract_Field {
 	 * @return bool True if selected.
 	 */
 	public function is_checked( string $option_value ): bool {
-		return in_array( $option_value, $this->get_value(), true );
+		$selected = array_map(
+			static fn( $value ): string => (string) $value,
+			$this->get_value()
+		);
+
+		return in_array( $option_value, $selected, true );
 	}
 }

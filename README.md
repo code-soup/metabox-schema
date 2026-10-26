@@ -111,6 +111,8 @@ $schema = [
 
 - `textarea` - Multi-line text input
 - `select` - Dropdown with options
+- `radio` - Single selection from inline options
+- `checkbox` - Single yes/no or agreement checkbox
 - `checkbox_group` - Multiple checkbox options
 - `wp_editor` - WordPress rich text editor
 - `media` - WordPress media library picker
