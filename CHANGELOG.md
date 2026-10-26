@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `get_help_position()` - Returns help text position (with filter support)
 - **Radio field** (`radio`) - Single selection from inline options with option allowlist validation
 - **Checkbox field** (`checkbox`) - Single yes/no or agreement checkbox
+- **WordPress plugin distribution**: `metabox-schema.php` bootstrap, `readme.txt` (Requires/Tested/Stable tag), `METABOX_SCHEMA_VERSION` constant
 
 ### Changed
 
