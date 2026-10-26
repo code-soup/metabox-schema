@@ -11,7 +11,7 @@
  * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
- * Tested up to:      6.8
+ * Tested up to:      7.1
  * Author:            Code Soup
  * Author URI:        https://codesoup.co
  * License:           MIT
