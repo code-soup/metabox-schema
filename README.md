@@ -21,9 +21,13 @@ Schema-driven form generator system for WordPress developers. Define fields as P
 
 ## Installation
 
+**Composer (theme or plugin dependency):**
+
 ```bash
 composer require codesoup/metabox-schema
 ```
+
+**WordPress plugin:** copy this repository into `wp-content/plugins/metabox-schema`, run `composer install --no-dev`, and activate **Metabox Schema**. See `readme.txt` for WordPress.org-style metadata (`Requires at least`, `Tested up to`, etc.).
 
 ## Quick Start
 
@@ -356,7 +360,9 @@ $renderer->render_fields([
 ## Requirements
 
 - PHP 8.1+
-- WordPress 5.0+ (for escaping functions, wp_editor, and media library)
+- WordPress 6.0+ (for escaping functions, `wp_editor`, and media library)
+
+Release versions are kept in sync across `metabox-schema.php`, `readme.txt`, and `composer.json` — see `docs/release-version-sync.md`.
 
 ## Agent Skills
 
