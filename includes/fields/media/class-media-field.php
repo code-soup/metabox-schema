@@ -94,28 +94,28 @@ class Media_Field extends Abstract_Field {
 	 * @return string Asset URL.
 	 */
 	protected function get_asset_url( string $file_path ): string {
-		$dir_path = dirname( $file_path );
+		$dir_path = wp_normalize_path( dirname( $file_path ) );
 
 		// Try to detect if in plugin context.
-		if ( defined( 'WP_PLUGIN_DIR' ) && str_contains( $dir_path, WP_PLUGIN_DIR ) ) {
+		if ( defined( 'WP_PLUGIN_DIR' ) && str_contains( $dir_path, wp_normalize_path( WP_PLUGIN_DIR ) ) ) {
 			return plugins_url( '', $file_path );
 		}
 
 		// Try to detect if in theme context.
-		if ( defined( 'WP_CONTENT_DIR' ) && str_contains( $dir_path, get_template_directory() ) ) {
-			$relative = str_replace( get_template_directory(), '', $dir_path );
+		if ( defined( 'WP_CONTENT_DIR' ) && str_contains( $dir_path, wp_normalize_path( get_template_directory() ) ) ) {
+			$relative = str_replace( wp_normalize_path( get_template_directory() ), '', $dir_path );
 			return get_template_directory_uri() . $relative;
 		}
 
 		// Try to detect if in child theme context.
-		if ( defined( 'WP_CONTENT_DIR' ) && get_stylesheet_directory() !== get_template_directory() && str_contains( $dir_path, get_stylesheet_directory() ) ) {
-			$relative = str_replace( get_stylesheet_directory(), '', $dir_path );
+		if ( defined( 'WP_CONTENT_DIR' ) && get_stylesheet_directory() !== get_template_directory() && str_contains( $dir_path, wp_normalize_path( get_stylesheet_directory() ) ) ) {
+			$relative = str_replace( wp_normalize_path( get_stylesheet_directory() ), '', $dir_path );
 			return get_stylesheet_directory_uri() . $relative;
 		}
 
 		// Fallback: convert absolute path to URL via wp-content.
-		if ( defined( 'WP_CONTENT_DIR' ) && str_contains( $dir_path, WP_CONTENT_DIR ) ) {
-			$relative = str_replace( WP_CONTENT_DIR, '', $dir_path );
+		if ( defined( 'WP_CONTENT_DIR' ) && str_contains( $dir_path, wp_normalize_path( WP_CONTENT_DIR ) ) ) {
+			$relative = str_replace( wp_normalize_path( WP_CONTENT_DIR ), '', $dir_path );
 			return content_url( $relative );
 		}
 

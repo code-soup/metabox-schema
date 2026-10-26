@@ -60,7 +60,7 @@ class Validator {
 			$value   = $data[ $field_name ] ?? null;
 
 			if ( $this->is_empty_value( $value ) ) {
-				$validated[ $field_name ] = $this->handle_empty_value( $field_name, $context );
+				$validated[ $field_name ] = $this->handle_empty_value( $field_name, $context, $field_config );
 				continue;
 			}
 
@@ -131,29 +131,34 @@ class Validator {
 	/**
 	 * Check if value is considered empty.
 	 *
-	 * Treats null and empty string as empty, but allows 0, '0', and boolean false.
+	 * Treats null, empty string, and empty arrays as empty, but allows 0, '0', and boolean false.
 	 * Boolean false is valid for checkbox/toggle fields when unchecked.
 	 *
 	 * @param mixed $value Value to check.
 	 * @return bool True if empty, false otherwise.
 	 */
 	protected function is_empty_value( $value ): bool {
-		return null === $value || '' === $value;
+		if ( null === $value || '' === $value ) {
+			return true;
+		}
+
+		return is_array( $value ) && array() === $value;
 	}
 
 	/**
 	 * Handle empty value validation.
 	 *
-	 * @param string $field_name Field name.
-	 * @param array  $context    Field context.
-	 * @return mixed Default value or empty string.
+	 * @param string $field_name   Field name.
+	 * @param array  $context      Field context.
+	 * @param array  $field_config Field configuration.
+	 * @return mixed Resolved default value.
 	 */
-	protected function handle_empty_value( string $field_name, array $context ) {
+	protected function handle_empty_value( string $field_name, array $context, array $field_config ) {
 		if ( $context['is_required'] ) {
 			$this->errors[ $field_name ] = $this->get_required_error( $context );
 		}
 
-		return $this->resolve_default( array( 'default' => '' ) );
+		return $this->resolve_default( $field_config );
 	}
 
 	/**
@@ -369,8 +374,15 @@ class Validator {
 			}
 		}
 
-		if ( 'select' === $type && ! empty( $context['options'] ) ) {
+		if ( ( 'select' === $type || 'radio' === $type ) && ! empty( $context['options'] ) ) {
 			$result = $this->validate_options( $value, $context['options'], $label, $errors );
+			if ( true !== $result ) {
+				return $result;
+			}
+		}
+
+		if ( 'checkbox_group' === $type && ! empty( $context['options'] ) ) {
+			$result = $this->validate_checkbox_group_options( $value, $context['options'], $label, $errors );
 			if ( true !== $result ) {
 				return $result;
 			}
@@ -401,6 +413,10 @@ class Validator {
 			if ( ( $value - $min ) < -self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'min', '%s must be at least %d', $label, $min );
 			}
+		} elseif ( 'checkbox_group' === $type && is_array( $value ) ) {
+			if ( count( $value ) < $min ) {
+				return $this->get_error_message( $errors, 'min', '%s must have at least %d selections', $label, $min );
+			}
 		} elseif ( strlen( (string) $value ) < $min ) {
 			return $this->get_error_message( $errors, 'min', '%s must be at least %d characters', $label, $min );
 		}
@@ -422,6 +438,10 @@ class Validator {
 		if ( 'number' === $type ) {
 			if ( ( $value - $max ) > self::FLOAT_EPSILON ) {
 				return $this->get_error_message( $errors, 'max', '%s must be at most %d', $label, $max );
+			}
+		} elseif ( 'checkbox_group' === $type && is_array( $value ) ) {
+			if ( count( $value ) > $max ) {
+				return $this->get_error_message( $errors, 'max', '%s must have at most %d selections', $label, $max );
 			}
 		} elseif ( strlen( (string) $value ) > $max ) {
 			return $this->get_error_message( $errors, 'max', '%s must be at most %d characters', $label, $max );
@@ -483,6 +503,30 @@ class Validator {
 
 		if ( ! $found ) {
 			return $this->get_error_message( $errors, 'options', '%s must be one of the available options', $label );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate checkbox group selections against available options.
+	 *
+	 * @param mixed  $value   Value to validate (array of selected option keys).
+	 * @param array  $options Available options.
+	 * @param string $label   Field label.
+	 * @param array  $errors  Custom error messages.
+	 * @return string|bool True if valid, error message if invalid.
+	 */
+	protected function validate_checkbox_group_options( $value, array $options, string $label, array $errors ): string|bool {
+		if ( ! is_array( $value ) ) {
+			return $this->validate_options( $value, $options, $label, $errors );
+		}
+
+		foreach ( $value as $selected ) {
+			$result = $this->validate_options( $selected, $options, $label, $errors );
+			if ( true !== $result ) {
+				return $result;
+			}
 		}
 
 		return true;
@@ -577,7 +621,17 @@ class Validator {
 	protected function validate_date_format( $value, string $label, array $errors, string $format = Constants::DEFAULT_DATE_FORMAT ): string|bool {
 		$date = \DateTime::createFromFormat( $format, $value );
 
-		if ( false === $date || $date->format( $format ) !== $value ) {
+		if ( false === $date ) {
+			return $this->get_error_message(
+				$errors,
+				'format',
+				'%s must be a valid date in %s format',
+				$label,
+				$format
+			);
+		}
+
+		if ( $date->format( $format ) !== $value ) {
 			return $this->get_error_message(
 				$errors,
 				'format',
