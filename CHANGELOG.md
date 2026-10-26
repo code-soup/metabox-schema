@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `get_wrapper_class()` - Returns combined wrapper CSS classes
     - `get_required_class()` - Returns required class name (with filter support)
     - `get_help_position()` - Returns help text position (with filter support)
+- **Radio field** (`radio`) - Single selection from inline options with option allowlist validation
+- **Checkbox field** (`checkbox`) - Single yes/no or agreement checkbox
+- **WordPress plugin distribution**: `metabox-schema.php` bootstrap, `readme.txt` (Requires/Tested/Stable tag), `METABOX_SCHEMA_VERSION` constant
 
 ### Changed
 
@@ -42,11 +45,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Fields resolve defaults via getter methods with fallback chain
     - Improved memory efficiency and eliminated side effects
 
+### Fixed
+
+- Optional fields with empty POST values now resolve schema `default` (including callables) instead of always returning an empty string
+- `required` validation treats empty arrays as empty (fixes required `checkbox_group` when no boxes are selected)
+- `checkbox_group` submitted values are validated against defined `options`
+- `min` / `max` on `checkbox_group` use selection count instead of string length
+- `label` and `help` display field types are excluded from validation
+- `checkbox_group` checked state normalizes stored values to strings for reliable comparison
+
 ### Documentation
 
 - Added `docs/wrapper-features-summary.md` - Complete implementation guide
 - Added `docs/wrapper-features-examples.md` - Usage examples
-- Updated README with wrapper features and filter examples
+- Added `docs/radio-checkbox-fields.md` and `docs/radio-checkbox-example.php`
+- Updated README with wrapper features, `radio` / `checkbox` field types, and filter examples
 - Updated all skills documentation
 - Updated `docs/extend-renderer.php` example
 

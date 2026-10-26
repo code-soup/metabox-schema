@@ -39,7 +39,7 @@ class Constants {
 	 *
 	 * @var array
 	 */
-	public const SKIP_VALIDATION_TYPES = array( 'html' );
+	public const SKIP_VALIDATION_TYPES = array( 'html', 'label', 'help' );
 
 	/**
 	 * Valid wrapper tag names.
