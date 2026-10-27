@@ -5,7 +5,7 @@ license: MIT
 location: includes/core/class-validator.php
 metadata:
     author: code-soup
-    version: "1.0"
+    version: "1.3"
     package: codesoup/metabox-schema
 ---
 
@@ -36,46 +36,69 @@ See `examples/basic-validation.md` for complete example.
 | Rule          | Type         | Description                                        |
 | ------------- | ------------ | -------------------------------------------------- |
 | `required`    | bool         | Field is required                                  |
-| `min`         | int\|float   | Minimum length (text) or value (number)            |
-| `max`         | int\|float   | Maximum length (text) or value (number)            |
+| `min`         | int\|float   | Min length (text), value (number), or selection count (`checkbox_group`) |
+| `max`         | int\|float   | Max length (text), value (number), or selection count (`checkbox_group`) |
 | `pattern`     | string       | Regular expression pattern                         |
-| `format`      | string       | Format validation: 'email', 'url', 'ip'            |
-| `date_format` | string       | Date format for date validation (default: 'Y-m-d') |
+| `format`      | string       | Format validation: `email`, `url`, `date` only   |
+| `date_format` | string       | PHP date format when `format` is `date` (default: `Y-m-d`) |
 | `validate`    | callable     | Custom validation callback                         |
+
+## Option allowlists
+
+When `options` is set, submitted values must be allowed keys:
+
+- **select** — single value
+- **radio** — single value
+- **checkbox_group** — each selected value in the POST array
+
+Nested optgroups in `select` options are supported (same as rendering).
+
+## Skipped field types
+
+No validation or sanitization pass for schema rows with type:
+
+- `html`
+- `label`
+- `help`
 
 ## Format Validation
 
-- **Email** - Uses WordPress `is_email()`
-- **URL** - Uses WordPress `wp_http_validate_url()`
-- **Date** - Uses strict `DateTime::createFromFormat()`
+- **email** — WordPress `is_email()`
+- **url** — WordPress `wp_http_validate_url()`
+- **date** — strict `DateTime::createFromFormat()` using `date_format` or `Constants::DEFAULT_DATE_FORMAT`
 
 ## Custom Validation
 
-See `examples/custom-validation.md` for examples of:
-- Custom validation callbacks
-- Custom error messages
-- Complex validation logic
+See `examples/custom-validation.md` for custom callbacks and error messages.
 
 ## Sanitization
 
-Automatic sanitization based on field type:
+Order: **sanitize first**, then validate.
 
-- **email** - `sanitize_email()`
-- **url** - `esc_url_raw()`
-- **textarea** - `sanitize_textarea_field()`
-- **text/other** - `sanitize_text_field()`
+By field type:
 
-Custom sanitization via `sanitize` config (single callback or array of callbacks).
+- **number** — numeric; integers preserved when exact
+- **email** — `sanitize_email()`
+- **url** — `esc_url_raw()`
+- **textarea** — `sanitize_textarea_field()`
+- **arrays** (e.g. checkbox_group) — `array_map( 'sanitize_text_field', … )`
+- **default** — `sanitize_text_field()`; custom types may use filter `codesoup_metabox_schema_sanitize_default`
+
+Custom sanitization via schema `sanitize` (single callable or array of callables).
+
+## Empty values
+
+Treated as empty: `null`, `''`, and empty arrays `[]`.
+
+Optional fields with empty input resolve schema **`default`** (including callables). Required fields record an error.
 
 ## Important Notes
 
-- Sanitization happens first, then validation (changed in v1.1.0)
-- Date validation is strict (exact format match required)
-- Custom validators should return `true` or error message string
-- Uses WordPress sanitization functions
-- Field names auto-formatted for error messages (via String_Formatter)
-- Method `validate_value()` renamed to `has_validation_errors()` (returns `?string` instead of `string|bool`)
-- Min/max validation now strictly checks for int/float types (prevents array/object injection)
+- `0` and `'0'` are **not** empty
+- Custom validators return `true` or an error message string
+- Extending: protected method `has_validation_errors()` (not `validate_value()`)
+- Min/max rule values must be int or float
+- POST data is usually keyed by field name inside `$_POST[ $form_prefix ]`, not raw `$_POST`
 
 ## See Also
 

@@ -4,7 +4,7 @@
 
 ```php
 use CodeSoup\MetaboxSchema\Fields\Input_Field;
-use CodeSoup\MetaboxSchema\Field_Factory;
+use CodeSoup\MetaboxSchema\Renderer;
 
 class Enhanced_Text_Field extends Input_Field {
 
@@ -33,8 +33,9 @@ class Enhanced_Text_Field extends Input_Field {
 ## Override Built-in Type
 
 ```php
-// Override built-in 'text' field type
-Field_Factory::register_field_type( 'text', Enhanced_Text_Field::class );
+$renderer = new Renderer();
+// Override built-in 'text' for this renderer instance only
+$renderer->register_field_type( 'text', Enhanced_Text_Field::class );
 ```
 
 ## Use in Schema

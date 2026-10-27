@@ -4,7 +4,6 @@
 
 ```php
 use CodeSoup\MetaboxSchema\Abstract_Field;
-use CodeSoup\MetaboxSchema\Field_Factory;
 
 class Rating_Field extends Abstract_Field {
 
@@ -58,11 +57,9 @@ $renderer->render_fields([
     'form_prefix' => 'product_form'
 ]);
 
-// Or use static facade (creates new instance)
-Renderer::render([
-    'schema' => $schema,
-    'form_prefix' => 'product_form'
-]);
+// Static Renderer::render() creates a NEW instance — custom types registered
+// on $renderer above are NOT available here. Register on the same instance
+// you call render_fields() on, or register before each render() call.
 ```
 
 ## Requirements

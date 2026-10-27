@@ -4,7 +4,6 @@
 
 ```php
 use CodeSoup\MetaboxSchema\Abstract_Field;
-use CodeSoup\MetaboxSchema\Field_Factory;
 
 class Color_Picker_Field extends Abstract_Field {
 

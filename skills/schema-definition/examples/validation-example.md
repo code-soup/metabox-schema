@@ -49,11 +49,13 @@ Demonstrates validation rules in schema.
     'label'      => 'Birth Date',
     'validation' => array(
         'required'    => true,
+        'format'      => 'date',
         'date_format' => 'Y-m-d',
     ),
 ),
 ```
 
 **Validation rules:**
-- `date_format` - Expected date format (Y-m-d = YYYY-MM-DD)
+- `format` => `date` — enables date validation
+- `date_format` — PHP format passed to `DateTime::createFromFormat()` (default `Y-m-d`)
 
