@@ -1,0 +1,38 @@
+# WordPress plugin production exclusions (see code-soup/wp-plugin-production-deploy)
+# Applied after production-files are copied into the release tree.
+
+# Agent / dev documentation (Composer library consumers use GitHub develop + Packagist)
+skills/
+docs/
+
+# CI and tooling
+.github/
+phpcs.xml
+.editorconfig
+
+# Composer manifest (vendor/ is included; lock not needed at runtime)
+composer.json
+composer.lock
+
+# Node tooling (no runtime frontend bundle in this plugin)
+package.json
+package-lock.json
+node_modules/
+
+# Git / IDE
+.gitignore
+.gitattributes
+
+# Vendor dev noise
+vendor/bin/
+vendor/phpunit/
+vendor/squizlabs/
+vendor/phpcompatibility/
+vendor/dealerdirect/
+vendor/php-parallel-lint/
+
+# Caches and OS
+*.log
+.phpcs.cache
+.DS_Store
+Thumbs.db

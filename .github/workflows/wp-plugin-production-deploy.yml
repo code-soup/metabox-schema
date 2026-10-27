@@ -1,0 +1,53 @@
+# Builds a WordPress-plugin-only tree and force-pushes to branch `plugin`.
+# Library development stays on master / develop; install the plugin from branch `plugin`
+# or a zip of that branch. See docs/wp-plugin-production-deploy.md.
+#
+# Requires: repository secret none (uses GITHUB_TOKEN with contents: write).
+
+name: WordPress plugin production deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Git ref to build (branch or tag)
+        required: true
+        default: develop
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wp-plugin-production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.source_ref || 'develop' }}
+          fetch-depth: 0
+
+      - name: WordPress Plugin Production Deploy
+        uses: code-soup/wp-plugin-production-deploy@v1.0.0
+        with:
+          php-version: '8.1'
+          node-version: '22'
+          build-command: 'npm run build:prod'
+          composer-install: 'true'
+          target-branch: plugin
+          use-deployignore: 'true'
+          production-files: >-
+            includes
+            vendor
+            assets
+            metabox-schema.php
+            readme.txt
+            CHANGELOG.md
+            LICENSE
