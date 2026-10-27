@@ -41,10 +41,15 @@ skills/
 └── ...
 ```
 
+## Accuracy
+
+Skills are maintained against the PHP package in `includes/`. After releases, see `docs/skills-audit-report.md` for the latest fact-check notes.
+
 ## Requirements
 
 - Skillshare CLI installed
 - AI tool with Skillshare support (Cursor, Windsurf, etc.)
+- Package PHP 8.1+, WordPress 6.0+ (see root `readme.txt`)
 
 ## License
 

@@ -5,7 +5,7 @@ license: MIT
 location: includes/core/class-renderer.php
 metadata:
     author: code-soup
-    version: "1.1"
+    version: "1.3"
     package: codesoup/metabox-schema
 ---
 
@@ -90,8 +90,10 @@ Create template in your custom location:
 ```
 templates/
 └── color-picker/
-    └── template.md
+    └── template.php
 ```
+
+Built-in fields use `includes/fields/{type}/template.php`. Custom types typically set `template_base` or override `get_template_path()` (see `Checkbox_Group_Field`).
 
 ## Common Use Cases
 

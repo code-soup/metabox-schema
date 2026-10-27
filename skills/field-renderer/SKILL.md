@@ -34,6 +34,9 @@ See `examples/` folder for complete examples:
 - **text, email, url, number, date, password, tel, color, range** - Input fields
 - **textarea** - Multi-line text
 - **select** - Dropdown with options
+- **radio** - Single choice from inline options
+- **checkbox** - Single yes/no checkbox
+- **checkbox_group** - Multiple checkboxes
 - **wp_editor** - WordPress rich text editor
 - **media** - WordPress media library picker
 - **html** - HTML content display
@@ -53,7 +56,8 @@ See `examples/` folder for complete examples:
 - `wrapper` - Wrapper element (p, div, span, or empty)
 - `wrapper_class` - CSS classes for wrapper (string or array)
 - `required_class` - CSS class for required fields (default: 'has-required')
-- `options` - For select fields (key => label array)
+- `options` - For select, radio, and checkbox_group (key => label array)
+- `sort_az`, `checked_on_top` - For checkbox_group display ordering
 - `rows` - For textarea/wp_editor (default: 5)
 - `editor_settings` - For wp_editor (WordPress editor config)
 - `content` - For html type (string or callable)
@@ -67,21 +71,24 @@ See `examples/custom-template-render.md` for template override example.
 
 Template structure:
 
-- `input/template.md` - All input types
-- `textarea/template.md` - Textarea fields
-- `select/template.md` - Select dropdowns
-- `wp-editor/template.md` - WordPress editor
-- `media/template.md` - Media library
-- `html/template.md` - HTML content
-- `label/template.md` - Field labels
-- `help/template.md` - Help text
+- `input/template.php` - All input types
+- `textarea/template.php` - Textarea fields
+- `select/template.php` - Select dropdowns
+- `radio/template.php` - Radio groups
+- `checkbox/template.php` - Single checkbox
+- `checkbox-group/template.php` - Checkbox groups (built-in path under `includes/fields/`)
+- `wp-editor/template.php` - WordPress editor
+- `media/template.php` - Media library
+- `html/template.php` - HTML content
+- `label/template.php` - Field labels
+- `help/template.php` - Help text
 
 ## Available Methods in Templates
 
 Inside templates, `$this` refers to Field object:
 
-- `$this->get_field_id()` - Sanitized field ID
-- `$this->get_field_name()` - Sanitized field name
+- `$this->get_field_id()` / `$this->get_escaped_field_id()` - Field ID (use escaped variant in HTML attributes)
+- `$this->get_field_name()` / `$this->get_escaped_field_name()` - Field name attribute
 - `$this->get_wrapper_id()` - Wrapper ID (field-id + '-wrap')
 - `$this->get_wrapper_class()` - Wrapper CSS classes (includes required class if applicable)
 - `$this->get_label()` - Sanitized label
@@ -95,7 +102,9 @@ Inside templates, `$this` refers to Field object:
 - `$this->get_help()` - Help text
 - `$this->get_help_position()` - Help position ('before' or 'after')
 - `$this->get_rows()` - Textarea rows
-- `$this->get_options()` - Sanitized select options
+- `$this->get_options()` - Options for select / radio / checkbox_group
+- `$this->is_selected()` - Radio: whether option is selected
+- `$this->is_checked()` - Checkbox group: whether option is checked
 - `$this->get_editor_settings()` - WP editor settings
 
 ## Wrapper Rendering
@@ -171,18 +180,23 @@ The Field class uses several utility components:
 **When Extending Field:**
 
 ```php
-use CodeSoup\MetaboxSchema\Field;
+use CodeSoup\MetaboxSchema\Abstract_Field;
 use CodeSoup\MetaboxSchema\Constants;
 
-class Custom_Field extends Field {
+class Custom_Field extends Abstract_Field {
     protected function resolve_value(): mixed {
-        // Use trait methods
-        $value = $this->resolve_callable($this->config['value']);
+        $value  = $this->config['value'] ?? '';
+        $entity = $this->config['entity'] ?? null;
+        $value  = $this->resolve_entity_method( $value, $entity );
+        $value  = $this->resolve_callable( $value );
         return $value;
     }
 
+    protected function get_template_name(): string {
+        return 'input';
+    }
+
     public function get_type(): string {
-        // Use constants
         return $this->config['type'] ?? Constants::DEFAULT_TYPE;
     }
 }

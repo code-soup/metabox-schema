@@ -1,6 +1,6 @@
 # Value Resolution Example
 
-Demonstrates different ways to resolve field values.
+Demonstrates how field values are resolved when **rendering** (see `Abstract_Field::resolve_value()`).
 
 ## Static Value
 
@@ -11,27 +11,16 @@ Demonstrates different ways to resolve field values.
 ),
 ```
 
-The field will always have the value `'active'`.
-
 ## Entity Method Resolution
 
 ```php
 'email' => array(
     'type'  => 'email',
-    'value' => 'get_email', // Calls $entity->get_email()
+    'value' => 'get_email', // Calls $entity->get_email() when entity is set
 ),
 ```
 
-When rendering, the system calls `$entity->get_email()` to get the value.
-
-**Entity example:**
-```php
-$entity = new class() {
-    public function get_email() {
-        return 'user@example.com';
-    }
-};
-```
+Entity methods run **before** global/callable resolution, so a method name like `get_post_types` on `$entity` is not treated as the WordPress function.
 
 ## Callable (Closure)
 
@@ -39,16 +28,14 @@ $entity = new class() {
 'created_at' => array(
     'type'  => 'date',
     'value' => function () {
-        return date( 'Y-m-d' );
+        return gmdate( 'Y-m-d' );
     },
 ),
 ```
 
-The closure is executed when the field is rendered, returning the current date.
+## Default (render + validation)
 
-## Default Values
-
-### Static Default
+### Static default
 
 ```php
 'country' => array(
@@ -57,26 +44,29 @@ The closure is executed when the field is rendered, returning the current date.
 ),
 ```
 
-Used when no value is provided.
+Used when building the field if no `value` key is present. On **validation**, when POST is empty for an optional field, the validator returns the resolved `default`.
 
-### Callable Default
+### Callable default
 
 ```php
 'registration_date' => array(
     'type'    => 'date',
     'default' => function () {
-        return date( 'Y-m-d' );
+        return gmdate( 'Y-m-d' );
     },
 ),
 ```
 
-The default value is computed dynamically when needed.
+## Render resolution order
 
-## Resolution Priority
+1. If `value` key exists in field config → use it (including `null`).
+2. Else if `default` key exists → use it.
+3. Else use `''`.
+4. **`resolve_entity_method( $value, $entity )`** — string method names on `$entity`.
+5. **`resolve_callable( $value )`** — closures, invokables, or global functions if still callable.
 
-1. **`value`** from schema config
-2. **Entity method** (if value is a string method name)
-3. **Callable** (if value is a closure/function)
-4. **`default`** (if no value found)
-5. **Empty string** (if no default)
+**Note:** A string that matches a global PHP function name can be invoked at step 5 if it is not an entity method. Prefer closures or entity methods for dynamic values.
 
+## Validator defaults
+
+On empty POST input, optional fields resolve `default` from the schema (including callables via `Value_Resolver`). Required empty fields add an error and still fall back to `default` on the validated output when validation fails for other rules.

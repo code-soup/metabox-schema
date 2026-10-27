@@ -41,7 +41,7 @@ See `examples/basic-schema.md` for complete example.
 
 ### Required Properties
 
-- **type** (string) - Field type: text, email, url, number, date, password, tel, color, range, textarea, select, wp_editor, media, html, label, help
+- **type** (string) - Field type: text, email, url, number, date, password, tel, color, range, textarea, select, radio, checkbox, checkbox_group, wp_editor, media, html, label, help
 
 ### Common Properties
 
@@ -56,13 +56,13 @@ See `examples/basic-schema.md` for complete example.
 - **sanitize** (callable/array) - Sanitization callback(s)
 - **help** (string) - Help text displayed below field
 - **help_position** (string) - Help text position: 'before' or 'after' (default: 'after')
-- **wrapper** (string) - Wrapper element: 'p' (default), 'div', 'span', '' (no wrapper)
+- **wrapper** (string) - Wrapper element: 'div' (default), 'p', 'span', 'section', 'article', '' (no wrapper)
 - **wrapper_class** (string/array) - CSS classes for wrapper element (string or array format)
 - **required_class** (string) - CSS class for required fields (default: 'has-required')
 
 ### Field-Specific Properties
 
-- **options** (array) - For select fields (key => label)
+- **options** (array) - For select, radio, and checkbox_group (key => label)
   - Supports flat arrays: `['value1' => 'Label 1', 'value2' => 'Label 2']`
   - Supports optgroups: `['Group 1' => ['val1' => 'Label 1'], 'single' => 'Label']`
 - **allowed_html** (array) - For html type: Custom wp_kses allowlist (defaults to admin-safe tags)
@@ -73,6 +73,8 @@ See `examples/basic-schema.md` for complete example.
 - **button_text** (string) - For media type: Button text (default: 'Select Media')
 - **media_type** (string) - For media type: Filter by type (image, video, audio)
 - **preview_size** (string) - For media type: WordPress image size for preview
+- **sort_az** (bool) - For checkbox_group: sort option labels A–Z (default: false)
+- **checked_on_top** (bool) - For checkbox_group: show selected options first (default: false)
 
 ## Value Resolution
 
@@ -88,6 +90,8 @@ All code examples are in the `examples/` folder:
 - `examples/basic-schema.md` - Basic field structure
 - `examples/validation-example.md` - Validation rules
 - `examples/value-resolution.md` - Value resolution patterns
+- `examples/select-optgroup.md` - Select optgroups
+- `examples/radio-checkbox.md` - Radio and single checkbox fields
 
 ## See Also
 
@@ -96,10 +100,9 @@ All code examples are in the `examples/` folder:
 - [template-creator](/skills/template-creator/SKILL.md) - Create custom templates
 - [utilities](/skills/utilities/SKILL.md) - Use Constants and utility classes
 
-## Important Changes (v1.1.0)
+## Important Changes (v1.1.0+)
 
-- Field names must match pattern: `/^[a-zA-Z0-9_-]+$/` (throws exception if invalid)
-- Form prefix must match same pattern (alphanumeric, hyphens, underscores only)
+- Field names and `form_prefix` must match WordPress `sanitize_key()` (lowercase alphanumeric and underscores only; hyphens are not allowed and will throw `InvalidArgumentException`)
 - Select field options now support nested arrays for optgroups
 - HTML field `allowed_html` property added for custom tag allowlists
 - Min/max validation rules must be int or float (prevents injection attacks)
