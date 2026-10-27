@@ -1,0 +1,8 @@
+{
+  "name": "metabox-schema",
+  "private": true,
+  "description": "No-op npm manifest for wp-plugin-production-deploy (Composer is the PHP build).",
+  "scripts": {
+    "build:prod": "node -e \"console.log('metabox-schema: no frontend build step')\""
+  }
+}

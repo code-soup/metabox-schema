@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Radio field** (`radio`) - Single selection from inline options with option allowlist validation
 - **Checkbox field** (`checkbox`) - Single yes/no or agreement checkbox
 - **WordPress plugin distribution**: `metabox-schema.php` bootstrap, `readme.txt` (Requires/Tested/Stable tag), `METABOX_SCHEMA_VERSION` constant
+- **Plugin production deploy**: GitHub Action [wp-plugin-production-deploy](https://github.com/code-soup/wp-plugin-production-deploy), `.deployignore`, and `plugin` branch output (see `docs/wp-plugin-production-deploy.md`)
 
 ### Changed
 

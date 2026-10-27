@@ -27,7 +27,9 @@ Schema-driven form generator system for WordPress developers. Define fields as P
 composer require codesoup/metabox-schema
 ```
 
-**WordPress plugin:** copy this repository into `wp-content/plugins/metabox-schema`, run `composer install --no-dev`, and activate **Metabox Schema**. See `readme.txt` for WordPress.org-style metadata (`Requires at least`, `Tested up to`, etc.).
+**WordPress plugin (manual):** copy this repository into `wp-content/plugins/metabox-schema`, run `composer install --no-dev`, and activate **Metabox Schema**. See `readme.txt` for WordPress.org-style metadata.
+
+**WordPress plugin (production branch):** CI builds a plugin-only tree on branch [`plugin`](https://github.com/code-soup/metabox-schema/tree/plugin) using [wp-plugin-production-deploy](https://github.com/code-soup/wp-plugin-production-deploy). See [`docs/wp-plugin-production-deploy.md`](docs/wp-plugin-production-deploy.md).
 
 ## Quick Start
 

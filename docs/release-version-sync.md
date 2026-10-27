@@ -20,4 +20,6 @@ Also update WordPress compatibility in:
 
 `Media_Field` uses `METABOX_SCHEMA_VERSION` for script/style cache busting, then falls back to `composer.json` `version`, then `1.0.0`.
 
+After version bumps, run the [WordPress plugin production deploy](wp-plugin-production-deploy.md) workflow so branch `plugin` matches the release.
+
 **Tested up to:** use the latest stable WordPress **major.minor** branch (e.g. `7.1` when core is at 7.1.3), not the patch version. Check [wordpress.org/download/releases](https://wordpress.org/download/releases/).
