@@ -1,22 +1,24 @@
 # Value_Resolver Trait Usage Example
 
+## Resolution order (matches `Abstract_Field`)
+
+1. `resolve_entity_method( $value, $entity )`
+2. `resolve_callable( $value )`
+
+Entity methods take precedence over global functions with the same name.
+
 ## Using the Trait
 
 ```php
 use CodeSoup\MetaboxSchema\Value_Resolver;
 
-class Custom_Field {
+class Custom_Processor {
     use Value_Resolver;
 
-    public function get_value( $config, $entity ) {
-        $value = $config['value'] ?? '';
-
-        // Resolve callable
-        $value = $this->resolve_callable( $value );
-
-        // Resolve entity method
+    public function resolve( $config, ?object $entity ) {
+        $value = $config['value'] ?? $config['default'] ?? '';
         $value = $this->resolve_entity_method( $value, $entity );
-
+        $value = $this->resolve_callable( $value );
         return $value;
     }
 }
@@ -25,12 +27,12 @@ class Custom_Field {
 ## Callable Resolution
 
 ```php
-$field  = new Custom_Field();
-
-// Callable resolution
-$config = array( 'value' => fn() => 'dynamic value' );
-$value  = $field->get_value( $config, null );
-// Result: 'dynamic value'
+$processor = new Custom_Processor();
+$value     = $processor->resolve(
+    array( 'value' => fn() => 'dynamic value' ),
+    null
+);
+// 'dynamic value'
 ```
 
 ## Entity Method Resolution
@@ -42,27 +44,26 @@ $entity = new class() {
     }
 };
 
-// Entity method resolution
-$config = array( 'value' => 'get_email' );
-$value  = $field->get_value( $config, $entity );
-// Result: 'user@example.com'
+$value = $processor->resolve(
+    array( 'value' => 'get_email' ),
+    $entity
+);
+// 'user@example.com'
 ```
 
 ## Methods
 
-### `resolve_callable( $value ): mixed`
-- Checks if value is callable (closure, function name, array callable)
-- Executes callable and returns result
-- Returns value as-is if not callable
-
 ### `resolve_entity_method( $value, ?object $entity ): mixed`
-- Checks if value is string method name
-- Checks if entity exists and has that method
-- Calls entity method and returns result
-- Returns value as-is if not entity method
+
+- String method name on `$entity` when `method_exists`
+- Otherwise returns `$value` unchanged
+
+### `resolve_callable( $value ): mixed`
+
+- Executes callables (no arguments)
+- Otherwise returns `$value` unchanged
 
 ## Used By
 
-- `Abstract_Field` class (for value resolution)
-- `Validator` class (for default value resolution)
-
+- `Abstract_Field` — field display values
+- `Validator` — `default` resolution on validation failures and empty optional fields

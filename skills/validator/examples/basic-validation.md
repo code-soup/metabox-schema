@@ -27,7 +27,9 @@ $schema = array(
 
 ```php
 $validator      = new Validator();
-$validated_data = $validator->validate( $_POST, $schema );
+// Field names are nested under your form prefix in POST.
+$form_prefix    = 'my_form';
+$validated_data = $validator->validate( $_POST[ $form_prefix ] ?? array(), $schema );
 
 if ( $validator->has_errors() ) {
     foreach ( $validator->get_errors() as $field => $error ) {
@@ -51,5 +53,7 @@ Data is automatically sanitized based on field type:
 - `email` → `sanitize_email()`
 - `url` → `esc_url_raw()`
 - `textarea` → `sanitize_textarea_field()`
-- `text` → `sanitize_text_field()`
+- `number` → int/float when numeric
+- `text` / other scalars → `sanitize_text_field()`
+- `checkbox_group` → array of sanitized strings; options validated against schema
 

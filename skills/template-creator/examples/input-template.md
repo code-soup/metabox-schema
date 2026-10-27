@@ -16,8 +16,8 @@ defined( 'ABSPATH' ) || exit;
 
 printf(
     '<div class="form-field"><input id="%s" name="%s" type="%s" value="%s"%s%s class="custom-input" /></div>',
-    $this->get_field_id(),
-    $this->get_field_name(),
+    $this->get_escaped_field_id(),
+    $this->get_escaped_field_name(),
     $this->get_type(),
     $this->get_escaped_value(),
     $this->get_required_attr(),
@@ -29,8 +29,8 @@ printf(
 
 Inside templates, `$this` refers to the Field object:
 
-- `$this->get_field_id()` - Sanitized field ID
-- `$this->get_field_name()` - Sanitized field name
+- `$this->get_escaped_field_id()` - Escaped field ID for attributes
+- `$this->get_escaped_field_name()` - Escaped name for attributes
 - `$this->get_type()` - Field type (text, email, etc.)
 - `$this->get_escaped_value()` - Escaped value for inputs
 - `$this->get_required_attr()` - ' required' or empty string
