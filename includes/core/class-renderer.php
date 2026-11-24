@@ -29,6 +29,20 @@ class Renderer {
 	protected array $custom_field_types = array();
 
 	/**
+	 * Global default required class.
+	 *
+	 * @var string|null
+	 */
+	protected ?string $default_required_class = null;
+
+	/**
+	 * Global default help position.
+	 *
+	 * @var string|null
+	 */
+	protected ?string $default_help_position = null;
+
+	/**
 	 * Render schema fields (static facade).
 	 *
 	 * @param array $config Configuration array with schema, entity, and form_prefix.
@@ -116,10 +130,12 @@ class Renderer {
 			}
 		}
 
-		$schema        = $config['schema'];
-		$entity        = $config['entity'] ?? null;
-		$form_prefix   = $config['form_prefix'];
-		$template_base = $config['template_base'] ?? null;
+		$schema                       = $config['schema'];
+		$entity                       = $config['entity'] ?? null;
+		$form_prefix                  = $config['form_prefix'];
+		$template_base                = $config['template_base'] ?? null;
+		$this->default_required_class = $config['default_required_class'] ?? null;
+		$this->default_help_position  = $config['default_help_position'] ?? null;
 
 		if ( isset( $config['values'] ) && is_array( $config['values'] ) ) {
 			$schema = $this->map_values_to_schema(
@@ -226,6 +242,29 @@ class Renderer {
 	}
 
 	/**
+	 * Merge global defaults into field config.
+	 *
+	 * Passes global defaults to field without mutating the schema.
+	 * Field getters will use these as fallbacks.
+	 *
+	 * @param array $field_config Field configuration.
+	 * @return array Field config with global defaults added.
+	 */
+	protected function merge_global_defaults( array $field_config ): array {
+		if ( null !== $this->default_required_class ) {
+			$field_config['default_required_class'] = $this->default_required_class;
+		}
+
+		if ( null !== $this->default_help_position ) {
+			$field_config['default_help_position'] = $this->default_help_position;
+		}
+
+		return $field_config;
+	}
+
+
+
+	/**
 	 * Create field instance.
 	 *
 	 * Checks instance registry first, then falls back to Field_Factory.
@@ -246,12 +285,15 @@ class Renderer {
 	): Abstract_Field {
 		$type = $field_config['type'] ?? Constants::DEFAULT_TYPE;
 
+		// Merge global defaults into field config.
+		$config_with_defaults = $this->merge_global_defaults( $field_config );
+
 		// Check instance registry first.
 		if ( isset( $this->custom_field_types[ $type ] ) ) {
 			return $this->create_custom_field(
 				$this->custom_field_types[ $type ],
 				$field_name,
-				$field_config,
+				$config_with_defaults,
 				$entity,
 				$form_prefix,
 				$template_base
@@ -261,7 +303,7 @@ class Renderer {
 		// Fall back to Field_Factory for built-in types.
 		return Field_Factory::create(
 			$field_name,
-			$field_config,
+			$config_with_defaults,
 			$entity,
 			$form_prefix,
 			$template_base
@@ -334,6 +376,17 @@ class Renderer {
 	 * @param \Exception $e Exception.
 	 */
 	protected function handle_render_error( \Exception $e ): void {
+		// Log to error log for production debugging.
+		error_log(
+			sprintf(
+				'Metabox Schema - Field rendering error: %s in %s:%d',
+				$e->getMessage(),
+				$e->getFile(),
+				$e->getLine()
+			)
+		);
+
+		// Output debug comment if WP_DEBUG enabled.
 		$this->maybe_output_debug_comment(
 			sprintf( 'Field rendering error: %s', $e->getMessage() )
 		);

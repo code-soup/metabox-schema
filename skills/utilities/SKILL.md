@@ -5,7 +5,7 @@ license: MIT
 location: includes/utilities/
 metadata:
     author: code-soup
-    version: "1.0"
+    version: "1.3"
     package: codesoup/metabox-schema
 ---
 

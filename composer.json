@@ -2,6 +2,7 @@
     "name": "codesoup/metabox-schema",
     "description": "Schema-driven form builder system for WordPress. Define fields as PHP arrays, use Renderer class to render forms and sanitize POST data. Use Validator to validate user input against your schema.",
     "type": "library",
+    "version": "1.3.0",
     "license": "MIT",
     "keywords": [
         "form",

@@ -39,7 +39,7 @@ class Constants {
 	 *
 	 * @var array
 	 */
-	public const SKIP_VALIDATION_TYPES = array( 'html' );
+	public const SKIP_VALIDATION_TYPES = array( 'html', 'label', 'help' );
 
 	/**
 	 * Valid wrapper tag names.
@@ -71,4 +71,21 @@ class Constants {
 	 * Default date format for validation.
 	 */
 	public const DEFAULT_DATE_FORMAT = 'Y-m-d';
+
+	/**
+	 * Default required field CSS class.
+	 */
+	public const DEFAULT_REQUIRED_CLASS = 'has-required';
+
+	/**
+	 * Default help text position.
+	 */
+	public const DEFAULT_HELP_POSITION = 'after';
+
+	/**
+	 * Valid help text positions.
+	 *
+	 * @var array
+	 */
+	public const VALID_HELP_POSITIONS = array( 'before', 'after' );
 }

@@ -120,7 +120,20 @@ class Custom_Input_Field extends \CodeSoup\MetaboxSchema\Fields\Input_Field {
 
 	protected function open_wrapper( string $wrapper ): void {
 		if ( 'p' === $wrapper ) {
-			printf( '<div class="form-group mb-3">' );
+			$wrapper_id    = $this->get_wrapper_id();
+			$wrapper_class = $this->get_wrapper_class();
+			$custom_class  = 'form-group mb-3';
+
+			// Combine custom classes with existing wrapper classes.
+			$final_class = $wrapper_class
+				? $wrapper_class . ' ' . $custom_class
+				: $custom_class;
+
+			printf(
+				'<div id="%s" class="%s">',
+				esc_attr( $wrapper_id ),
+				esc_attr( $final_class )
+			);
 		} else {
 			parent::open_wrapper( $wrapper );
 		}

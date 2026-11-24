@@ -142,8 +142,16 @@ abstract class Abstract_Field {
 		}
 
 		$this->render_template( 'label' );
+
+		if ( 'before' === $this->get_help_position() ) {
+			$this->render_template( 'help' );
+		}
+
 		$this->render_template( $this->get_template_name() );
-		$this->render_template( 'help' );
+
+		if ( 'after' === $this->get_help_position() ) {
+			$this->render_template( 'help' );
+		}
 
 		if ( $wrapper ) {
 			$this->close_wrapper( $wrapper );
@@ -234,21 +242,33 @@ abstract class Abstract_Field {
 	 */
 	protected function render_template( string $template_name ): void {
 		$template_path = $this->get_template_path( $template_name );
-		if ( file_exists( $template_path ) ) {
-			try {
-				require $template_path;
-			} catch ( \Throwable $e ) {
-				throw new \RuntimeException(
-					sprintf(
-						'Template rendering failed for "%s". Check template file: %s. Original error: %s',
-						$template_name,
-						$template_path,
-						$e->getMessage()
-					),
-					0,
-					$e
-				);
-			}
+		if ( ! file_exists( $template_path ) ) {
+			$this->maybe_output_debug_comment(
+				sprintf(
+					'Template file not found: %s (expected at: %s)',
+					$template_name,
+					$template_path
+				)
+			);
+			return;
+		}
+
+		ob_start();
+		try {
+			require $template_path;
+			ob_end_flush();
+		} catch ( \Throwable $e ) {
+			ob_end_clean();
+			throw new \RuntimeException(
+				sprintf(
+					'Template rendering failed for "%s". Check template file: %s. Original error: %s',
+					$template_name,
+					$template_path,
+					$e->getMessage()
+				),
+				0,
+				$e
+			);
 		}
 	}
 
@@ -294,9 +314,16 @@ abstract class Abstract_Field {
 			return;
 		}
 
+		$wrapper_id    = $this->get_wrapper_id();
+		$wrapper_class = $this->get_wrapper_class();
+
 		printf(
-			'<%s>',
-			esc_html( $wrapper )
+			'<%s id="%s"%s>',
+			esc_html( $wrapper ),
+			esc_attr( $wrapper_id ),
+			$wrapper_class
+				? ' class="' . esc_attr( $wrapper_class ) . '"'
+				: ''
 		);
 	}
 
@@ -481,5 +508,93 @@ abstract class Abstract_Field {
 	 */
 	public function get_rows(): int {
 		return $this->config['rows'] ?? Constants::DEFAULT_ROWS;
+	}
+
+	/**
+	 * Get wrapper ID.
+	 *
+	 * Generated from field ID with '-wrap' suffix.
+	 *
+	 * @return string Wrapper ID.
+	 */
+	public function get_wrapper_id(): string {
+		return $this->field_id . '-wrap';
+	}
+
+	/**
+	 * Get wrapper CSS classes.
+	 *
+	 * Combines custom wrapper_class with automatic required class.
+	 *
+	 * @return string Wrapper classes.
+	 */
+	public function get_wrapper_class(): string {
+		$classes = array();
+
+		if ( isset( $this->config['wrapper_class'] ) && '' !== $this->config['wrapper_class'] ) {
+			$classes[] = $this->config['wrapper_class'];
+		}
+
+		if ( $this->is_required() ) {
+			$classes[] = $this->get_required_class();
+		}
+
+		return implode( ' ', array_filter( $classes ) );
+	}
+
+	/**
+	 * Get required CSS class name.
+	 *
+	 * Priority: field config > global default > package default.
+	 * Filterable per field.
+	 *
+	 * @return string Required class name.
+	 */
+	public function get_required_class(): string {
+		$class = $this->config['required_class']
+			?? $this->config['default_required_class']
+			?? Constants::DEFAULT_REQUIRED_CLASS;
+
+		/**
+		 * Filter the required CSS class for a field.
+		 *
+		 * @param string $class      Required class name.
+		 * @param string $field_name Field name.
+		 * @param array  $config     Field configuration.
+		 */
+		return apply_filters(
+			'codesoup_metabox_field_required_class',
+			$class,
+			$this->config['name'],
+			$this->config
+		);
+	}
+
+	/**
+	 * Get help text position.
+	 *
+	 * Priority: field config > global default > package default.
+	 * Filterable per field.
+	 *
+	 * @return string Help position ('before' or 'after').
+	 */
+	public function get_help_position(): string {
+		$position = $this->config['help_position']
+			?? $this->config['default_help_position']
+			?? Constants::DEFAULT_HELP_POSITION;
+
+		/**
+		 * Filter the help text position for a field.
+		 *
+		 * @param string $position   Help position ('before' or 'after').
+		 * @param string $field_name Field name.
+		 * @param array  $config     Field configuration.
+		 */
+		return apply_filters(
+			'codesoup_metabox_field_help_position',
+			$position,
+			$this->config['name'],
+			$this->config
+		);
 	}
 }

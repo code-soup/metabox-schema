@@ -43,6 +43,8 @@ echo 'DEFAULT_WRAPPER: ' . Constants::DEFAULT_WRAPPER . "\n";
 echo 'DEFAULT_ROWS: ' . Constants::DEFAULT_ROWS . "\n";
 echo 'DEFAULT_GRID_CLASS: ' . Constants::DEFAULT_GRID_CLASS . "\n";
 echo 'DEFAULT_DATE_FORMAT: ' . Constants::DEFAULT_DATE_FORMAT . "\n";
+echo 'DEFAULT_REQUIRED_CLASS: ' . Constants::DEFAULT_REQUIRED_CLASS . "\n";
+echo 'DEFAULT_HELP_POSITION: ' . Constants::DEFAULT_HELP_POSITION . "\n";
 echo '</pre>';
 
 echo '<h3>Valid Wrapper Tags:</h3>';
@@ -58,6 +60,11 @@ echo '</pre>';
 echo '<h3>Reserved Attributes:</h3>';
 echo '<pre>';
 print_r( Constants::RESERVED_ATTRIBUTES );
+echo '</pre>';
+
+echo '<h3>Valid Help Positions:</h3>';
+echo '<pre>';
+print_r( Constants::VALID_HELP_POSITIONS );
 echo '</pre>';
 
 echo '<h3>Usage Example:</h3>';

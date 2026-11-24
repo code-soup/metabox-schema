@@ -5,7 +5,7 @@ license: MIT
 location: includes/fields/class-abstract-field.php
 metadata:
   author: code-soup
-  version: "1.0"
+  version: "1.3"
   package: codesoup/metabox-schema
 ---
 
@@ -55,7 +55,10 @@ See `examples/basic-schema.md` for complete example.
 - **errors** (array) - Custom error messages for validation rules
 - **sanitize** (callable/array) - Sanitization callback(s)
 - **help** (string) - Help text displayed below field
+- **help_position** (string) - Help text position: 'before' or 'after' (default: 'after')
 - **wrapper** (string) - Wrapper element: 'p' (default), 'div', 'span', '' (no wrapper)
+- **wrapper_class** (string/array) - CSS classes for wrapper element (string or array format)
+- **required_class** (string) - CSS class for required fields (default: 'has-required')
 
 ### Field-Specific Properties
 

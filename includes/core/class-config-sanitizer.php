@@ -27,11 +27,12 @@ class Config_Sanitizer {
 	 * @var array<string, string>
 	 */
 	private const SANITIZATION_RULES = array(
-		'name'        => 'sanitize_key',
-		'type'        => 'sanitize_key',
-		'label'       => 'sanitize_text_field',
-		'form_prefix' => 'sanitize_key',
-		'rows'        => 'absint',
+		'name'           => 'sanitize_key',
+		'type'           => 'sanitize_key',
+		'label'          => 'sanitize_text_field',
+		'form_prefix'    => 'sanitize_key',
+		'rows'           => 'absint',
+		'required_class' => 'sanitize_html_class',
 	);
 
 	/**
@@ -52,6 +53,8 @@ class Config_Sanitizer {
 		}
 
 		$sanitized = $this->sanitize_wrapper( $sanitized );
+		$sanitized = $this->sanitize_wrapper_class( $sanitized );
+		$sanitized = $this->sanitize_help_position( $sanitized );
 		$sanitized = $this->sanitize_options( $sanitized );
 		$sanitized = $this->sanitize_attributes( $sanitized );
 
@@ -69,6 +72,45 @@ class Config_Sanitizer {
 	protected function sanitize_wrapper( array $config ): array {
 		if ( isset( $config['wrapper'] ) && ! in_array( $config['wrapper'], Constants::VALID_WRAPPER_TAGS, true ) ) {
 			$config['wrapper'] = Constants::DEFAULT_WRAPPER;
+		}
+		return $config;
+	}
+
+	/**
+	 * Sanitize wrapper_class.
+	 *
+	 * Converts arrays to space-separated string and sanitizes class names.
+	 *
+	 * @param array $config Configuration array.
+	 * @return array Configuration with sanitized wrapper_class.
+	 */
+	protected function sanitize_wrapper_class( array $config ): array {
+		if ( isset( $config['wrapper_class'] ) ) {
+			if ( is_array( $config['wrapper_class'] ) ) {
+				$classes = array_map( 'sanitize_html_class', $config['wrapper_class'] );
+				$config['wrapper_class'] = implode( ' ', array_filter( $classes ) );
+			} elseif ( is_string( $config['wrapper_class'] ) ) {
+				$classes = explode( ' ', $config['wrapper_class'] );
+				$classes = array_map( 'sanitize_html_class', $classes );
+				$config['wrapper_class'] = implode( ' ', array_filter( $classes ) );
+			} else {
+				unset( $config['wrapper_class'] );
+			}
+		}
+		return $config;
+	}
+
+	/**
+	 * Sanitize help_position.
+	 *
+	 * Validates help_position against whitelist, falls back to default if invalid.
+	 *
+	 * @param array $config Configuration array.
+	 * @return array Configuration with sanitized help_position.
+	 */
+	protected function sanitize_help_position( array $config ): array {
+		if ( isset( $config['help_position'] ) && ! in_array( $config['help_position'], Constants::VALID_HELP_POSITIONS, true ) ) {
+			$config['help_position'] = Constants::DEFAULT_HELP_POSITION;
 		}
 		return $config;
 	}
