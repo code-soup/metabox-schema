@@ -60,8 +60,7 @@ trait Value_Resolver {
 		) {
 			return $this->execute_with_error_handling(
 				fn() => $entity->{$value}(),
-				'Entity method resolution failed',
-				$value
+				sprintf( 'Entity method resolution failed for method "%s"', $value )
 			);
 		}
 		return $value;
