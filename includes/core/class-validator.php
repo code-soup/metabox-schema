@@ -326,6 +326,13 @@ class Validator {
 		$label      = $context['label'];
 		$type       = $context['type'];
 
+		if ( 'number' === $type ) {
+			$result = $this->validate_number_value( $value, $label, $errors );
+			if ( true !== $result ) {
+				return $result;
+			}
+		}
+
 		if ( isset( $validation['min'] ) ) {
 			if ( ! is_int( $validation['min'] ) && ! is_float( $validation['min'] ) ) {
 				throw new \InvalidArgumentException(
@@ -396,6 +403,26 @@ class Validator {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Validate number field values are numeric scalars.
+	 *
+	 * @param mixed  $value  Value to validate.
+	 * @param string $label  Field label.
+	 * @param array  $errors Custom error messages.
+	 * @return string|bool True if valid, error message if invalid.
+	 */
+	protected function validate_number_value( $value, string $label, array $errors ): string|bool {
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return true;
+		}
+
+		if ( is_string( $value ) && is_numeric( $value ) ) {
+			return true;
+		}
+
+		return $this->get_error_message( $errors, 'number', '%s must be a valid number', $label );
 	}
 
 	/**
